@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">LowEnergyUI</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+	
+	<string-array name="commands_entries">
+		<item>bs#a&amp;_LED1_\r</item>
+	    <item>bs#a&amp;_LED0_\r</item>
+	    <item>bs#a&amp;_LED1_SEC2_LED0_\r</item>
+	    <item>bs#a&amp;_LED2_SEC2_LED0_\r</item>
+	    <item>bs#a&amp;_LED3_SEC2_LED0_\r</item>
+	    <item>bs#a&amp;_LED4_SEC2_LED0_\r</item>
+	    <item>bs#a&amp;_LED5_SEC2_LED0_\r</item>
+	    <item>bs#a&amp;_LED6_SEC2_LED0_\r</item>
+	    <item>bs#a&amp;_V1_\r</item>
+	    <item>bs#a&amp;_V2_\r</item>
+	    <item>bs#a&amp;_V3_\r</item>
+	    <item>bs#a&amp;_V4_\r</item>
+	    <item>bs#a&amp;_V5_\r</item>
+	    <item>bs#a&amp;_V6_\r</item>
+	    <item>bs#a&amp;_V7_\r</item>
+	    <item>bs#a&amp;_V8_\r</item>
+	    <item>bs#a&amp;_V9_\r</item>
+	</string-array>
+	<string-array name="commands_entry_values">
+		<item>bs#a&amp;_LED1_chr\r</item>
+	    <item>bs#a&amp;_LED0_chr\r</item>
+	</string-array>
+</resources>

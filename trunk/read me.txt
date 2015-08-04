@@ -1,0 +1,6 @@
+SDK:com.BLE.BLEUtility (合約裡的API都在這個package裡)
+
+UI:操作app,Demo SDK用
+ps1. 使用APP時要開bluetooth
+ps2. 測試commands可在LowEnergyUI\res\values\strings.xml
+裡面加並重build

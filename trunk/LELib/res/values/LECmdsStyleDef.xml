@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<declare-styleable name = "LECmdsStyleDef">
+	    <attr name = "LEBtnState1CmdTitle" format = "string" />
+	    <attr name = "LEBtnState2CmdTitle" format = "string" />
+	    <attr name = "LEBtnState3CmdTitle" format = "string" />
+	    <attr name = "LEBtnState1Cmd" format = "string" />
+	    <attr name = "LEBtnState2Cmd" format = "string" />
+	    <attr name = "LEBtnState3Cmd" format = "string" />
+	    <attr name = "LEBtnState1CmdRes" format = "string" />
+	    <attr name = "LEBtnState2CmdRes" format = "string" />
+	    <attr name = "LEBtnState3CmdRes" format = "string" />
+    </declare-styleable>  
+</resources>

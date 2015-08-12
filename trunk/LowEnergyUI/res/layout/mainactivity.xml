@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    		  xmlns:leCmdsStyleDef = "http://schemas.android.com/apk/res/com.UI.LEDevice"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -10,12 +11,16 @@
         android:layout_weight="1" 
          android:orientation="horizontal" >
 
-        <Button
-            android:id="@+id/btnWrite"
+        <com.BLE.Buttons.BLEButton3State
+	        android:id="@+id/btnWrite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="write" />
+            leCmdsStyleDef:LEBtnState1Cmd = "edid fixed\r"
+            leCmdsStyleDef:LEBtnState1CmdRes = "ok\r"
+            leCmdsStyleDef:LEBtnState2Cmd = "edid custom\r"
+            leCmdsStyleDef:LEBtnState2CmdRes = "ok\r"
+            leCmdsStyleDef:LEBtnState3Cmd = "edid remix\r"
+            leCmdsStyleDef:LEBtnState3CmdRes = "ok\r"/>
         
          <Button     
              android:id="@+id/commands"

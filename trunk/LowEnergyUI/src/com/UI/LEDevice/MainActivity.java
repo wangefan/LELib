@@ -39,7 +39,7 @@ public class MainActivity extends ListActivity
 	private LeDeviceListAdapter mLeDeviceListAdapter = null;
 	private ProgressDialog mPDialog = null;
 	private TextView mtvRead = null;
-	private Button mBtnWrite = null;
+	private com.BLE.Buttons.BLEButton3State mBtnWrite = null;
 	private Button mBtnDisconnect = null;
 	private Button  mlstCommands = null;
 	private String  mstrCommand = "";
@@ -245,7 +245,7 @@ public class MainActivity extends ListActivity
 		 setContentView(R.layout.mainactivity);
 	     
 	     //=============init conrols==========
-	     mBtnWrite = (Button) findViewById(R.id.btnWrite);
+	     mBtnWrite = (com.BLE.Buttons.BLEButton3State) findViewById(R.id.btnWrite);
 	 	 if(mBtnWrite != null)
 	     {
 	 		mBtnWrite.setOnClickListener(new OnClickListener() 
@@ -253,6 +253,7 @@ public class MainActivity extends ListActivity
 				@Override
 				public void onClick(View v) 
 				{
+					mstrCommand = mBtnWrite.toggleNextState();
 					mtvRead.setText("no response...");
 					try {
 						if(mstrCommand != null)

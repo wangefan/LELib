@@ -240,7 +240,7 @@ public class MainActivity extends ListActivity
 		super.onCreate(savedInstanceState);
 		 getActionBar().setTitle("Low Energy Devices");
 		 
-		 mBLEUtility = new BLEUtility(this);
+		 mBLEUtility = BLEUtility.getInstance(this);
 		 mBLEUtility.setListener(mBLEUtilityListenerListener);
 		 setContentView(R.layout.mainactivity);
 	     

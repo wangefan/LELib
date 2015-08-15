@@ -159,6 +159,7 @@ public class BLEUtility
     };
 	
     //Data members
+    static private BLEUtility mMe = null;
 	private BluetoothAdapter mBluetoothAdapter = null;
 	private BluetoothGatt mBluetoothGatt = null;
 	private BluetoothGattCharacteristic mBTCharct = null;
@@ -171,16 +172,15 @@ public class BLEUtility
 	private Handler mHandlerCheckConn = new Handler();
 	private Handler mHandlerConnTimeout = new Handler();
 	
+	//private functions
 	//default constructor
-	public BLEUtility(Context context) 
+	private BLEUtility(Context context) 
 	{
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 	    mbtDeviceList = new ArrayList<BLEDevice>();
 	    mContext = context;
 	    mBAutoReconnect = false;
 	}
-	
-	//private functions
 	
 	// @param: boolean bSetTimer
 	// true: set timer with 8secs to connect again, 
@@ -255,6 +255,13 @@ public class BLEUtility
 	}
 	
     //public methods
+	static public BLEUtility getInstance(Context context)
+	{
+		if(mMe == null)
+			mMe = new BLEUtility(context);
+		return mMe;
+	}
+	
     /**
 	 * Set listener from client.
 	 */

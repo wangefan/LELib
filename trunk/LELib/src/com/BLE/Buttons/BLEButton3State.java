@@ -1,10 +1,9 @@
 package com.BLE.Buttons;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.ArrayList;
+import com.BLE.BLEUtility.BLEUtility;
+import com.BLE.BLEUtility.BLEUtilityException;
 import com.LELib.R;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -14,7 +13,7 @@ import android.widget.RadioButton;
 
 public class BLEButton3State extends BLEButton {
 	//data members
-	private Map<String, LECmd> mCmdsColl;
+	private ArrayList<LECmd> mCmdsColl;
 	private String mCurStateCmd = "";
 	private RadioButton mRadBtn1;
 	private RadioButton mRadBtn2;
@@ -45,6 +44,60 @@ public class BLEButton3State extends BLEButton {
 		mRadBtn2 = (RadioButton) findViewById(R.id.radioButton2);
 		mRadBtn3 = (RadioButton) findViewById(R.id.radioButton3);
 		
+		if(mRadBtn1 != null)
+		{
+			mRadBtn1.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					
+					String cmd = mCmdsColl.get(0).mCmd;
+					try {
+						BLEUtility.getInstance(getContext()).write(cmd);
+					} catch (BLEUtilityException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+		
+		if(mRadBtn2 != null)
+		{
+			mRadBtn2.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					String cmd = mCmdsColl.get(1).mCmd;
+					try {
+						BLEUtility.getInstance(getContext()).write(cmd);
+					} catch (BLEUtilityException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+			});
+		}
+		
+		if(mRadBtn3 != null)
+		{
+			mRadBtn3.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					String cmd = mCmdsColl.get(2).mCmd;
+					try {
+						BLEUtility.getInstance(getContext()).write(cmd);
+					} catch (BLEUtilityException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+			});
+		}
+		
 		String cmd1Title = mTypedArray.getString(R.styleable.LECmdsStyleDef_LEBtnState1CmdTitle);
         String cmd2Title = mTypedArray.getString(R.styleable.LECmdsStyleDef_LEBtnState2CmdTitle);
         String cmd3Title = mTypedArray.getString(R.styleable.LECmdsStyleDef_LEBtnState3CmdTitle);
@@ -55,12 +108,12 @@ public class BLEButton3State extends BLEButton {
         String cmd2Res = mTypedArray.getString(R.styleable.LECmdsStyleDef_LEBtnState2CmdRes);
         String cmd3Res = mTypedArray.getString(R.styleable.LECmdsStyleDef_LEBtnState3CmdRes);
         mTypedArray.recycle();
-        mCmdsColl = new HashMap<String, LECmd>();
+        mCmdsColl = new ArrayList<LECmd>();
         if(mCmdsColl != null)
         {
-        	mCmdsColl.put(cmd1, new LECmd(cmd1Title, cmd1, cmd1Res));
-        	mCmdsColl.put(cmd2, new LECmd(cmd2Title, cmd2, cmd2Res));
-        	mCmdsColl.put(cmd3, new LECmd(cmd3Title, cmd3, cmd3Res));
+        	mCmdsColl.add(new LECmd(cmd1Title, cmd1, cmd1Res));
+        	mCmdsColl.add(new LECmd(cmd2Title, cmd2, cmd2Res));
+        	mCmdsColl.add(new LECmd(cmd3Title, cmd3, cmd3Res));
         }
 	}
 

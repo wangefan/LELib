@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
@@ -151,10 +153,11 @@ public class BLEUtility
         	final byte[] data = characteristic.getValue();
             if (data != null && data.length > 0) 
             {
-                String strData = new String(data);
-                mFireReceivingData(strData);
+            	mResData = new String(data);
+                mFireReceivingData(mResData);
                 MyLog.d(mTAG, "onCharacteristicChanged, Thread id = " + android.os.Process.myTid() + ", data = [" + data + "]");
             }
+            mlockWriteRead.unlock();
         }
     };
 	
@@ -171,6 +174,8 @@ public class BLEUtility
 	private boolean mBAutoReconnect = false;
 	private Handler mHandlerCheckConn = new Handler();
 	private Handler mHandlerConnTimeout = new Handler();
+	private Lock mlockWriteRead = new ReentrantLock();   
+	private String mResData = "";
 	
 	//private functions
 	//default constructor
@@ -429,5 +434,38 @@ public class BLEUtility
 		{
 			throw new BLEUtilityException(BLEUtilityException.CHAR_NOTREADY);
 		}
+	}
+	
+	//blocking call, return read data
+	public String writeCmd(String command)
+	{
+		mlockWriteRead.lock();
+		try {
+			mResData = "";
+			write(command);
+			final int nWaitMilliSecs = 2000;
+			final int nWaitStep = 100;
+			int nTime = 0;
+			do {
+				if(mResData.length() > 0)
+				{
+					return mResData;
+				}
+				Thread.sleep(nWaitStep);
+				nTime += nWaitStep;
+			}
+			while(nTime < nWaitMilliSecs);
+			if(mResData.length() <= 0)
+				throw new BLEUtilityException(BLEUtilityException.CHAR_READFAIL);
+		} catch (BLEUtilityException e) {
+			e.printStackTrace();
+			mResData = "";
+			mlockWriteRead.unlock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			mResData = "";
+			mlockWriteRead.unlock();
+		}
+		return mResData;
 	}
 }

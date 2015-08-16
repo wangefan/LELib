@@ -1,8 +1,6 @@
 package com.BLE.Buttons;
 
 import java.util.ArrayList;
-import com.BLE.BLEUtility.BLEUtility;
-import com.BLE.BLEUtility.BLEUtilityException;
 import com.LELib.R;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -13,11 +11,8 @@ import android.widget.RadioButton;
 
 public class BLEButton3State extends BLEButton {
 	//data members
-	private ArrayList<LECmd> mCmdsColl;
-	private String mCurStateCmd = "";
-	private RadioButton mRadBtn1;
-	private RadioButton mRadBtn2;
-	private RadioButton mRadBtn3;
+	private RadioButton mCurCheckedRadBtn = null;
+	private RadioButton [] mRadBtns;
 	
 	//constructors
 	public BLEButton3State(Context context) {
@@ -40,63 +35,25 @@ public class BLEButton3State extends BLEButton {
 		final LayoutInflater layoutInflater =
 	            (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		layoutInflater.inflate(R.layout.blebutton3state, this, true);
-		mRadBtn1 = (RadioButton) findViewById(R.id.radioButton1);
-		mRadBtn2 = (RadioButton) findViewById(R.id.radioButton2);
-		mRadBtn3 = (RadioButton) findViewById(R.id.radioButton3);
+		mRadBtns = new RadioButton[3];
+		mRadBtns[0] = (RadioButton) findViewById(R.id.radioButton1);
+		mRadBtns[1] = (RadioButton) findViewById(R.id.radioButton2);
+		mRadBtns[2] = (RadioButton) findViewById(R.id.radioButton3);
 		
-		if(mRadBtn1 != null)
+		for(int idxBtn = 0; idxBtn < 3; ++idxBtn)
 		{
-			mRadBtn1.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					
-					String cmd = mCmdsColl.get(0).mCmd;
-					try {
-						BLEUtility.getInstance(getContext()).write(cmd);
-					} catch (BLEUtilityException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+			final int idxBtnTemp = idxBtn;
+			if(mRadBtns[idxBtn] != null)
+			{
+				mRadBtns[idxBtn].setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						doWriteCmdAndReadRsp(mCmdsColl.get(idxBtnTemp));
 					}
-				}
-			});
+				});
+			}
 		}
-		
-		if(mRadBtn2 != null)
-		{
-			mRadBtn2.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					String cmd = mCmdsColl.get(1).mCmd;
-					try {
-						BLEUtility.getInstance(getContext()).write(cmd);
-					} catch (BLEUtilityException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-				}
-			});
-		}
-		
-		if(mRadBtn3 != null)
-		{
-			mRadBtn3.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					String cmd = mCmdsColl.get(2).mCmd;
-					try {
-						BLEUtility.getInstance(getContext()).write(cmd);
-					} catch (BLEUtilityException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-				}
-			});
-		}
+		saveUIState();
 		
 		String cmd1Title = mTypedArray.getString(R.styleable.LECmdsStyleDef_LEBtnState1CmdTitle);
         String cmd2Title = mTypedArray.getString(R.styleable.LECmdsStyleDef_LEBtnState2CmdTitle);
@@ -131,5 +88,31 @@ public class BLEButton3State extends BLEButton {
 		idxGoal += 1;
 		idxGoal = (idxGoal >= cmds.length? 0 : idxGoal);*/
 		return "";//cmds[idxGoal];
+	}
+
+	@Override
+	protected void saveUIState() {
+		for(int idxBtn = 0; idxBtn < 3; ++idxBtn)
+		{
+			if(mRadBtns[idxBtn] != null && mRadBtns[idxBtn].isChecked())
+			{
+				mCurCheckedRadBtn = mRadBtns[idxBtn];
+				break;
+			}
+		}
+	}
+
+	@Override
+	protected void restoreUIState() {
+		for(int idxBtn = 0; idxBtn < 3; ++idxBtn)
+		{
+			if(mRadBtns[idxBtn] != null && mRadBtns[idxBtn].isChecked())
+			{
+				mRadBtns[idxBtn].setChecked(false);
+				break;
+			}
+		}
+		if(mCurCheckedRadBtn != null)
+			mCurCheckedRadBtn.setChecked(true);
 	}
 }

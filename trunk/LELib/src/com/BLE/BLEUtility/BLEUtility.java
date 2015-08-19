@@ -21,7 +21,7 @@ import android.os.Handler;
 public class BLEUtility
 {
 	//inner define
-	final private String mTAG = "BLEUtility";
+	final private String mTag = "BLEUtility";
 	final private static UUID mSUUIDString = UUID.fromString("edee2909-12b0-3e9d-1042-4c0bc820c4dc");
 	final private static UUID mCUUIDString = UUID.fromString("1249c28c-63b4-219b-814a-393944dec8c1");
 	private enum ConnStatus { CONN_STATE_IDLE, CONN_STATE_CONNECTING, CONN_STATE_CONNECTED}
@@ -132,7 +132,9 @@ public class BLEUtility
             if (status == BluetoothGatt.GATT_SUCCESS) 
             {
             	final byte[] data = characteristic.getValue();
-            	MyLog.d(mTAG, "onCharacteristicRead, Thread id = " + android.os.Process.myTid() + " , data = [" + data + "]");
+            	mResData = new String(data);
+            	mFireReceivingData(mResData);
+            	MyLog.d(mTag, "onCharacteristicRead, Thread id = " + android.os.Process.myTid() + " , data = [" + data + "]");
             }
         }
         
@@ -143,11 +145,8 @@ public class BLEUtility
             if (status == BluetoothGatt.GATT_SUCCESS) 
             {
             	final byte[] data = characteristic.getValue();
-            	mResData = new String(data);
-            	mFireReceivingData(mResData);
-            	MyLog.d(mTAG, "onCharacteristicWrite, Thread id = " + android.os.Process.myTid() + ", data = [" + data + "]");
+            	MyLog.d(mTag, "onCharacteristicWrite, Thread id = " + android.os.Process.myTid() + ", data = [" + data + "]");
             }
-            mlockWriteRead.unlock();
         }
 
         @Override
@@ -158,9 +157,8 @@ public class BLEUtility
             {
             	mResData = new String(data);
                 mFireReceivingData(mResData);
-                MyLog.d(mTAG, "onCharacteristicChanged, Thread id = " + android.os.Process.myTid() + ", data = [" + data + "]");
+                MyLog.d(mTag, "onCharacteristicChanged, Thread id = " + android.os.Process.myTid() + ", data = [" + data + "]");
             }
-            mlockWriteRead.unlock();
         }
     };
 	
@@ -401,6 +399,7 @@ public class BLEUtility
 	
 	public void read() throws BLEUtilityException
 	{
+		MyLog.d(mTag, "read begin");
 		// Characteristic has read property
 		if(mBTCharct == null)
 			throw new BLEUtilityException(BLEUtilityException.CHAR_NOTREADY);
@@ -425,7 +424,7 @@ public class BLEUtility
 		if ((mBTCharct.getProperties() | BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) 
 		{
 			String strHex = String.format("%x", new BigInteger(1, command.getBytes()));
-			MyLog.d(mTAG, "command hex =[" + strHex);
+			MyLog.d(mTag, "command hex =[" + strHex);
 			mBTCharct.setValue(command.getBytes());
 			if(mBluetoothGatt.writeCharacteristic(mBTCharct) == false)
 			{
@@ -441,34 +440,43 @@ public class BLEUtility
 	//blocking call, return read data
 	public String writeCmd(String command)
 	{
+		MyLog.d(mTag, "writeCmd begin");
 		mlockWriteRead.lock();
 		try {
 			mResData = "";
 			write(command);
-			read();
+			
 			final int nWaitMilliSecs = 2000;
 			final int nWaitStep = 100;
 			int nTime = 0;
 			do {
-				if(mResData.length() > 0)
-				{
-					return mResData;
-				}
+				read();
 				Thread.sleep(nWaitStep);
+				if(mResData.length() > 0)
+					break;
 				nTime += nWaitStep;
 			}
 			while(nTime < nWaitMilliSecs);
 			if(mResData.length() <= 0)
+			{
+				MyLog.d(mTag, "timeout, throw BLEUtilityException read fail");
 				throw new BLEUtilityException(BLEUtilityException.CHAR_READFAIL);
+			}
 		} catch (BLEUtilityException e) {
+			MyLog.d(mTag, "catch BLEUtilityException");
 			e.printStackTrace();
 			mResData = "";
-			mlockWriteRead.unlock();
+			
 		} catch (InterruptedException e) {
+			MyLog.d(mTag, "catch InterruptedException");
 			e.printStackTrace();
 			mResData = "";
+		}
+		finally {
+			MyLog.d(mTag, "mlockWriteRead.unlock()");
 			mlockWriteRead.unlock();
 		}
+		MyLog.d(mTag, "writeCmd end");
 		return mResData;
 	}
 }

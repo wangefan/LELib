@@ -4,6 +4,7 @@ package com.BLE.Buttons;
 import java.util.ArrayList;
 
 import com.BLE.BLEUtility.BLEUtility;
+import com.BLE.BLEUtility.MyLog;
 import com.LELib.R;
 
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.widget.LinearLayout;
 
 public abstract class BLEButton extends LinearLayout {
 	//constant and define
+	private final String mTag = "BLEButton";
 	//broadcast actions.
     public static final String ACTION_SENCMD_BEGIN =
             "com.BLE.Buttons.ACTION_SENCMD_BEGIN";
@@ -85,15 +87,19 @@ public abstract class BLEButton extends LinearLayout {
      * */
 	protected void doWriteCmdAndReadRsp(LECmd lecmd)
 	{
+		MyLog.d(mTag, "doWriteCmdAndReadRsp begin");
 		broadCastAction(ACTION_SENCMD_BEGIN);
 		
 		final LECmd tempLeCmd = lecmd;
 		Thread workerThread = new Thread() {
 		    public void run() {
-		    	
-				String rsp = BLEUtility.getInstance(getContext()).writeCmd(tempLeCmd.mCmd);
+		    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd in thread" + Thread.currentThread().getId());
+		    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write cmd = " + tempLeCmd.mCmd);
+		    	String rsp = BLEUtility.getInstance(getContext()).writeCmd(tempLeCmd.mCmd);
+		    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write cmd response = " + rsp);
 				if(rsp.equals(tempLeCmd.mCmdRes) == true)
 				{
+					MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd match response");
 					mUIHanlder.post(new Runnable() {
 
 						@Override
@@ -105,6 +111,7 @@ public abstract class BLEButton extends LinearLayout {
 				}
 				else
 				{
+					MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd not match response");
 					mUIHanlder.post(new Runnable() {
 						@Override
 						public void run() {

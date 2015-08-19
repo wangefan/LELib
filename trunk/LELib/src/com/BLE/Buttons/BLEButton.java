@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.BLE.BLEUtility.BLEUtility;
 import com.BLE.BLEUtility.MyLog;
 import com.LELib.R;
+import com.utility.CmdProcObj;
 
 import android.content.Context;
 import android.content.Intent;
@@ -95,7 +96,7 @@ public abstract class BLEButton extends LinearLayout {
 		    public void run() {
 		    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd in thread" + Thread.currentThread().getId());
 		    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write cmd = " + tempLeCmd.mCmd);
-		    	String rsp = BLEUtility.getInstance(getContext()).writeCmd(tempLeCmd.mCmd);
+		    	String rsp = BLEUtility.getInstance(getContext()).writeCmd(CmdProcObj.proc(tempLeCmd.mCmd));
 		    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write cmd response = " + rsp);
 				if(rsp.equals(tempLeCmd.mCmdRes) == true)
 				{

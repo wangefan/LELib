@@ -133,6 +133,8 @@ public class BLEUtility
             {
             	final byte[] data = characteristic.getValue();
             	mResData = new String(data);
+            	String strHex = String.format("%x", new BigInteger(1, mResData.getBytes()));
+    			MyLog.d(mTag, "read data hex = " + strHex);
             	mFireReceivingData(mResData);
             	MyLog.d(mTag, "onCharacteristicRead, Thread id = " + android.os.Process.myTid() + " , data = [" + data + "]");
             }
@@ -424,7 +426,7 @@ public class BLEUtility
 		if ((mBTCharct.getProperties() | BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) 
 		{
 			String strHex = String.format("%x", new BigInteger(1, command.getBytes()));
-			MyLog.d(mTag, "command hex =[" + strHex);
+			MyLog.d(mTag, "command hex = " + strHex);
 			mBTCharct.setValue(command.getBytes());
 			if(mBluetoothGatt.writeCharacteristic(mBTCharct) == false)
 			{

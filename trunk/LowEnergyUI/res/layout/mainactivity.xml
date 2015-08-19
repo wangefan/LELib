@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             leCmdsStyleDef:LEBtnState1Cmd = "edid fixed\r"
             leCmdsStyleDef:LEBtnState1CmdRes = "ok\r"
-            leCmdsStyleDef:LEBtnState2Cmd = "edid custom\r"
+            leCmdsStyleDef:LEBtnState2Cmd = "insel 1\r"
             leCmdsStyleDef:LEBtnState2CmdRes = "ok\r"
             leCmdsStyleDef:LEBtnState3Cmd = "edid remix\r"
             leCmdsStyleDef:LEBtnState3CmdRes = "ok\r"/>

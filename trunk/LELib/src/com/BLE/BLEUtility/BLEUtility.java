@@ -22,8 +22,8 @@ public class BLEUtility
 {
 	//inner define
 	final private String mTAG = "BLEUtility";
-	final private static UUID mSUUIDString = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
-	final private static UUID mCUUIDString = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
+	final private static UUID mSUUIDString = UUID.fromString("edee2909-12b0-3e9d-1042-4c0bc820c4dc");
+	final private static UUID mCUUIDString = UUID.fromString("1249c28c-63b4-219b-814a-393944dec8c1");
 	private enum ConnStatus { CONN_STATE_IDLE, CONN_STATE_CONNECTING, CONN_STATE_CONNECTED}
 		
 	// Device scan callback.
@@ -143,8 +143,11 @@ public class BLEUtility
             if (status == BluetoothGatt.GATT_SUCCESS) 
             {
             	final byte[] data = characteristic.getValue();
+            	mResData = new String(data);
+            	mFireReceivingData(mResData);
             	MyLog.d(mTAG, "onCharacteristicWrite, Thread id = " + android.os.Process.myTid() + ", data = [" + data + "]");
             }
+            mlockWriteRead.unlock();
         }
 
         @Override
@@ -396,7 +399,6 @@ public class BLEUtility
 		mFireDisconnected();
 	}
 	
-	/*
 	public void read() throws BLEUtilityException
 	{
 		// Characteristic has read property
@@ -414,7 +416,7 @@ public class BLEUtility
 			throw new BLEUtilityException(BLEUtilityException.CHAR_NOTREADY);
 		}
 	}
-	*/
+	
 	public void write(String command) throws BLEUtilityException
 	{
 		// Characteristic has read property
@@ -443,6 +445,7 @@ public class BLEUtility
 		try {
 			mResData = "";
 			write(command);
+			read();
 			final int nWaitMilliSecs = 2000;
 			final int nWaitStep = 100;
 			int nTime = 0;

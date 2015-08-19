@@ -7,11 +7,16 @@ import com.BLE.BLEUtility.BLEUtility;
 import com.BLE.BLEUtility.BLEUtilityException;
 import com.BLE.BLEUtility.IBLEUtilityListener;
 import com.BLE.BLEUtility.MyLog;
+import com.BLE.Buttons.BLEButton;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -31,7 +36,7 @@ public class MainActivity extends ListActivity
 	//constant 
 	private static final long SCAN_PERIOD = 10000; // Stops scanning after 10 seconds.
 	private final String mTAG = "MainActivity";
-	
+
 	//data member
 	private BLEUtility mBLEUtility = null;
 	private boolean mScanning = false;
@@ -185,6 +190,23 @@ public class MainActivity extends ListActivity
 		}
 	};
 	
+	BroadcastReceiver mBtnReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final String action = intent.getAction();
+            
+            if (BLEButton.ACTION_SENCMD_BEGIN.equals(action)) 
+            {
+            	showProgressDlg(true, "sending cmd");
+            }
+            else if(BLEButton.ACTION_SENCMD_END.equals(action)) 
+            {
+            	showProgressDlg(false, "sending cmd end");
+            }
+		}
+	};
+	
 	//member functions
 	private void showProgressDlg(boolean bShow, String message)
     {
@@ -240,31 +262,12 @@ public class MainActivity extends ListActivity
 		super.onCreate(savedInstanceState);
 		 getActionBar().setTitle("Low Energy Devices");
 		 
-		 mBLEUtility = BLEUtility.getInstance(this);
-		 mBLEUtility.setListener(mBLEUtilityListenerListener);
-		 setContentView(R.layout.mainactivity);
-	     
-	     //=============init conrols==========
-	     mBtnWrite = (com.BLE.Buttons.BLEButton3State) findViewById(R.id.btnWrite);
-	 	 if(mBtnWrite != null)
-	     {
-	 		mBtnWrite.setOnClickListener(new OnClickListener() 
-	 		{
-				@Override
-				public void onClick(View v) 
-				{
-					mstrCommand = mBtnWrite.toggleNextState();
-					mtvRead.setText("no response...");
-					try {
-						if(mstrCommand != null)
-							mBLEUtility.write(mstrCommand);
-					} catch (BLEUtilityException e) {
-						Toast.makeText(MainActivity.this, "write error, cause = [" + e.getMessage() +"]", Toast.LENGTH_SHORT).show();
-					}
-				}
-	    	 });
-	     }
-	 	 
+		mBLEUtility = BLEUtility.getInstance(this);
+		mBLEUtility.setListener(mBLEUtilityListenerListener);
+		setContentView(R.layout.mainactivity);
+		 
+		//=============init conrols==========
+		mBtnWrite = (com.BLE.Buttons.BLEButton3State) findViewById(R.id.btnWrite);
 	 	mBtnDisconnect = (Button) findViewById(R.id.btnDis);
 	 	 if(mBtnDisconnect != null)
 	     {
@@ -310,9 +313,24 @@ public class MainActivity extends ListActivity
 	     scanLeDevice(true);	
 	}
 	
+	private static IntentFilter makeServiceActionsIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BLEButton.ACTION_SENCMD_BEGIN);
+        intentFilter.addAction(BLEButton.ACTION_SENCMD_END);
+        return intentFilter;
+    }
+	
+	@Override
+    protected void onResume() {
+    	//MyLog.d(TAG, "onResume()");
+		registerReceiver(mBtnReceiver, makeServiceActionsIntentFilter());
+		super.onResume();
+	}
+	
 	@Override
     protected void onPause() {
         super.onPause();
+        unregisterReceiver(mBtnReceiver);
         mScanPeriodHandler.removeCallbacksAndMessages(null);
         scanLeDevice(false);
     }

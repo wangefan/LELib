@@ -75,22 +75,6 @@ public class BLEButton3State extends BLEButton {
 	}
 
 	@Override
-	public String toggleNextState() {
-		/*String [] cmds = (String[]) mCmdsColl.keySet().toArray();
-		int idxGoal = 0;
-		for(int idxCmd = 0; idxCmd < cmds.length; ++idxCmd)
-		{
-			if(cmds[idxCmd].compareTo(mCurStateCmd) == 0) {
-				idxGoal = idxCmd;
-				break;
-			}
-		}
-		idxGoal += 1;
-		idxGoal = (idxGoal >= cmds.length? 0 : idxGoal);*/
-		return "";//cmds[idxGoal];
-	}
-
-	@Override
 	protected void saveUIState() {
 		for(int idxBtn = 0; idxBtn < 3; ++idxBtn)
 		{
@@ -108,6 +92,8 @@ public class BLEButton3State extends BLEButton {
 		{
 			if(mRadBtns[idxBtn] != null && mRadBtns[idxBtn].isChecked())
 			{
+				if(mRadBtns[idxBtn] == mCurCheckedRadBtn)
+					return;
 				mRadBtns[idxBtn].setChecked(false);
 				break;
 			}

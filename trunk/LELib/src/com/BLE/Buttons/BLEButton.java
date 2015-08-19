@@ -7,12 +7,21 @@ import com.BLE.BLEUtility.BLEUtility;
 import com.LELib.R;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 public abstract class BLEButton extends LinearLayout {
+	//constant and define
+	//broadcast actions.
+    public static final String ACTION_SENCMD_BEGIN =
+            "com.BLE.Buttons.ACTION_SENCMD_BEGIN";
+    
+    public static final String ACTION_SENCMD_END =
+            "com.BLE.Buttons.ACTION_SENCMD_END";
+    
 	//inner class
 	public class LECmd
 	{
@@ -53,6 +62,19 @@ public abstract class BLEButton extends LinearLayout {
 	
 	//Member functions
 	
+	/*
+     * <!----------------------------------------------------------------->
+     * @Name: broadCastAction()
+     * @Description: send broadcast intent.
+     * return: N/A 
+     * <!----------------------------------------------------------------->
+     * */
+	protected void broadCastAction(String action)
+	{
+		final Intent brdConnState = new Intent(action);
+        getContext().sendBroadcast(brdConnState);
+	}
+	
 	 /*
      * <!----------------------------------------------------------------->
      * @Name: doWriteCmdAndReadRsp()
@@ -63,7 +85,7 @@ public abstract class BLEButton extends LinearLayout {
      * */
 	protected void doWriteCmdAndReadRsp(LECmd lecmd)
 	{
-		//Todo:broadcast event to do cmd now...
+		broadCastAction(ACTION_SENCMD_BEGIN);
 		
 		final LECmd tempLeCmd = lecmd;
 		Thread workerThread = new Thread() {
@@ -77,7 +99,7 @@ public abstract class BLEButton extends LinearLayout {
 						@Override
 						public void run() {
 							saveUIState();
-							//Todo:broadcast event to end cmd now...
+							broadCastAction(ACTION_SENCMD_END);
 						}
 					});
 				}
@@ -87,7 +109,7 @@ public abstract class BLEButton extends LinearLayout {
 						@Override
 						public void run() {
 							restoreUIState();
-							//Todo:broadcast event to end cmd now...
+							broadCastAction(ACTION_SENCMD_END);
 						}
 					});
 				}
@@ -99,8 +121,5 @@ public abstract class BLEButton extends LinearLayout {
 	//virtual functions
 	protected abstract void saveUIState();
 	
-	protected abstract void restoreUIState();
-	
-	public abstract String toggleNextState();
-	
+	protected abstract void restoreUIState();	
 }

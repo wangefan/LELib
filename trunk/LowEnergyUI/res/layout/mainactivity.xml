@@ -21,21 +21,6 @@
             leCmdsStyleDef:LEBtnState2CmdRes = "ok"
             leCmdsStyleDef:LEBtnState3Cmd = "edid remix"
             leCmdsStyleDef:LEBtnState3CmdRes = "ok"/>
-        
-         <Button     
-             android:id="@+id/commands"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:layout_gravity="center_vertical"
-             android:adjustViewBounds="true"
-             
-             android:paddingBottom="2dp"
-             android:paddingLeft="2dp"
-             android:paddingRight="2dp"
-             android:paddingTop="2dp"
-             android:scaleType="fitCenter"
-             android:background="@drawable/commands"
-            />
           
     </LinearLayout>
     
@@ -57,19 +42,6 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal" >
-
-        <TextView
-            android:id="@+id/tvReadTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Read String:" />
-
-        <TextView
-            android:id="@+id/tvRead"
-            android:layout_width="236dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="fill_horizontal"
-            android:text="none" />
     </LinearLayout>
 
 	<LinearLayout

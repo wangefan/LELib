@@ -8,9 +8,11 @@ import com.BLE.BLEUtility.IBLEUtilityListener;
 import com.BLE.BLEUtility.MyLog;
 import com.BLE.Buttons.BLEButton;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,6 +37,7 @@ public class MainActivity extends ListActivity
 	//constant 
 	private static final long SCAN_PERIOD = 10000; // Stops scanning after 10 seconds.
 	private final String mTAG = "MainActivity";
+	private static final int REQUEST_ENABLE_BT = 1;
 
 	//data member
 	private BLEUtility mBLEUtility = null;
@@ -42,11 +45,8 @@ public class MainActivity extends ListActivity
 	private Handler mScanPeriodHandler = new Handler();
 	private LeDeviceListAdapter mLeDeviceListAdapter = null;
 	private ProgressDialog mPDialog = null;
-	private TextView mtvRead = null;
 	private com.BLE.Buttons.BLEButton3State mBtnWrite = null;
 	private Button mBtnDisconnect = null;
-	private Button  mlstCommands = null;
-	private String  mstrCommand = "";
 	
 	//inner class
 	// Adapter for holding devices found through scanning.
@@ -182,7 +182,6 @@ public class MainActivity extends ListActivity
                 @Override
                 public void run() 
                 {
-                	mtvRead.setText(data);
                 	Toast.makeText(MainActivity.this, "read data:" + data, Toast.LENGTH_SHORT).show();
                 }
             });
@@ -209,6 +208,21 @@ public class MainActivity extends ListActivity
             	showProgressDlg(false, "sending cmd fail");
             	Toast.makeText(MainActivity.this, "sending cmd fail", Toast.LENGTH_SHORT).show();
             }
+            else if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
+                                               BluetoothAdapter.ERROR);
+                if (state == BluetoothAdapter.STATE_ON) 
+                {
+                    
+                } 
+                else if (state == BluetoothAdapter.STATE_OFF) 
+                {
+                	if (!BluetoothAdapter.getDefaultAdapter().isEnabled()) {
+                		mDoBTIntentForResult();
+                        return;
+                    }
+                }
+            }
 		}
 	};
 	
@@ -233,6 +247,12 @@ public class MainActivity extends ListActivity
     		if(mPDialog != null)
     			mPDialog.dismiss();
     	}
+    }
+	
+    private void mDoBTIntentForResult()
+    {
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
     }
 	
     private void scanLeDevice(final boolean enable) 
@@ -269,7 +289,9 @@ public class MainActivity extends ListActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		 getActionBar().setTitle("Low Energy Devices");
+		getActionBar().setTitle("Low Energy Devices");
+		 
+		registerReceiver(mBtnReceiver, makeServiceActionsIntentFilter());	
 		 
 		mBLEUtility = BLEUtility.getInstance(this);
 		mBLEUtility.setListener(mBLEUtilityListenerListener);
@@ -290,32 +312,6 @@ public class MainActivity extends ListActivity
 	    	 });
 	     }
 	 	 
-	     mlstCommands = (Button) findViewById(R.id.commands);
-	     if(mlstCommands != null)
-	     {
-	    	 mlstCommands.setOnClickListener(new OnClickListener() 
-		 	 {
-	    		 @Override
-	    		 public void onClick(View v) 
-	    		 {
-					AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-					builder.setTitle("Choose commands");
-					final String [] cmdArr = MainActivity.this.getResources().getStringArray(R.array.commands_entries);    
-					builder.setItems(R.array.commands_entries, new DialogInterface.OnClickListener() {
-					    public void onClick(DialogInterface dialog, int item) {
-					    	mstrCommand = cmdArr[item];
-					    	mstrCommand += "\r";
-					        mlstCommands.setText(mstrCommand);
-					        MyLog.d(mTAG, "mstrCommand = ["+ mstrCommand +"]");
-					    }
-					});
-					AlertDialog alert = builder.create();
-					alert.show();
-	    		 }
-		 	 });
-	     }
-	        
-	 	mtvRead = (TextView) findViewById(R.id.tvRead);
 	 	mLeDeviceListAdapter = new LeDeviceListAdapter();
 	    setListAdapter(mLeDeviceListAdapter);
 	 	//=============init conrols end==========
@@ -327,22 +323,53 @@ public class MainActivity extends ListActivity
         intentFilter.addAction(BLEButton.ACTION_SENCMD_BEGIN);
         intentFilter.addAction(BLEButton.ACTION_SENCMD_OK);
         intentFilter.addAction(BLEButton.ACTION_SENCMD_FAIL);
+        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         return intentFilter;
     }
 	
 	@Override
     protected void onResume() {
-    	//MyLog.d(TAG, "onResume()");
-		registerReceiver(mBtnReceiver, makeServiceActionsIntentFilter());
 		super.onResume();
+		BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		if(bluetoothAdapter == null)
+		{
+            finish();
+            return;
+		}
+		
+		// Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
+        // fire an intent to display a dialog asking the user to grant permission to enable it.
+        if (!bluetoothAdapter.isEnabled()) {
+        	mDoBTIntentForResult();
+            return;
+        }	
 	}
 	
 	@Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(mBtnReceiver);
         mScanPeriodHandler.removeCallbacksAndMessages(null);
         scanLeDevice(false);
+    }
+	
+	@Override
+	protected void onDestroy() {
+		unregisterReceiver(mBtnReceiver);
+		super.onDestroy();
+	}
+	
+	@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// User chose not to enable Bluetooth.
+        if (requestCode == REQUEST_ENABLE_BT) {
+            if(resultCode == Activity.RESULT_CANCELED)
+            {
+            	finish();
+                return;
+            }
+            else;	//allow
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 	@Override

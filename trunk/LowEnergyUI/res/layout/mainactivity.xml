@@ -8,17 +8,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" 
+        android:layout_weight="4" 
          android:orientation="horizontal" >
 
         <com.BLE.Buttons.BLEButton3State
 	        android:id="@+id/btnWrite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            leCmdsStyleDef:LEBtnState1CmdTitle = "edid fixed"
             leCmdsStyleDef:LEBtnState1Cmd = "edid fixed"
             leCmdsStyleDef:LEBtnState1CmdRes = "ok"
+            leCmdsStyleDef:LEBtnState2CmdTitle = "insel 1"
             leCmdsStyleDef:LEBtnState2Cmd = "insel 1"
             leCmdsStyleDef:LEBtnState2CmdRes = "ok"
+            leCmdsStyleDef:LEBtnState3CmdTitle = "edid remix"
             leCmdsStyleDef:LEBtnState3Cmd = "edid remix"
             leCmdsStyleDef:LEBtnState3CmdRes = "ok"/>
           
@@ -37,21 +40,17 @@
             android:text="Disconnect" />
 
      </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal" >
-    </LinearLayout>
-
+  
 	<LinearLayout
 	        android:layout_width="match_parent"
 	        android:layout_height="0dp"
-	        android:layout_weight="4" >
+	        android:layout_weight="1" >
+
 		<ListView
 		    android:id="@android:id/list"
 		    android:layout_width="match_parent"
-		    android:layout_height="match_parent">
+		    android:layout_height="92dp" >
+
 		</ListView>
 	</LinearLayout>
 

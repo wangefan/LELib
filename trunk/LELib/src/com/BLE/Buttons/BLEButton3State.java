@@ -7,12 +7,14 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 
 public class BLEButton3State extends BLEButton {
 	//data members
 	private RadioButton mCurCheckedRadBtn = null;
 	private RadioButton [] mRadBtns;
+	private TextView    mTvTitle;
 	
 	//constructors
 	public BLEButton3State(Context context) {
@@ -39,6 +41,7 @@ public class BLEButton3State extends BLEButton {
 		mRadBtns[0] = (RadioButton) findViewById(R.id.radioButton1);
 		mRadBtns[1] = (RadioButton) findViewById(R.id.radioButton2);
 		mRadBtns[2] = (RadioButton) findViewById(R.id.radioButton3);
+		mTvTitle = (TextView) findViewById(R.id.tvTitle);
 		
 		for(int idxBtn = 0; idxBtn < 3; ++idxBtn)
 		{
@@ -53,8 +56,7 @@ public class BLEButton3State extends BLEButton {
 				});
 			}
 		}
-		saveUIState();
-		
+				
 		String cmd1Title = mTypedArray.getString(R.styleable.LECmdsStyleDef_LEBtnState1CmdTitle);
         String cmd2Title = mTypedArray.getString(R.styleable.LECmdsStyleDef_LEBtnState2CmdTitle);
         String cmd3Title = mTypedArray.getString(R.styleable.LECmdsStyleDef_LEBtnState3CmdTitle);
@@ -72,6 +74,7 @@ public class BLEButton3State extends BLEButton {
         	mCmdsColl.add(new LECmd(cmd2Title, cmd2, cmd2Res));
         	mCmdsColl.add(new LECmd(cmd3Title, cmd3, cmd3Res));
         }
+        saveUIState();
 	}
 
 	@Override
@@ -81,6 +84,8 @@ public class BLEButton3State extends BLEButton {
 			if(mRadBtns[idxBtn] != null && mRadBtns[idxBtn].isChecked())
 			{
 				mCurCheckedRadBtn = mRadBtns[idxBtn];
+				String title = mCmdsColl.get(idxBtn).mCmdTitle;
+				mTvTitle.setText(title);
 				break;
 			}
 		}
@@ -99,6 +104,8 @@ public class BLEButton3State extends BLEButton {
 			}
 		}
 		if(mCurCheckedRadBtn != null)
+		{
 			mCurCheckedRadBtn.setChecked(true);
+		}
 	}
 }

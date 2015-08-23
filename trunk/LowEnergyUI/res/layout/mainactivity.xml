@@ -15,12 +15,12 @@
 	        android:id="@+id/btnWrite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            leCmdsStyleDef:LEBtnState1Cmd = "edid fixed\r"
-            leCmdsStyleDef:LEBtnState1CmdRes = "ok\r"
-            leCmdsStyleDef:LEBtnState2Cmd = "insel 1\r"
-            leCmdsStyleDef:LEBtnState2CmdRes = "ok\r"
-            leCmdsStyleDef:LEBtnState3Cmd = "edid remix\r"
-            leCmdsStyleDef:LEBtnState3CmdRes = "ok\r"/>
+            leCmdsStyleDef:LEBtnState1Cmd = "edid fixed"
+            leCmdsStyleDef:LEBtnState1CmdRes = "ok"
+            leCmdsStyleDef:LEBtnState2Cmd = "insel 1"
+            leCmdsStyleDef:LEBtnState2CmdRes = "ok"
+            leCmdsStyleDef:LEBtnState3Cmd = "edid remix"
+            leCmdsStyleDef:LEBtnState3CmdRes = "ok"/>
         
          <Button     
              android:id="@+id/commands"

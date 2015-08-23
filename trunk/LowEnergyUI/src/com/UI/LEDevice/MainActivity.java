@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.BLE.BLEUtility.BLEDevice;
 import com.BLE.BLEUtility.BLEUtility;
-import com.BLE.BLEUtility.BLEUtilityException;
 import com.BLE.BLEUtility.IBLEUtilityListener;
 import com.BLE.BLEUtility.MyLog;
 import com.BLE.Buttons.BLEButton;
@@ -200,9 +199,15 @@ public class MainActivity extends ListActivity
             {
             	showProgressDlg(true, "sending cmd");
             }
-            else if(BLEButton.ACTION_SENCMD_END.equals(action)) 
+            else if(BLEButton.ACTION_SENCMD_OK.equals(action)) 
             {
-            	showProgressDlg(false, "sending cmd end");
+            	showProgressDlg(false, "sending cmd OK");
+            	Toast.makeText(MainActivity.this, "sending cmd OK", Toast.LENGTH_SHORT).show();
+            }
+            else if(BLEButton.ACTION_SENCMD_FAIL.equals(action)) 
+            {
+            	showProgressDlg(false, "sending cmd fail");
+            	Toast.makeText(MainActivity.this, "sending cmd fail", Toast.LENGTH_SHORT).show();
             }
 		}
 	};
@@ -213,7 +218,11 @@ public class MainActivity extends ListActivity
     	if(bShow)
     	{
     		if(mPDialog != null)
+    		{
+    			mPDialog.setTitle("Process...");
+    			mPDialog.setMessage(message);
     			mPDialog.show();
+    		}
     		else
     		{
     			mPDialog = ProgressDialog.show(this, "Process...", message);
@@ -316,7 +325,8 @@ public class MainActivity extends ListActivity
 	private static IntentFilter makeServiceActionsIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BLEButton.ACTION_SENCMD_BEGIN);
-        intentFilter.addAction(BLEButton.ACTION_SENCMD_END);
+        intentFilter.addAction(BLEButton.ACTION_SENCMD_OK);
+        intentFilter.addAction(BLEButton.ACTION_SENCMD_FAIL);
         return intentFilter;
     }
 	

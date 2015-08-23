@@ -129,14 +129,18 @@ public class BLEUtility
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
-            if (status == BluetoothGatt.GATT_SUCCESS) 
+            if (status == BluetoothGatt.GATT_SUCCESS && mBWaitData &&characteristic.getValue() != null) 
             {
             	final byte[] data = characteristic.getValue();
-            	mResData = new String(data);
-            	String strHex = String.format("%x", new BigInteger(1, mResData.getBytes()));
-    			MyLog.d(mTag, "read data hex = " + strHex);
-            	mFireReceivingData(mResData);
+            	byte resDataTemp[] = new byte [data.length];
+            	for(int idxData = 0; idxData < data.length; ++idxData)
+            		resDataTemp[idxData] = data[idxData];
+            	String strHex = String.format("%x", new BigInteger(1, resDataTemp));
+    			MyLog.d(mTag, "read resDataTemp, hex = " + strHex);	
+    			strHex = String.format("%x", new BigInteger(1, data));
+    			MyLog.d(mTag, "read data, hex = " + strHex);	
             	MyLog.d(mTag, "onCharacteristicRead, Thread id = " + android.os.Process.myTid() + " , data = [" + data + "]");
+            	mResData = resDataTemp;
             }
         }
         
@@ -155,10 +159,12 @@ public class BLEUtility
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
         	final byte[] data = characteristic.getValue();
-            if (data != null && data.length > 0) 
+            if (data != null && data.length > 0 && mBWaitData) 
             {
-            	mResData = new String(data);
-                mFireReceivingData(mResData);
+            	byte resDataTemp[] = new byte [data.length];
+            	for(int idxData = 0; idxData < data.length; ++idxData)
+            		mResData[idxData] = data[idxData];
+            	mResData = resDataTemp;
                 MyLog.d(mTag, "onCharacteristicChanged, Thread id = " + android.os.Process.myTid() + ", data = [" + data + "]");
             }
         }
@@ -178,7 +184,8 @@ public class BLEUtility
 	private Handler mHandlerCheckConn = new Handler();
 	private Handler mHandlerConnTimeout = new Handler();
 	private Lock mlockWriteRead = new ReentrantLock();   
-	private String mResData = "";
+	private byte[] mResData = null;
+	private boolean mBWaitData;
 	
 	//private functions
 	//default constructor
@@ -188,6 +195,7 @@ public class BLEUtility
 	    mbtDeviceList = new ArrayList<BLEDevice>();
 	    mContext = context;
 	    mBAutoReconnect = false;
+	    mBWaitData = false;
 	}
 	
 	// @param: boolean bSetTimer
@@ -409,6 +417,7 @@ public class BLEUtility
 		{
 			if(mBluetoothGatt.readCharacteristic(mBTCharct) == false)
 			{
+				MyLog.d(mTag, "readCharacteristic false");
 				throw new BLEUtilityException(BLEUtilityException.CHAR_READFAIL);
 			}
         }
@@ -418,18 +427,19 @@ public class BLEUtility
 		}
 	}
 	
-	public void write(String command) throws BLEUtilityException
+	public void write(byte [] command) throws BLEUtilityException
 	{
 		// Characteristic has read property
 		if(mBTCharct == null)
 			throw new BLEUtilityException(BLEUtilityException.CHAR_NOTREADY);
 		if ((mBTCharct.getProperties() | BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) 
 		{
-			String strHex = String.format("%x", new BigInteger(1, command.getBytes()));
+			String strHex = String.format("%x", new BigInteger(1, command));
 			MyLog.d(mTag, "command hex = " + strHex);
-			mBTCharct.setValue(command.getBytes());
+			mBTCharct.setValue(command);
 			if(mBluetoothGatt.writeCharacteristic(mBTCharct) == false)
 			{
+				MyLog.d(mTag, "write command false");
 				throw new BLEUtilityException(BLEUtilityException.CHAR_WRITEFAIL);
 			}
         }
@@ -440,26 +450,27 @@ public class BLEUtility
 	}
 	
 	//blocking call, return read data
-	public String writeCmd(String command)
+	public byte[] writeCmd(byte[] command)
 	{
 		MyLog.d(mTag, "writeCmd begin");
 		mlockWriteRead.lock();
 		try {
-			mResData = "";
+			mResData = null;
 			write(command);
-			
+			mBWaitData = true;
+			Thread.sleep(800);
+			read();
 			final int nWaitMilliSecs = 2000;
 			final int nWaitStep = 100;
 			int nTime = 0;
 			do {
-				read();
 				Thread.sleep(nWaitStep);
-				if(mResData.length() > 0)
+				if(mResData != null)
 					break;
 				nTime += nWaitStep;
 			}
 			while(nTime < nWaitMilliSecs);
-			if(mResData.length() <= 0)
+			if(mResData == null)
 			{
 				MyLog.d(mTag, "timeout, throw BLEUtilityException read fail");
 				throw new BLEUtilityException(BLEUtilityException.CHAR_READFAIL);
@@ -467,15 +478,18 @@ public class BLEUtility
 		} catch (BLEUtilityException e) {
 			MyLog.d(mTag, "catch BLEUtilityException");
 			e.printStackTrace();
-			mResData = "";
+			mBWaitData = false;
+			mResData = null;
 			
 		} catch (InterruptedException e) {
 			MyLog.d(mTag, "catch InterruptedException");
 			e.printStackTrace();
-			mResData = "";
+			mBWaitData = false;
+			mResData = null;
 		}
 		finally {
 			MyLog.d(mTag, "mlockWriteRead.unlock()");
+			mBWaitData = false;
 			mlockWriteRead.unlock();
 		}
 		MyLog.d(mTag, "writeCmd end");

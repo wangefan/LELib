@@ -22,8 +22,11 @@ public abstract class BLEButton extends LinearLayout {
     public static final String ACTION_SENCMD_BEGIN =
             "com.BLE.Buttons.ACTION_SENCMD_BEGIN";
     
-    public static final String ACTION_SENCMD_END =
-            "com.BLE.Buttons.ACTION_SENCMD_END";
+    public static final String ACTION_SENCMD_OK =
+            "com.BLE.Buttons.ACTION_SENCMD_OK";
+    
+    public static final String ACTION_SENCMD_FAIL =
+            "com.BLE.Buttons.ACTION_SENCMD_FAIL";
     
 	//inner class
 	public class LECmd
@@ -96,9 +99,12 @@ public abstract class BLEButton extends LinearLayout {
 		    public void run() {
 		    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd in thread" + Thread.currentThread().getId());
 		    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write cmd = " + tempLeCmd.mCmd);
-		    	String rsp = BLEUtility.getInstance(getContext()).writeCmd(CmdProcObj.proc(tempLeCmd.mCmd));
-		    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write cmd response = " + rsp);
-				if(rsp.equals(tempLeCmd.mCmdRes) == true)
+		    	byte [] rsp = BLEUtility.getInstance(getContext()).writeCmd(CmdProcObj.addCRC(tempLeCmd.mCmd, true));
+		    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
+		    	String strRspCal = "";
+		    	if(rspCal != null)
+		    		strRspCal = new String(rspCal);
+				if(strRspCal.equals(tempLeCmd.mCmdRes) == true)
 				{
 					MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd match response");
 					mUIHanlder.post(new Runnable() {
@@ -106,7 +112,7 @@ public abstract class BLEButton extends LinearLayout {
 						@Override
 						public void run() {
 							saveUIState();
-							broadCastAction(ACTION_SENCMD_END);
+							broadCastAction(ACTION_SENCMD_OK);
 						}
 					});
 				}
@@ -117,7 +123,7 @@ public abstract class BLEButton extends LinearLayout {
 						@Override
 						public void run() {
 							restoreUIState();
-							broadCastAction(ACTION_SENCMD_END);
+							broadCastAction(ACTION_SENCMD_FAIL);
 						}
 					});
 				}

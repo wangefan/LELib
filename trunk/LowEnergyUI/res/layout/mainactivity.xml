@@ -12,19 +12,54 @@
          android:orientation="horizontal" >
 
         <com.BLE.Buttons.BLEButton3State
-	        android:id="@+id/btnWrite"
+	        android:id="@+id/btnEdid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             leCmdsStyleDef:LEBtnState1CmdTitle = "edid fixed"
             leCmdsStyleDef:LEBtnState1Cmd = "edid fixed"
             leCmdsStyleDef:LEBtnState1CmdRes = "ok"
-            leCmdsStyleDef:LEBtnState2CmdTitle = "insel 1"
-            leCmdsStyleDef:LEBtnState2Cmd = "insel 1"
+            leCmdsStyleDef:LEBtnState2CmdTitle = "edid custom"
+            leCmdsStyleDef:LEBtnState2Cmd = "edid custom"
             leCmdsStyleDef:LEBtnState2CmdRes = "ok"
             leCmdsStyleDef:LEBtnState3CmdTitle = "edid remix"
             leCmdsStyleDef:LEBtnState3Cmd = "edid remix"
             leCmdsStyleDef:LEBtnState3CmdRes = "ok"/>
-          
+
+        <com.BLE.Buttons.BLEButton2State
+            android:id="@+id/btnSelectChan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            leCmdsStyleDef:LEBtnState1Cmd="insel 1"
+            leCmdsStyleDef:LEBtnState1CmdRes="ok"
+            leCmdsStyleDef:LEBtnState1CmdTitle="select channel 1"
+            leCmdsStyleDef:LEBtnState2Cmd="insel 2"
+            leCmdsStyleDef:LEBtnState2CmdRes="ok"
+            leCmdsStyleDef:LEBtnState2CmdTitle="select channel 2"/>
+
+         <com.BLE.Buttons.BLEButton2State
+            android:id="@+id/btnHDCP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            leCmdsStyleDef:LEBtnState1Cmd="hdcp 22"
+            leCmdsStyleDef:LEBtnState1CmdRes="ok"
+            leCmdsStyleDef:LEBtnState1CmdTitle="hdcp 2.2"
+            leCmdsStyleDef:LEBtnState2Cmd="hdcp 14"
+            leCmdsStyleDef:LEBtnState2CmdRes="ok"
+            leCmdsStyleDef:LEBtnState2CmdTitle="hdcp 14"/>
+         
+         <com.BLE.Buttons.BLEButton2State
+            android:id="@+id/btnAudio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            leCmdsStyleDef:LEBtnState1Cmd="audio hdmi"
+            leCmdsStyleDef:LEBtnState1CmdRes="ok"
+            leCmdsStyleDef:LEBtnState1CmdTitle="audio from HDMI"
+            leCmdsStyleDef:LEBtnState2Cmd="audio jack"
+            leCmdsStyleDef:LEBtnState2CmdRes="ok"
+            leCmdsStyleDef:LEBtnState2CmdTitle="audio from input jack"/>
     </LinearLayout>
     
     <LinearLayout

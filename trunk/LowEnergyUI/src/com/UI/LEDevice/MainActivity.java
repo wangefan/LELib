@@ -45,7 +45,6 @@ public class MainActivity extends ListActivity
 	private Handler mScanPeriodHandler = new Handler();
 	private LeDeviceListAdapter mLeDeviceListAdapter = null;
 	private ProgressDialog mPDialog = null;
-	private com.BLE.Buttons.BLEButton3State mBtnWrite = null;
 	private Button mBtnDisconnect = null;
 	
 	//inner class
@@ -298,7 +297,7 @@ public class MainActivity extends ListActivity
 		setContentView(R.layout.mainactivity);
 		 
 		//=============init conrols==========
-		mBtnWrite = (com.BLE.Buttons.BLEButton3State) findViewById(R.id.btnWrite);
+		
 	 	mBtnDisconnect = (Button) findViewById(R.id.btnDis);
 	 	 if(mBtnDisconnect != null)
 	     {

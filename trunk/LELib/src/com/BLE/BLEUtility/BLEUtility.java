@@ -442,6 +442,8 @@ public class BLEUtility
 				MyLog.d(mTag, "write command false");
 				throw new BLEUtilityException(BLEUtilityException.CHAR_WRITEFAIL);
 			}
+			else
+				MyLog.d(mTag, "write success, Thread id = " + android.os.Process.myTid() + " , command = [" + command + "]");
         }
 		else
 		{

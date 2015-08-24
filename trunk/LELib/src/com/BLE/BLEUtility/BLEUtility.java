@@ -460,7 +460,7 @@ public class BLEUtility
 			mResData = null;
 			write(command);
 			mBWaitData = true;
-			Thread.sleep(800);
+			Thread.sleep(1500);
 			read();
 			final int nWaitMilliSecs = 2000;
 			final int nWaitStep = 100;

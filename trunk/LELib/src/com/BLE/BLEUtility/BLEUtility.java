@@ -24,7 +24,7 @@ public class BLEUtility
 	final private String mTag = "BLEUtility";
 	final private static UUID mSUUIDString = UUID.fromString("edee2909-12b0-3e9d-1042-4c0bc820c4dc");
 	final private static UUID mCUUIDString = UUID.fromString("1249c28c-63b4-219b-814a-393944dec8c1");
-	private enum ConnStatus { CONN_STATE_IDLE, CONN_STATE_CONNECTING, CONN_STATE_CONNECTED}
+	private enum ConnStatus { CONN_STATE_DISCONNECTED, CONN_STATE_CONNECTING, CONN_STATE_CONNECTED}
 		
 	// Device scan callback.
     @SuppressLint("NewApi")
@@ -178,7 +178,7 @@ public class BLEUtility
 	private ArrayList<BLEDevice> mbtDeviceList = null;
 	private IBLEUtilityListener mListener = null;
 	private BLEDevice mDestBTLEDevice = null;
-	private ConnStatus mConnStatus = ConnStatus.CONN_STATE_IDLE;
+	private ConnStatus mConnStatus = ConnStatus.CONN_STATE_DISCONNECTED;
 	private Context mContext = null;
 	private boolean mBAutoReconnect = false;
 	private Handler mHandlerCheckConn = new Handler();
@@ -237,7 +237,7 @@ public class BLEUtility
 	        mHandlerConnTimeout.removeCallbacksAndMessages(null);
         }
         
-		mConnStatus = ConnStatus.CONN_STATE_IDLE;
+		mConnStatus = ConnStatus.CONN_STATE_DISCONNECTED;
 	}
 	
 	void mFireConnecting()
@@ -326,6 +326,10 @@ public class BLEUtility
 	public boolean isAutoReconnect() {
 		return mBAutoReconnect;
 	}
+	
+	public boolean isConnect() {
+		return mConnStatus != ConnStatus.CONN_STATE_DISCONNECTED;
+	}
 	 
 	/**
    	 * connect to low energy device, 
@@ -336,7 +340,7 @@ public class BLEUtility
 	public void connect(final String deviceMACAddr)
 	{
 		try {
-			if(mConnStatus != ConnStatus.CONN_STATE_IDLE)
+			if(mConnStatus != ConnStatus.CONN_STATE_DISCONNECTED)
 				throw new BLEUtilityException(BLEUtilityException.CONN_ALREADY_CONN);
 			
 			 //clean checking connection timer first, it should trigger after connecting error. 

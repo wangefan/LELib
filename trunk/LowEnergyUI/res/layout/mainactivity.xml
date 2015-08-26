@@ -12,7 +12,7 @@
          android:orientation="horizontal" >
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent" >
 			<com.BLE.Buttons.BLEButton3State
 	             android:id="@+id/btnEdid"
@@ -31,7 +31,7 @@
 	             leCmdsStyleDef:LEBtnState3CmdRes="ok"
 	             leCmdsStyleDef:LEBtnState3CmdTitle="edid remix" >
 	         </com.BLE.Buttons.BLEButton3State>
-
+	         
 	         <com.BLE.Buttons.BLEButton2State
 	             android:id="@+id/btnSelectChan"
 	             android:layout_width="wrap_content"
@@ -45,6 +45,7 @@
 	             leCmdsStyleDef:LEBtnState2CmdRes="ok"
 	             leCmdsStyleDef:LEBtnState2CmdTitle="select channel 2" >
 	         </com.BLE.Buttons.BLEButton2State>
+
 	         <com.BLE.Buttons.BLEButton2State
 	             android:id="@+id/btnHDCP"
 	             android:layout_width="wrap_content"
@@ -73,7 +74,21 @@
 	             leCmdsStyleDef:LEBtnState2CmdRes="ok"
 	             leCmdsStyleDef:LEBtnState2CmdTitle="audio from input jack" >
 	         </com.BLE.Buttons.BLEButton2State>
+
+	         <com.BLE.Buttons.BLEReadCmdButton
+	             android:id="@+id/btnReadSel"
+	             android:layout_width="wrap_content"
+	             android:layout_height="wrap_content"
+	             android:layout_below="@+id/btnEdid"
+	             android:layout_toRightOf="@+id/btnSelectChan"
+	             android:paddingLeft="10dp"
+	             leCmdsStyleDef:LEBtnState1Cmd="insel"
+	             leCmdsStyleDef:LEBtnState1CmdRes="insel"
+	             leCmdsStyleDef:LEBtnState1CmdTitle="Get Channel" >
+	         </com.BLE.Buttons.BLEReadCmdButton>
+
         </RelativeLayout>
+
     </LinearLayout>
     
     <LinearLayout

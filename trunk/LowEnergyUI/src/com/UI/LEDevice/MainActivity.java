@@ -5,17 +5,13 @@ import java.util.ArrayList;
 import com.BLE.BLEUtility.BLEDevice;
 import com.BLE.BLEUtility.BLEUtility;
 import com.BLE.BLEUtility.IBLEUtilityListener;
-import com.BLE.BLEUtility.MyLog;
 import com.BLE.Buttons.BLEButton;
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;

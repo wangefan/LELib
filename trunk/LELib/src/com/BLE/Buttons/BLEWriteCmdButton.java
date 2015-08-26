@@ -1,9 +1,6 @@
 package com.BLE.Buttons;
 
-import java.util.ArrayList;
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.os.Handler;
 import android.util.AttributeSet;
 import com.BLE.BLEUtility.BLEUtility;
 import com.BLE.BLEUtility.MyLog;

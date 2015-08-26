@@ -193,6 +193,10 @@ public class MainActivity extends ListActivity
             {
             	showProgressDlg(true, "sending cmd");
             }
+            else if (BLEButton.ACTION_SENCMD_READ.equals(action)) 
+            {
+            	showProgressDlg(true, "sending read cmd");
+            }
             else if(BLEButton.ACTION_SENCMD_OK.equals(action)) 
             {
             	showProgressDlg(false, "sending cmd OK");
@@ -202,6 +206,11 @@ public class MainActivity extends ListActivity
             {
             	showProgressDlg(false, "sending cmd fail");
             	Toast.makeText(MainActivity.this, "sending cmd fail", Toast.LENGTH_SHORT).show();
+            }
+            else if(BLEButton.ACTION_SENCMD_READ_FAIL.equals(action))
+            {
+            	showProgressDlg(false, "read cmd fail");
+            	Toast.makeText(MainActivity.this, "read cmd fail", Toast.LENGTH_SHORT).show();
             }
             else if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
                 int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
@@ -318,6 +327,8 @@ public class MainActivity extends ListActivity
         intentFilter.addAction(BLEButton.ACTION_SENCMD_BEGIN);
         intentFilter.addAction(BLEButton.ACTION_SENCMD_OK);
         intentFilter.addAction(BLEButton.ACTION_SENCMD_FAIL);
+        intentFilter.addAction(BLEButton.ACTION_SENCMD_READ);
+        intentFilter.addAction(BLEButton.ACTION_SENCMD_READ_FAIL);
         intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         return intentFilter;
     }

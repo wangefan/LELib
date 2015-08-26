@@ -11,10 +11,17 @@ import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.BLE.BLEUtility.BLEUtility;
+import com.BLE.BLEUtility.MyLog;
 import com.BLE.Buttons.BLEButton.LECmd;
 import com.LELib.R;
+import com.utility.CmdProcObj;
 
 public class BLEReadCmdButton extends BLEButton{
+	
+	//constant and define
+	private final String mTag = "BLEReadCmdButton";
+		
 	//data members
 	private ImageButton mBtnRead = null;
 	private TextView    mTvTitle;
@@ -60,9 +67,50 @@ public class BLEReadCmdButton extends BLEButton{
 			mBtnRead.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					
+					doWriteCmdAndReadRsp(mCmdsColl.get(0));
 				}
 			});
 		}
+	}
+	
+	protected void doWriteCmdAndReadRsp(LECmd leCmd)
+	{
+		MyLog.d(mTag, "doWriteCmdAndReadRsp begin");
+		broadCastAction(ACTION_SENCMD_READ);
+		
+		final LECmd tempLeCmd = leCmd;
+		Thread workerThread = new Thread() {
+		    public void run() {
+		    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd in thread" + Thread.currentThread().getId());
+		    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write cmd = " + tempLeCmd.mCmd);
+		    	byte [] rsp = BLEUtility.getInstance(getContext()).writeCmd(CmdProcObj.addCRC(tempLeCmd.mCmd, false));
+		    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
+		    	String strRspCal = "";
+		    	if(rspCal != null)
+		    		strRspCal = new String(rspCal);
+				if(strRspCal.contains(tempLeCmd.mCmdRes) == true)
+				{
+					MyLog.d(mTag, "doWriteCmdAndReadRsp, read ok, content = " + strRspCal);
+					mUIHanlder.post(new Runnable() {
+
+						@Override
+						public void run() {
+							broadCastAction(ACTION_SENCMD_READ_CONTENT);
+						}
+					});
+				}
+				else
+				{
+					MyLog.d(mTag, "doWriteCmdAndReadRsp, read fail");
+					mUIHanlder.post(new Runnable() {
+						@Override
+						public void run() {
+							broadCastAction(ACTION_SENCMD_READ_FAIL);
+						}
+					});
+				}
+		    }
+		};
+		workerThread.start();
 	}
 }

@@ -23,6 +23,15 @@ public abstract class BLEButton extends LinearLayout {
     public static final String ACTION_SENCMD_FAIL =
             "com.BLE.Buttons.ACTION_SENCMD_FAIL";
     
+    public static final String ACTION_SENCMD_READ =
+            "com.BLE.Buttons.ACTION_SENCMD_READ";
+    
+    public static final String ACTION_SENCMD_READ_CONTENT =
+            "com.BLE.Buttons.ACTION_SENCMD_READ_CONTENT";
+    
+    public static final String ACTION_SENCMD_READ_FAIL =
+            "com.BLE.Buttons.ACTION_SENCMD_READ_FAIL";
+    
 	//inner class
 	public class LECmd
 	{

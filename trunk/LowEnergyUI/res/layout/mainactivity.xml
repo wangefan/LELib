@@ -74,6 +74,17 @@
 	             leCmdsStyleDef:LEBtnState2CmdRes="ok"
 	             leCmdsStyleDef:LEBtnState2CmdTitle="audio from input jack" >
 	         </com.BLE.Buttons.BLEButton2State>
+	         
+	         <com.BLE.Buttons.BLEReadCmdButton
+	             android:id="@+id/btnReadEdid"
+	             android:layout_width="wrap_content"
+	             android:layout_height="wrap_content"
+	             android:layout_toRightOf="@+id/btnEdid"
+	             android:paddingLeft="10dp"
+	             leCmdsStyleDef:LEBtnState1Cmd="edid"
+	             leCmdsStyleDef:LEBtnState1CmdRes="12"
+	             leCmdsStyleDef:LEBtnState1CmdTitle="Get edit" >
+	         </com.BLE.Buttons.BLEReadCmdButton>
 
 	         <com.BLE.Buttons.BLEReadCmdButton
 	             android:id="@+id/btnReadSel"
@@ -83,10 +94,10 @@
 	             android:layout_toRightOf="@+id/btnSelectChan"
 	             android:paddingLeft="10dp"
 	             leCmdsStyleDef:LEBtnState1Cmd="insel"
-	             leCmdsStyleDef:LEBtnState1CmdRes="insel"
+	             leCmdsStyleDef:LEBtnState1CmdRes="12"
 	             leCmdsStyleDef:LEBtnState1CmdTitle="Get Channel" >
 	         </com.BLE.Buttons.BLEReadCmdButton>
-
+	         
         </RelativeLayout>
 
     </LinearLayout>

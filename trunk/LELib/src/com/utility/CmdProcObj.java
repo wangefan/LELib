@@ -65,6 +65,7 @@ public class CmdProcObj {
 		if(crcSrc == getCRC(cmdNoCRC.toByteArray()))
 		{
 			cmdNoCRC.reset();
+			//Extract read string, remove header (first 2 byte) and CRC(last byte)
 			cmdNoCRC.write(cmdRes, 3, cmdLength - 1);
 			return cmdNoCRC.toByteArray();
 		}

@@ -10,7 +10,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 
-public class BLEButton3State extends BLEButton {
+public class BLEButton3State extends BLEWriteCmdButton {
 	//data members
 	private RadioButton mCurCheckedRadBtn = null;
 	private RadioButton [] mRadBtns;

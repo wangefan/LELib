@@ -4,6 +4,7 @@
     <string name="app_name">LowEnergyUI</string>
     <string name="strWelcome">Integral (this is splash)</string>
     <string name="action_settings">Settings</string>
+    <string name="strAutoConn">Auto connect</string>
 	
 	<string-array name="commands_entries">
 		<item>bs#a&amp;_LED1_\r</item>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ImageButton
+        android:id="@+id/idConn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@android:drawable/ic_menu_call" />
+
+    <ImageButton
+        android:id="@+id/idSetConn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/idConn"
+        android:layout_centerHorizontal="true"
+        android:src="@android:drawable/ic_search_category_default" />
+
+    <CheckBox
+        android:id="@+id/idAutoConn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/idSetConn"
+        android:layout_toRightOf="@+id/idConn"
+        android:text="@+string/strAutoConn" />
+
+</RelativeLayout>

@@ -10,7 +10,7 @@ import android.widget.TextView;
 public class SplashScreensActivity extends Activity {
 	
 	// Splash screen timer
-    private static int SPLASH_TIME_OUT = 3000;
+    private static int SPLASH_TIME_OUT = 1000;
 	
 	private TextView mWelcomeText;
 
@@ -33,7 +33,7 @@ public class SplashScreensActivity extends Activity {
             public void run() {
                 // This method will be executed once the timer is over
                 // Start your app main activity
-                Intent i = new Intent(SplashScreensActivity.this, MainActivity.class);
+                Intent i = new Intent(SplashScreensActivity.this, ConnectionActivity.class);
                 startActivity(i);
  
                 // close this activity

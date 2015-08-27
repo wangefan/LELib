@@ -1,6 +1,8 @@
 package com.UI.LEDevice;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 
@@ -22,6 +24,18 @@ public class ConnectionActivity extends BTSettingActivity {
 		mBtnScan = (ImageButton) findViewById(R.id.idSetConn);
 		mAutoConn = (CheckBox) findViewById(R.id.idAutoConn);
 				
+		if(mBtnScan != null)
+		{
+			mBtnScan.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Intent i = new Intent(ConnectionActivity.this, ScanLEDeviceActivity.class);
+		            startActivity(i);
+				}
+			});
+		}
+		
 		//initialize preference value
 		IntegralSetting.initSharedPreferences(this);
 	}

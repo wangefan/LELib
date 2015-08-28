@@ -8,7 +8,6 @@ import com.BLE.BLEUtility.IBLEUtilityListener;
 import com.BLE.Buttons.BLEButton;
 import android.app.Activity;
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -40,7 +39,7 @@ public class MainActivity extends ListActivity
 	private boolean mScanning = false;
 	private Handler mScanPeriodHandler = new Handler();
 	private LeDeviceListAdapter mLeDeviceListAdapter = null;
-	private ProgressDialog mPDialog = null;
+	
 	private Button mBtnDisconnect = null;
 	
 	//inner class
@@ -133,7 +132,7 @@ public class MainActivity extends ListActivity
 			runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                	showProgressDlg(true, "connecting...");
+                	UIUtility.showProgressDlg(MainActivity.this, true, "connecting...");
                 }
             });
 		}
@@ -143,7 +142,7 @@ public class MainActivity extends ListActivity
 			runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                	showProgressDlg(false, "connect error");
+                	UIUtility.showProgressDlg(MainActivity.this, false, "connect error");
                 	Toast.makeText(MainActivity.this, "Connect error", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -154,7 +153,7 @@ public class MainActivity extends ListActivity
 			runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                	showProgressDlg(false, "connected");
+                	UIUtility.showProgressDlg(MainActivity.this, false, "connected");
                 	Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -165,7 +164,7 @@ public class MainActivity extends ListActivity
 			runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                	showProgressDlg(false, "Disconnected");
+                	UIUtility.showProgressDlg(MainActivity.this, false, "Disconnected");
                 	Toast.makeText(MainActivity.this, "Disconnected", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -191,25 +190,25 @@ public class MainActivity extends ListActivity
             
             if (BLEButton.ACTION_SENCMD_BEGIN.equals(action)) 
             {
-            	showProgressDlg(true, "sending cmd");
+            	UIUtility.showProgressDlg(MainActivity.this, true, "sending cmd");
             }
             else if (BLEButton.ACTION_SENCMD_READ.equals(action)) 
             {
-            	showProgressDlg(true, "sending read cmd");
+            	UIUtility.showProgressDlg(MainActivity.this, true, "sending read cmd");
             }
             else if(BLEButton.ACTION_SENCMD_OK.equals(action)) 
             {
-            	showProgressDlg(false, "sending cmd OK");
+            	UIUtility.showProgressDlg(MainActivity.this, false, "sending cmd OK");
             	Toast.makeText(MainActivity.this, "sending cmd OK", Toast.LENGTH_SHORT).show();
             }
             else if(BLEButton.ACTION_SENCMD_FAIL.equals(action)) 
             {
-            	showProgressDlg(false, "sending cmd fail");
+            	UIUtility.showProgressDlg(MainActivity.this, false, "sending cmd fail");
             	Toast.makeText(MainActivity.this, "sending cmd fail", Toast.LENGTH_SHORT).show();
             }
             else if(BLEButton.ACTION_SENCMD_READ_FAIL.equals(action))
             {
-            	showProgressDlg(false, "read cmd fail");
+            	UIUtility.showProgressDlg(MainActivity.this, false, "read cmd fail");
             	Toast.makeText(MainActivity.this, "read cmd fail", Toast.LENGTH_SHORT).show();
             }
             else if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
@@ -229,29 +228,6 @@ public class MainActivity extends ListActivity
             }
 		}
 	};
-	
-	//member functions
-	private void showProgressDlg(boolean bShow, String message)
-    {
-    	if(bShow)
-    	{
-    		if(mPDialog != null)
-    		{
-    			mPDialog.setTitle("Process...");
-    			mPDialog.setMessage(message);
-    			mPDialog.show();
-    		}
-    		else
-    		{
-    			mPDialog = ProgressDialog.show(this, "Process...", message);
-    		}
-    	}
-    	else
-    	{
-    		if(mPDialog != null)
-    			mPDialog.dismiss();
-    	}
-    }
 	
     private void mDoBTIntentForResult()
     {

@@ -37,7 +37,7 @@ public class ConnectionActivity extends BTSettingActivity {
 		}
 
 		@Override
-		public void onConnectError(String message) {
+		public void onDisconnected(String message) {
 			runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -54,17 +54,8 @@ public class ConnectionActivity extends BTSettingActivity {
                 public void run() {
                 	UIUtility.showProgressDlg(ConnectionActivity.this, false, "connected");
                 	Toast.makeText(ConnectionActivity.this, "Connected", Toast.LENGTH_SHORT).show();
-                }
-            });
-		}
-
-		@Override
-		public void onDisconnected() {
-			runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                	UIUtility.showProgressDlg(ConnectionActivity.this, false, "Disconnected");
-                	Toast.makeText(ConnectionActivity.this, "Disconnected", Toast.LENGTH_SHORT).show();
+                	Intent i = new Intent(ConnectionActivity.this, MainActivity.class);
+		            startActivity(i);
                 }
             });
 		}
@@ -105,6 +96,8 @@ public class ConnectionActivity extends BTSettingActivity {
 		
 		//initialize preference value
 		IntegralSetting.initSharedPreferences(this);
+		
+		BLEUtility.getInstance(this).setListener(mBLEUtilityListenerListener);
 	}
 
 	@Override

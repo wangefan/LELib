@@ -15,7 +15,7 @@ public abstract class BTSettingActivity extends Activity {
 	abstract protected void mDoThingsAtrEnableBTActy();
 	
 	//constant 
-	private static final int REQUEST_ENABLE_BT = 1;
+	private static final int REQUEST_ENABLE_BT = -1;
 	
 	//Members
 	protected BluetoothAdapter mBluetoothAdapter;

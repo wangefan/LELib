@@ -16,20 +16,15 @@ public interface IBLEUtilityListener
 	public void onConnecting();
 	
 	/**
-	 * Callback to notify connection error.
-	 * Message contains error information.
+	 * Callback to notify disconnected.
+	 * Message contains information.
 	 */
-	public void onConnectError(String message);
+	public void onDisconnected(String message);
 	
 	/**
 	 * Callback to notify connected.
 	 */
 	public void onConnected();
-	
-	/**
-	 * Callback to notify disconnected.
-	 */
-	public void onDisconnected();
 	
 	/**
 	 * Callback to return string data.

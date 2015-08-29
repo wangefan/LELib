@@ -150,17 +150,12 @@ public class ScanLEDeviceActivity extends ListActivity {
 		}
 
 		@Override
-		public void onConnectError(String message) {
+		public void onDisconnected(String message) {
 			
 		}
 
 		@Override
 		public void onConnected() {
-			
-		}
-
-		@Override
-		public void onDisconnected() {
 			
 		}
 

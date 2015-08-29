@@ -101,7 +101,7 @@ public class BLEUtility
             
             //discover no services.
             mDisconnect();
-        	mFireConnectError("discover no services.");
+        	mFireDisconnected("discover no services.");
             if(mBAutoReconnect)
 	        	mSetCheckConnTimer(true);
         }
@@ -113,13 +113,13 @@ public class BLEUtility
             	if(mBluetoothGatt == null || false == mBluetoothGatt.discoverServices())
             	{
             		mDisconnect();
-            		mFireConnectError("discover services = false");
+            		mFireDisconnected("discover services = false");
             		if(mBAutoReconnect)
         	        	mSetCheckConnTimer(true);
             	}
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
             	mDisconnect();
-            	mFireConnectError("BluetoothProfile.STATE_DISCONNECTED");
+            	mFireDisconnected("BluetoothProfile.STATE_DISCONNECTED");
     	        if(mBAutoReconnect)
     	        	mSetCheckConnTimer(true);
             }
@@ -246,22 +246,16 @@ public class BLEUtility
 			mListener.onConnecting();
 	}
 	
-	void mFireConnectError(String message)
+	void mFireDisconnected(String message)
 	{
 		if(mListener != null)
-			mListener.onConnectError(message);
+			mListener.onDisconnected(message);
 	}
 	
 	void mFireConnected()
 	{
 		if(mListener != null)
 			mListener.onConnected();
-	}
-	
-	void mFireDisconnected()
-	{
-		if(mListener != null)
-			mListener.onDisconnected();
 	}
 	
 	void mFireReceivingData(String strData)
@@ -382,7 +376,7 @@ public class BLEUtility
                 public void run() {
                     if(ConnStatus.CONN_STATE_CONNECTED != mConnStatus) {
                     	mDisconnect();
-                    	mFireConnectError("Connect no response");
+                    	mFireDisconnected("Connect no response");
             	        if(mBAutoReconnect)
             	        	mSetCheckConnTimer(true);
                     }
@@ -393,7 +387,7 @@ public class BLEUtility
 			mDisconnect();
             if(mBAutoReconnect)
 	        	mSetCheckConnTimer(true);
-        	mFireConnectError(e.getMessage());
+        	mFireDisconnected(e.getMessage());
 		}
 		catch (Exception e) {
 			mDisconnect();
@@ -402,13 +396,12 @@ public class BLEUtility
 				message = e.getMessage();
             if(mBAutoReconnect)
 	        	mSetCheckConnTimer(true);
-        	mFireConnectError(message);
+        	mFireDisconnected(message);
 		}
 	}
 	
 	public void disconnect() {
 		mDisconnect();
-		mFireDisconnected();
 	}
 	
 	public void read() throws BLEUtilityException

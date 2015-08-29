@@ -6,14 +6,10 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ImageButton;
-import android.widget.RadioButton;
 import android.widget.TextView;
-
 import com.BLE.BLEUtility.BLEUtility;
 import com.BLE.BLEUtility.MyLog;
-import com.BLE.Buttons.BLEButton.LECmd;
 import com.LELib.R;
 import com.utility.CmdProcObj;
 

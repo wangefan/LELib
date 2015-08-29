@@ -138,7 +138,7 @@ public class MainActivity extends ListActivity
 		}
 
 		@Override
-		public void onConnectError(String message) {
+		public void onDisconnected(String message) {
 			runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -155,17 +155,6 @@ public class MainActivity extends ListActivity
                 public void run() {
                 	UIUtility.showProgressDlg(MainActivity.this, false, "connected");
                 	Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
-                }
-            });
-		}
-
-		@Override
-		public void onDisconnected() {
-			runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                	UIUtility.showProgressDlg(MainActivity.this, false, "Disconnected");
-                	Toast.makeText(MainActivity.this, "Disconnected", Toast.LENGTH_SHORT).show();
                 }
             });
 		}

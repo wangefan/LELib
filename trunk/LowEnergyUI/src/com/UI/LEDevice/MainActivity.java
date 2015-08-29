@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.BLE.BLEUtility.BLEDevice;
 import com.BLE.BLEUtility.BLEUtility;
-import com.BLE.BLEUtility.IBLEUtilityListener;
 import com.BLE.Buttons.BLEButton;
 import android.app.Activity;
 import android.app.ListActivity;
@@ -23,7 +22,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,10 +33,8 @@ public class MainActivity extends ListActivity
 	private static final int REQUEST_ENABLE_BT = 1;
 
 	//data member
-	private BLEUtility mBLEUtility = null;
 	private boolean mScanning = false;
 	private Handler mScanPeriodHandler = new Handler();
-	private LeDeviceListAdapter mLeDeviceListAdapter = null;
 	
 	private Button mBtnDisconnect = null;
 	
@@ -112,64 +108,6 @@ public class MainActivity extends ListActivity
             return view;
         }
     }
-    
-	//Listener for listen ConnectManagerService
-	private IBLEUtilityListener mBLEUtilityListenerListener = new IBLEUtilityListener() 
-	{
-		@Override
-	    public void onGetLEDevice(final BLEDevice device) {
-	    	runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mLeDeviceListAdapter.addDevice(device);
-                    mLeDeviceListAdapter.notifyDataSetChanged();
-                }
-            });
-	    }
-
-		@Override
-		public void onConnecting() {
-			runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                	UIUtility.showProgressDlg(MainActivity.this, true, "connecting...");
-                }
-            });
-		}
-
-		@Override
-		public void onDisconnected(String message) {
-			runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                	UIUtility.showProgressDlg(MainActivity.this, false, "connect error");
-                	Toast.makeText(MainActivity.this, "Connect error", Toast.LENGTH_SHORT).show();
-                }
-            });
-		}
-
-		@Override
-		public void onConnected() {
-			runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                	UIUtility.showProgressDlg(MainActivity.this, false, "connected");
-                	Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
-                }
-            });
-		}
-
-		@Override
-		public void onRead(final String data) {
-			runOnUiThread(new Runnable() {
-                @Override
-                public void run() 
-                {
-                	Toast.makeText(MainActivity.this, "read data:" + data, Toast.LENGTH_SHORT).show();
-                }
-            });
-		}
-	};
 	
 	BroadcastReceiver mBtnReceiver = new BroadcastReceiver() {
 
@@ -224,36 +162,7 @@ public class MainActivity extends ListActivity
         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
     }
 	
-    private void scanLeDevice(final boolean enable) 
-    {
-    	try {
-    		if(mBLEUtility != null) {
-	    		if (enable) {
-		            // Stops scanning after a pre-defined scan period.
-		        	mScanPeriodHandler.postDelayed(new Runnable() {
-		                @Override
-		                public void run() {
-		                    mScanning = false;
-		                    mBLEUtility.stopScanLEDevices();
-		                    invalidateOptionsMenu();
-		                }
-		            }, SCAN_PERIOD);
-		     
-		            //will start scan a period times ad receive devices under "onGetLEDevice".
-		        	mBLEUtility.startScanLEDevices();
-		        	mScanning = true;  
-		        } else {
-		    		mBLEUtility.stopScanLEDevices();
-		    		mScanning = false;
-		        }
-    		}
-        }
-        catch (Exception e) {
-        	Toast.makeText(this, "scanLeDevice(" + enable +") fail, exception " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            finish();
-        }
-        invalidateOptionsMenu();	//trigger  onCreateOptionsMenu
-    }
+    
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -261,9 +170,6 @@ public class MainActivity extends ListActivity
 		getActionBar().setTitle("Low Energy Devices");
 		 
 		registerReceiver(mBtnReceiver, makeServiceActionsIntentFilter());	
-		 
-		mBLEUtility = BLEUtility.getInstance(this);
-		mBLEUtility.setListener(mBLEUtilityListenerListener);
 		setContentView(R.layout.mainactivity);
 		 
 		//=============init conrols==========
@@ -276,15 +182,11 @@ public class MainActivity extends ListActivity
 				@Override
 				public void onClick(View v) 
 				{
-					mBLEUtility.disconnect();
+					BLEUtility.getInstance(MainActivity.this).disconnect();
 				}
 	    	 });
 	     }
-	 	 
-	 	mLeDeviceListAdapter = new LeDeviceListAdapter();
-	    setListAdapter(mLeDeviceListAdapter);
-	 	//=============init conrols end==========
-	     scanLeDevice(true);	
+
 	}
 	
 	private static IntentFilter makeServiceActionsIntentFilter() {
@@ -320,7 +222,6 @@ public class MainActivity extends ListActivity
     protected void onPause() {
         super.onPause();
         mScanPeriodHandler.removeCallbacksAndMessages(null);
-        scanLeDevice(false);
     }
 	
 	@Override
@@ -359,26 +260,13 @@ public class MainActivity extends ListActivity
 	        }
 		return true;
 	}
-	
-	@Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        final BLEDevice device = mLeDeviceListAdapter.getDevice(position);
-        if (device == null || mBLEUtility == null) return;
-        scanLeDevice(false);
-        mBLEUtility.connect(device.getAddress());
-    }
+
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		switch (item.getItemId()) {
-        case R.id.menu_scan:
-            mLeDeviceListAdapter.clear();
-            scanLeDevice(true);
-            break;
-        case R.id.menu_stop:
-            scanLeDevice(false);
-            break;
+        
         case android.R.id.home:
             onBackPressed();
             return true;

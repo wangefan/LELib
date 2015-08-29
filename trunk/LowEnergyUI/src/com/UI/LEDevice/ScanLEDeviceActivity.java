@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.BLE.BLEUtility.BLEDevice;
 import com.BLE.BLEUtility.BLEUtility;
-import com.BLE.BLEUtility.IBLEUtilityListener;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -106,7 +105,7 @@ public class ScanLEDeviceActivity extends ListActivity {
         }
     }
     
-    private BroadcastReceiver mBtnReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -127,41 +126,12 @@ public class ScanLEDeviceActivity extends ListActivity {
                     }
                 }
             }
-		}
-	};
-    
-	//Listener for listen ConnectManagerService
-	private IBLEUtilityListener mBLEUtilityListenerListener = new IBLEUtilityListener() 
-	{
-		@Override
-	    public void onGetLEDevice(final BLEDevice device) {
-	    	runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mLeDeviceListAdapter.addDevice(device);
-                    mLeDeviceListAdapter.notifyDataSetChanged();
-                }
-            });
-	    }
-
-		@Override
-		public void onConnecting() {
-			
-		}
-
-		@Override
-		public void onDisconnected(String message) {
-			
-		}
-
-		@Override
-		public void onConnected() {
-			
-		}
-
-		@Override
-		public void onRead(final String data) {
-			
+			else if(action.equals(BLEUtility.ACTION_GET_LEDEVICE))
+			{
+				BLEDevice cBTDeivce = (BLEDevice) intent.getSerializableExtra(BLEUtility.ACTION_GET_LEDEVICE_KEY);
+				mLeDeviceListAdapter.addDevice(cBTDeivce);
+                mLeDeviceListAdapter.notifyDataSetChanged();
+			}
 		}
 	};
 	
@@ -208,9 +178,7 @@ public class ScanLEDeviceActivity extends ListActivity {
 		getActionBar().setTitle(getResources().getString(R.string.strSeatchIntegral));
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
-		registerReceiver(mBtnReceiver, makeServiceActionsIntentFilter());	
-		 
-		BLEUtility.getInstance(this).setListener(mBLEUtilityListenerListener);
+		registerReceiver(mReceiver, makeServiceActionsIntentFilter());	
 		setContentView(R.layout.scanledeviceactivity);
 	 	 
 	 	mLeDeviceListAdapter = new LeDeviceListAdapter();
@@ -222,6 +190,7 @@ public class ScanLEDeviceActivity extends ListActivity {
 	private static IntentFilter makeServiceActionsIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        intentFilter.addAction(BLEUtility.ACTION_GET_LEDEVICE);
         return intentFilter;
     }
 	
@@ -252,7 +221,7 @@ public class ScanLEDeviceActivity extends ListActivity {
 	
 	@Override
 	protected void onDestroy() {
-		unregisterReceiver(mBtnReceiver);
+		unregisterReceiver(mReceiver);
 		super.onDestroy();
 	}
 	

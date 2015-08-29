@@ -16,16 +16,33 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 
 public class BLEUtility
 {
+	//public define
+	/**
+	 * broadcast to get low energy devices after calling 
+	 * StartScanLEDevices.
+	 * Stop scanning by calling StopScanLEDevices.
+	 * This broadcast is fired from worker thread.
+	 */
+	public final static String ACTION_GET_LEDEVICE = "ACTION_GET_LEDEVICE";
+	public final static String ACTION_GET_LEDEVICE_KEY = "ACTION_GET_LEDEVICE_KEY";
+	public final static String ACTION_CONNSTATE_CONNECTED = "ACTION_CONNSTATE_CONNECTED";
+	public final static String ACTION_CONNSTATE_DISCONNECTED = "ACTION_CONNSTATE_DISCONNECTED";
+	public final static String ACTION_CONNSTATE_DISCONNECTED_KEY = "ACTION_CONNSTATE_DISCONNECTED_KEY";
+	public final static String ACTION_CONNSTATE_CONNECTING = "ACTION_CONNSTATE_CONNECTING";
+	public final static String ACTION_DATA = "ACTION_DATA";
+	public final static String ACTION_DATA_KEY = "ACTION_DATA_KEY";
+	
 	//inner define
 	final private String mTag = "BLEUtility";
 	final private static UUID mSUUIDString = UUID.fromString("edee2909-12b0-3e9d-1042-4c0bc820c4dc");
 	final private static UUID mCUUIDString = UUID.fromString("1249c28c-63b4-219b-814a-393944dec8c1");
 	private enum ConnStatus { CONN_STATE_DISCONNECTED, CONN_STATE_CONNECTING, CONN_STATE_CONNECTED}
-		
+		 
 	// Device scan callback.
     @SuppressLint("NewApi")
 	private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
@@ -53,10 +70,10 @@ public class BLEUtility
         			BLEDevice cBTDeivce = new BLEDevice(name, add);
     				mbtDeviceList.add(cBTDeivce);
     				
-    				//fire to listener.
-    				if(mListener != null) {
-    					mListener.onGetLEDevice(cBTDeivce);
-    				}	
+    				//Broadcast.
+    				final Intent brdConnState = new Intent(ACTION_GET_LEDEVICE);
+    				brdConnState.putExtra(ACTION_GET_LEDEVICE_KEY, cBTDeivce);
+    		        mContext.sendBroadcast(brdConnState);
         		}
         	}
         }
@@ -176,7 +193,6 @@ public class BLEUtility
 	private BluetoothGatt mBluetoothGatt = null;
 	private BluetoothGattCharacteristic mBTCharct = null;
 	private ArrayList<BLEDevice> mbtDeviceList = null;
-	private IBLEUtilityListener mListener = null;
 	private BLEDevice mDestBTLEDevice = null;
 	private ConnStatus mConnStatus = ConnStatus.CONN_STATE_DISCONNECTED;
 	private Context mContext = null;
@@ -240,28 +256,47 @@ public class BLEUtility
 		mConnStatus = ConnStatus.CONN_STATE_DISCONNECTED;
 	}
 	
+	private void mBroadcastAction(String action)
+	{
+		final Intent brd = new Intent(action);
+		mContext.sendBroadcast(brd);
+	}
+	
+	/*
+    private void mBroadcastConnChangeWithInfo(CONN_STATE connState, String message)
+	{
+		// Client should use Servic.GetConnState() to get status
+		mConnState = connState;
+		final Intent brdConnState = new Intent(ACTION_CONN_STATE_CHANGED);
+		brdConnState.putExtra(ACTION_CONN_STATE_CHANGED_KEY, message);
+        sendBroadcast(brdConnState);
+	}
+	*/
+	
 	void mFireConnecting()
 	{
-		if(mListener != null)
-			mListener.onConnecting();
+		final Intent brd = new Intent(ACTION_CONNSTATE_CONNECTING);
+		mContext.sendBroadcast(brd);
 	}
 	
 	void mFireDisconnected(String message)
 	{
-		if(mListener != null)
-			mListener.onDisconnected(message);
+		final Intent brd = new Intent(ACTION_CONNSTATE_DISCONNECTED);
+		brd.putExtra(ACTION_CONNSTATE_DISCONNECTED_KEY, message);
+		mContext.sendBroadcast(brd);
 	}
 	
 	void mFireConnected()
 	{
-		if(mListener != null)
-			mListener.onConnected();
+		final Intent brd = new Intent(ACTION_CONNSTATE_CONNECTED);
+		mContext.sendBroadcast(brd);
 	}
 	
 	void mFireReceivingData(String strData)
 	{
-		if(mListener != null)
-			mListener.onRead(strData);
+		final Intent brd = new Intent(ACTION_DATA);
+		brd.putExtra(ACTION_DATA_KEY, strData);
+		mContext.sendBroadcast(brd);
 	}
 	
     //public methods
@@ -272,14 +307,6 @@ public class BLEUtility
 		return mMe;
 	}
 	
-    /**
-	 * Set listener from client.
-	 */
-    public void setListener(IBLEUtilityListener listener)
-    {
-    	mListener = listener;
-    }
-    
     /**
 	 * start to scan devices, will report devices by
 	 * IBLEUtilityListener.onGetLEDevice()

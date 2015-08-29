@@ -2,9 +2,12 @@ package com.UI.LEDevice;
 
 import com.BLE.BLEUtility.BLEDevice;
 import com.BLE.BLEUtility.BLEUtility;
-import com.BLE.BLEUtility.IBLEUtilityListener;
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
@@ -19,50 +22,28 @@ public class ConnectionActivity extends BTSettingActivity {
 	private static final int REQUEST_GET_LE_DEVICE = 1;
 
 	//inner class and listener
-	private IBLEUtilityListener mBLEUtilityListenerListener = new IBLEUtilityListener() 
+	private BroadcastReceiver mReceiver = new BroadcastReceiver() 
 	{
 		@Override
-	    public void onGetLEDevice(final BLEDevice device) {
-	    	
-	    }
-
-		@Override
-		public void onConnecting() {
-			runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                	UIUtility.showProgressDlg(ConnectionActivity.this, true, "connecting...");
-                }
-            });
-		}
-
-		@Override
-		public void onDisconnected(String message) {
-			runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                	UIUtility.showProgressDlg(ConnectionActivity.this, false, "connect error");
-                	Toast.makeText(ConnectionActivity.this, "Connect error", Toast.LENGTH_SHORT).show();
-                }
-            });
-		}
-
-		@Override
-		public void onConnected() {
-			runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                	UIUtility.showProgressDlg(ConnectionActivity.this, false, "connected");
-                	Toast.makeText(ConnectionActivity.this, "Connected", Toast.LENGTH_SHORT).show();
-                	Intent i = new Intent(ConnectionActivity.this, MainActivity.class);
-		            startActivity(i);
-                }
-            });
-		}
-
-		@Override
-		public void onRead(final String data) {
-			
+		public void onReceive(Context context, Intent intent) {
+			final String action = intent.getAction();
+			if(action.equals(BLEUtility.ACTION_CONNSTATE_CONNECTING))
+			{
+				UIUtility.showProgressDlg(ConnectionActivity.this, true, "connecting...");
+			}
+			else if(action.equals(BLEUtility.ACTION_CONNSTATE_DISCONNECTED))
+			{
+				UIUtility.showProgressDlg(ConnectionActivity.this, false, "disconnect");
+				String message = intent.getStringExtra(BLEUtility.ACTION_CONNSTATE_DISCONNECTED_KEY);
+            	Toast.makeText(ConnectionActivity.this, "disconnect, cause = " + message, Toast.LENGTH_SHORT).show();
+			}
+			if(action.equals(BLEUtility.ACTION_CONNSTATE_CONNECTED))
+			{
+				UIUtility.showProgressDlg(ConnectionActivity.this, false, "connected");
+            	Toast.makeText(ConnectionActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+            	Intent i = new Intent(ConnectionActivity.this, MainActivity.class);
+	            startActivity(i);
+			}
 		}
 	};
 		
@@ -70,6 +51,15 @@ public class ConnectionActivity extends BTSettingActivity {
 	ImageButton   mBtnConn;
 	ImageButton   mBtnScan;
 	CheckBox      mAutoConn;
+	
+	//functions
+	private static IntentFilter makeIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_CONNECTING);
+        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_CONNECTED);
+        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_DISCONNECTED);
+        return intentFilter;
+    }
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -97,14 +87,14 @@ public class ConnectionActivity extends BTSettingActivity {
 		//initialize preference value
 		IntegralSetting.initSharedPreferences(this);
 		
-		BLEUtility.getInstance(this).setListener(mBLEUtilityListenerListener);
+		registerReceiver(mReceiver, makeIntentFilter());	
 	}
 
 	@Override
 	protected void onDestroy() {
-		
-		super.onDestroy();
+		unregisterReceiver(mReceiver);
 		IntegralSetting.destroySharedPreferences();
+		super.onDestroy();
 	}
 
 	@Override

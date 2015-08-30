@@ -195,7 +195,7 @@ public class BLEUtility
 	private ArrayList<BLEDevice> mbtDeviceList = null;
 	private BLEDevice mDestBTLEDevice = null;
 	private ConnStatus mConnStatus = ConnStatus.CONN_STATE_DISCONNECTED;
-	private Context mContext = null;
+	static private Context mContext = null;
 	private boolean mBAutoReconnect = false;
 	private Handler mHandlerCheckConn = new Handler();
 	private Handler mHandlerConnTimeout = new Handler();
@@ -205,11 +205,10 @@ public class BLEUtility
 	
 	//private functions
 	//default constructor
-	private BLEUtility(Context context) 
+	private BLEUtility() 
 	{
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 	    mbtDeviceList = new ArrayList<BLEDevice>();
-	    mContext = context;
 	    mBAutoReconnect = false;
 	    mBWaitData = false;
 	}
@@ -256,12 +255,6 @@ public class BLEUtility
 		mConnStatus = ConnStatus.CONN_STATE_DISCONNECTED;
 	}
 	
-	private void mBroadcastAction(String action)
-	{
-		final Intent brd = new Intent(action);
-		mContext.sendBroadcast(brd);
-	}
-	
 	/*
     private void mBroadcastConnChangeWithInfo(CONN_STATE connState, String message)
 	{
@@ -300,11 +293,17 @@ public class BLEUtility
 	}
 	
     //public methods
-	static public BLEUtility getInstance(Context context)
+	static public BLEUtility getInstance()
 	{
 		if(mMe == null)
-			mMe = new BLEUtility(context);
+			mMe = new BLEUtility();
 		return mMe;
+	}
+	
+	//public methods
+	static public void initBLEUtility(Context context)
+	{
+		mContext = context;
 	}
 	
     /**

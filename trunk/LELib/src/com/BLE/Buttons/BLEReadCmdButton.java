@@ -79,7 +79,7 @@ public class BLEReadCmdButton extends BLEButton{
 		    public void run() {
 		    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd in thread" + Thread.currentThread().getId());
 		    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write cmd = " + tempLeCmd.mCmd);
-		    	byte [] rsp = BLEUtility.getInstance(getContext()).writeCmd(CmdProcObj.addCRC(tempLeCmd.mCmd, false));
+		    	byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(tempLeCmd.mCmd, false));
 		    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
 		    	String strRspCal = "";
 		    	if(rspCal != null)

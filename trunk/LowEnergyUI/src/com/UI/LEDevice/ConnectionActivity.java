@@ -131,7 +131,7 @@ public class ConnectionActivity extends BTSettingActivity {
 	        	if(resultCode == Activity.RESULT_OK ) 
 	        	{
 	        		BLEDevice device = (BLEDevice) data.getSerializableExtra(KEY_GET_BT_DEVICE);
-	        		BLEUtility.getInstance(this).connect(device.getAddress());
+	        		BLEUtility.getInstance().connect(device.getAddress());
 	        	}
 	        }
 	        break;

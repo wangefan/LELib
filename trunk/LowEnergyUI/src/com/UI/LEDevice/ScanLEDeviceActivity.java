@@ -144,23 +144,23 @@ public class ScanLEDeviceActivity extends ListActivity {
     private void scanLeDevice(final boolean enable) 
     {
     	try {
-    		if(BLEUtility.getInstance(this) != null) {
+    		if(BLEUtility.getInstance() != null) {
 	    		if (enable) {
 		            // Stops scanning after a pre-defined scan period.
 		        	mScanPeriodHandler.postDelayed(new Runnable() {
 		                @Override
 		                public void run() {
 		                    mScanning = false;
-		                    BLEUtility.getInstance(ScanLEDeviceActivity.this).stopScanLEDevices();
+		                    BLEUtility.getInstance().stopScanLEDevices();
 		                    invalidateOptionsMenu();
 		                }
 		            }, SCAN_PERIOD);
 		     
 		            //will start scan a period times ad receive devices under "onGetLEDevice".
-		        	BLEUtility.getInstance(this).startScanLEDevices();
+		        	BLEUtility.getInstance().startScanLEDevices();
 		        	mScanning = true;  
 		        } else {
-		        	BLEUtility.getInstance(this).stopScanLEDevices();
+		        	BLEUtility.getInstance().stopScanLEDevices();
 		    		mScanning = false;
 		        }
     		}
@@ -259,7 +259,7 @@ public class ScanLEDeviceActivity extends ListActivity {
 	@Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         final BLEDevice device = mLeDeviceListAdapter.getDevice(position);
-        if (device == null || BLEUtility.getInstance(this) == null) return;
+        if (device == null || BLEUtility.getInstance() == null) return;
         scanLeDevice(false);
         Intent resultInt = new Intent();
         resultInt.putExtra(ConnectionActivity.KEY_GET_BT_DEVICE, device);

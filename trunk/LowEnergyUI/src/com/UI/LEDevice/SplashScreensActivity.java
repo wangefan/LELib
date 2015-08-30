@@ -1,4 +1,6 @@
 package com.UI.LEDevice;
+import com.BLE.BLEUtility.BLEUtility;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,7 +21,7 @@ public class SplashScreensActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		getWindow().requestFeature(Window.FEATURE_NO_TITLE); //Removing ActionBar
 		setContentView(R.layout.splashscreenactivity);
-		
+		BLEUtility.initBLEUtility(getApplicationContext());
 		mWelcomeText = (TextView) findViewById(R.id.idWelcome);
 		
 		new Handler().postDelayed(new Runnable() {

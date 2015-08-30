@@ -182,7 +182,7 @@ public class MainActivity extends ListActivity
 				@Override
 				public void onClick(View v) 
 				{
-					BLEUtility.getInstance(MainActivity.this).disconnect();
+					BLEUtility.getInstance().disconnect();
 				}
 	    	 });
 	     }

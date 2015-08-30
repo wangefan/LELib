@@ -35,79 +35,7 @@ public class MainActivity extends ListActivity
 	//data member
 	private boolean mScanning = false;
 	private Handler mScanPeriodHandler = new Handler();
-	
 	private Button mBtnDisconnect = null;
-	
-	//inner class
-	// Adapter for holding devices found through scanning.
-    private class LeDeviceListAdapter extends BaseAdapter {
-        private ArrayList<BLEDevice> mLeDevices;	
-        private LayoutInflater mInflator;
-        class ViewHolder {
-            TextView deviceName;
-            TextView deviceAddress;
-        }
-        
-        public LeDeviceListAdapter() {
-            super();
-            mLeDevices = new ArrayList<BLEDevice>();
-            mInflator = MainActivity.this.getLayoutInflater();
-        }
-
-        public void addDevice(BLEDevice device) {
-            if(!mLeDevices.contains(device)) {
-                mLeDevices.add(device);
-            }
-        }
-
-        public void clear() {
-            mLeDevices.clear();
-        }
-        
-        public BLEDevice getDevice(int position) {
-            return mLeDevices.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mLeDevices.size();
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return mLeDevices.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            ViewHolder viewHolder;
-            // General ListView optimization code.
-            if (view == null) {
-                view = mInflator.inflate(R.layout.listitem_ledevice, null);
-                viewHolder = new ViewHolder();
-                viewHolder.deviceAddress = (TextView) view.findViewById(R.id.device_address);
-                viewHolder.deviceName = (TextView) view.findViewById(R.id.device_name);
-                view.setTag(viewHolder);
-            } else {
-                viewHolder = (ViewHolder) view.getTag();
-            }
-
-            BLEDevice device = mLeDevices.get(i);
-            final String deviceName = device.getDeviceName();
-            if (deviceName != null && deviceName.length() > 0)
-                viewHolder.deviceName.setText(deviceName);
-            else
-                viewHolder.deviceName.setText("unknown device");
-            viewHolder.deviceAddress.setText(device.getAddress());
-
-            return view;
-        }
-    }
 	
 	BroadcastReceiver mBtnReceiver = new BroadcastReceiver() {
 
@@ -138,6 +66,12 @@ public class MainActivity extends ListActivity
             	UIUtility.showProgressDlg(MainActivity.this, false, "read cmd fail");
             	Toast.makeText(MainActivity.this, "read cmd fail", Toast.LENGTH_SHORT).show();
             }
+            else if(BLEUtility.ACTION_CONNSTATE_DISCONNECTED.equals(action))
+            {
+            	UIUtility.showProgressDlg(MainActivity.this, false, "disconnected");
+            	String message = intent.getStringExtra(BLEUtility.ACTION_CONNSTATE_DISCONNECTED_KEY);
+            	Toast.makeText(MainActivity.this, "disconnected, cause = " + message, Toast.LENGTH_SHORT).show();
+            }
             else if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
                 int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
                                                BluetoothAdapter.ERROR);
@@ -161,9 +95,7 @@ public class MainActivity extends ListActivity
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
     }
-	
-    
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -173,20 +105,18 @@ public class MainActivity extends ListActivity
 		setContentView(R.layout.mainactivity);
 		 
 		//=============init conrols==========
-		
 	 	mBtnDisconnect = (Button) findViewById(R.id.btnDis);
-	 	 if(mBtnDisconnect != null)
-	     {
+	 	if(mBtnDisconnect != null)
+	    {
 	 		mBtnDisconnect.setOnClickListener(new OnClickListener() 
 	 		{
-				@Override
+	 			@Override
 				public void onClick(View v) 
 				{
 					BLEUtility.getInstance().disconnect();
 				}
-	    	 });
+	    	});
 	     }
-
 	}
 	
 	private static IntentFilter makeServiceActionsIntentFilter() {
@@ -196,6 +126,7 @@ public class MainActivity extends ListActivity
         intentFilter.addAction(BLEButton.ACTION_SENCMD_FAIL);
         intentFilter.addAction(BLEButton.ACTION_SENCMD_READ);
         intentFilter.addAction(BLEButton.ACTION_SENCMD_READ_FAIL);
+        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_DISCONNECTED);
         intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         return intentFilter;
     }

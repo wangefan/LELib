@@ -11,21 +11,12 @@ public class UIUtility {
     {
     	if(bShow)
     	{
-    		if(mPDialog != null)
-    		{
-    			mPDialog.setTitle("Process...");
-    			mPDialog.setMessage(message);
-    			mPDialog.show();
-    		}
-    		else
-    		{
-    			mPDialog = ProgressDialog.show(context, "Process...", message);
-    		}
+    		mPDialog = ProgressDialog.show(context, "Process...", message);
     	}
     	else
     	{
     		if(mPDialog != null)
     			mPDialog.dismiss();
     	}
-}
+    }
 }

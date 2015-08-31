@@ -108,6 +108,18 @@
 	             leCmdsStyleDef:LEBtnState1CmdRes="audio"
 	             leCmdsStyleDef:LEBtnState1CmdTitle="Get Audio" >
 	         </com.BLE.Buttons.BLEReadCmdButton>
+	         
+	         <com.BLE.Buttons.BLEOneWrtCmdButton
+	             android:id="@+id/btnReset"
+	             android:layout_width="wrap_content"
+	             android:layout_height="wrap_content"
+	             android:layout_below="@+id/btnReadAudio"
+	             android:paddingLeft="10dp"
+	             android:paddingTop="10dp"
+	             leCmdsStyleDef:LEBtnState1Cmd="reset"
+	             leCmdsStyleDef:LEBtnState1CmdRes="ok"
+	             leCmdsStyleDef:LEBtnState1CmdTitle="Reset" >
+	         </com.BLE.Buttons.BLEOneWrtCmdButton>
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

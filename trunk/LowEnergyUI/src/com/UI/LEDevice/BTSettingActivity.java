@@ -15,13 +15,13 @@ public abstract class BTSettingActivity extends Activity {
 	abstract protected void mDoThingsAtrEnableBTActy();
 	
 	//constant 
-	private static final int REQUEST_ENABLE_BT = -1;
+	private static final int REQUEST_ENABLE_BT = 2;
 	
 	//Members
 	protected BluetoothAdapter mBluetoothAdapter;
 	
 	//member funcitons
-    private void mDoBTIntentForResult()
+	protected void mDoBTIntentForResult()
     {
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);

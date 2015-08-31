@@ -428,6 +428,7 @@ public class BLEUtility
 	
 	public void disconnect() {
 		mDisconnect();
+		mFireDisconnected("disconnted");
 	}
 	
 	public void read() throws BLEUtilityException

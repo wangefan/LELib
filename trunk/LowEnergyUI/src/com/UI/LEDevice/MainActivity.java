@@ -1,41 +1,25 @@
 package com.UI.LEDevice;
 
-import java.util.ArrayList;
-
-import com.BLE.BLEUtility.BLEDevice;
 import com.BLE.BLEUtility.BLEUtility;
 import com.BLE.Buttons.BLEButton;
 import android.app.Activity;
-import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends ListActivity 
+public class MainActivity extends BTSettingActivity 
 {
 	//constant 
-	private static final long SCAN_PERIOD = 10000; // Stops scanning after 10 seconds.
 	private final String mTAG = "MainActivity";
 	private static final int REQUEST_ENABLE_BT = 1;
 
 	//data member
-	private boolean mScanning = false;
-	private Handler mScanPeriodHandler = new Handler();
-	private Button mBtnDisconnect = null;
 	
 	BroadcastReceiver mBtnReceiver = new BroadcastReceiver() {
 
@@ -71,30 +55,11 @@ public class MainActivity extends ListActivity
             	UIUtility.showProgressDlg(MainActivity.this, false, "disconnected");
             	String message = intent.getStringExtra(BLEUtility.ACTION_CONNSTATE_DISCONNECTED_KEY);
             	Toast.makeText(MainActivity.this, "disconnected, cause = " + message, Toast.LENGTH_SHORT).show();
-            }
-            else if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
-                int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
-                                               BluetoothAdapter.ERROR);
-                if (state == BluetoothAdapter.STATE_ON) 
-                {
-                    
-                } 
-                else if (state == BluetoothAdapter.STATE_OFF) 
-                {
-                	if (!BluetoothAdapter.getDefaultAdapter().isEnabled()) {
-                		mDoBTIntentForResult();
-                        return;
-                    }
-                }
+            	finish();
+                return;
             }
 		}
 	};
-	
-    private void mDoBTIntentForResult()
-    {
-        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-    }
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -103,20 +68,6 @@ public class MainActivity extends ListActivity
 		 
 		registerReceiver(mBtnReceiver, makeServiceActionsIntentFilter());	
 		setContentView(R.layout.mainactivity);
-		 
-		//=============init conrols==========
-	 	mBtnDisconnect = (Button) findViewById(R.id.btnDis);
-	 	if(mBtnDisconnect != null)
-	    {
-	 		mBtnDisconnect.setOnClickListener(new OnClickListener() 
-	 		{
-	 			@Override
-				public void onClick(View v) 
-				{
-					BLEUtility.getInstance().disconnect();
-				}
-	    	});
-	     }
 	}
 	
 	private static IntentFilter makeServiceActionsIntentFilter() {
@@ -134,25 +85,11 @@ public class MainActivity extends ListActivity
 	@Override
     protected void onResume() {
 		super.onResume();
-		BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-		if(bluetoothAdapter == null)
-		{
-            finish();
-            return;
-		}
-		
-		// Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
-        // fire an intent to display a dialog asking the user to grant permission to enable it.
-        if (!bluetoothAdapter.isEnabled()) {
-        	mDoBTIntentForResult();
-            return;
-        }	
 	}
 	
 	@Override
     protected void onPause() {
         super.onPause();
-        mScanPeriodHandler.removeCallbacksAndMessages(null);
     }
 	
 	@Override
@@ -163,15 +100,7 @@ public class MainActivity extends ListActivity
 	
 	@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// User chose not to enable Bluetooth.
-        if (requestCode == REQUEST_ENABLE_BT) {
-            if(resultCode == Activity.RESULT_CANCELED)
-            {
-            	finish();
-                return;
-            }
-            else;	//allow
-        }
+		
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -179,19 +108,9 @@ public class MainActivity extends ListActivity
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
-		 if (!mScanning) {
-	            menu.findItem(R.id.menu_stop).setVisible(false);
-	            menu.findItem(R.id.menu_scan).setVisible(true);
-	            menu.findItem(R.id.menu_refresh).setActionView(null);
-	        } else {
-	            menu.findItem(R.id.menu_stop).setVisible(true);
-	            menu.findItem(R.id.menu_scan).setVisible(false);
-	            menu.findItem(R.id.menu_refresh).setActionView(
-	                    R.layout.actionbar_indeterminate_progress);
-	        }
+		menu.findItem(R.id.menu_disconnect).setVisible(true);
 		return true;
 	}
-
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
@@ -201,7 +120,15 @@ public class MainActivity extends ListActivity
         case android.R.id.home:
             onBackPressed();
             return true;
+        case R.id.menu_disconnect:
+        	BLEUtility.getInstance().disconnect();
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void mDoThingsAtrEnableBTActy() {
+		// TODO Auto-generated method stub
+		
 	}
 }

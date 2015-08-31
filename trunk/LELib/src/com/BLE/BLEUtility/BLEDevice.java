@@ -17,7 +17,7 @@ public class BLEDevice implements Serializable
 		mStrDeviceAddress = "";
 	}
 	
-	BLEDevice(String strDeviceName, String strDeviceAddress)
+	public BLEDevice(String strDeviceName, String strDeviceAddress)
 	{
 		mStrDeviceName = new String(strDeviceName);
 		mStrDeviceAddress = new String(strDeviceAddress);

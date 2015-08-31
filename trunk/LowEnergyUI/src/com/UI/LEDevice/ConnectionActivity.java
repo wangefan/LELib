@@ -34,12 +34,14 @@ public class ConnectionActivity extends BTSettingActivity {
 			{
 				UIUtility.showProgressDlg(ConnectionActivity.this, false, "disconnect");
 				String message = intent.getStringExtra(BLEUtility.ACTION_CONNSTATE_DISCONNECTED_KEY);
-            	Toast.makeText(ConnectionActivity.this, "disconnect, cause = " + message, Toast.LENGTH_SHORT).show();
+				Toast.makeText(ConnectionActivity.this, "disconnect, cause = " + message, Toast.LENGTH_SHORT).show();
 			}
 			if(action.equals(BLEUtility.ACTION_CONNSTATE_CONNECTED))
 			{
 				UIUtility.showProgressDlg(ConnectionActivity.this, false, "connected");
             	Toast.makeText(ConnectionActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+            	IntegralSetting.setDeviceMACAddr(mLastConnDevice.getAddress());
+            	IntegralSetting.setDeviceName(mLastConnDevice.getDeviceName());
             	Intent i = new Intent(ConnectionActivity.this, MainActivity.class);
 	            startActivity(i);
 			}
@@ -50,6 +52,7 @@ public class ConnectionActivity extends BTSettingActivity {
 	ImageButton   mBtnConn;
 	ImageButton   mBtnScan;
 	CheckBox      mAutoConn;
+	BLEDevice 	  mLastConnDevice;
 	
 	//functions
 	private static IntentFilter makeIntentFilter() {
@@ -59,6 +62,11 @@ public class ConnectionActivity extends BTSettingActivity {
         intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_DISCONNECTED);
         return intentFilter;
     }
+	
+	private void connectTo(String name, String address) {
+		mLastConnDevice = new BLEDevice(name, address);
+		BLEUtility.getInstance().connect(mLastConnDevice.getAddress());	
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,11 +78,21 @@ public class ConnectionActivity extends BTSettingActivity {
 		mBtnConn = (ImageButton) findViewById(R.id.idConn);
 		mBtnScan = (ImageButton) findViewById(R.id.idSetConn);
 		mAutoConn = (CheckBox) findViewById(R.id.idAutoConn);
+		mLastConnDevice = null;
 				
+		if(mBtnConn != null)
+		{
+			mBtnConn.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					ConnectionActivity.this.connectTo(IntegralSetting.getDeviceName(), IntegralSetting.getDeviceMACAddr());
+				}
+			});
+		}
+		
 		if(mBtnScan != null)
 		{
 			mBtnScan.setOnClickListener(new View.OnClickListener() {
-				
 				@Override
 				public void onClick(View v) {
 					Intent i = new Intent(ConnectionActivity.this, ScanLEDeviceActivity.class);
@@ -129,8 +147,8 @@ public class ConnectionActivity extends BTSettingActivity {
 	        {
 	        	if(resultCode == Activity.RESULT_OK ) 
 	        	{
-	        		BLEDevice device = (BLEDevice) data.getSerializableExtra(KEY_GET_BT_DEVICE);
-	        		BLEUtility.getInstance().connect(device.getAddress());
+	        		final BLEDevice device = (BLEDevice) data.getSerializableExtra(KEY_GET_BT_DEVICE);
+	        		connectTo(device.getDeviceName(), device.getAddress());
 	        	}
 	        }
 	        break;

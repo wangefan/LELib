@@ -11,11 +11,19 @@
         android:layout_centerInParent="true"
         android:src="@android:drawable/ic_menu_call" />
 
+    <TextView
+        android:id="@+id/tvConnectTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/idConn"
+        android:layout_centerHorizontal="true"
+        android:text="none device" />
+        
     <ImageButton
         android:id="@+id/idSetConn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/idConn"
+        android:layout_below="@+id/tvConnectTo"
         android:layout_centerHorizontal="true"
         android:src="@android:drawable/ic_search_category_default" />
 
@@ -23,8 +31,16 @@
         android:id="@+id/idAutoConn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/idSetConn"
-        android:layout_toRightOf="@+id/idConn"
+        android:layout_above="@+id/idConn"
+        android:layout_centerHorizontal="true"
         android:text="@+string/strAutoConn" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/idSetConn"
+        android:text="Serch integral device" />
 
 </RelativeLayout>

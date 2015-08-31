@@ -97,6 +97,17 @@
 	             leCmdsStyleDef:LEBtnState1CmdRes="12"
 	             leCmdsStyleDef:LEBtnState1CmdTitle="Get Channel" >
 	         </com.BLE.Buttons.BLEReadCmdButton>
+	         <com.BLE.Buttons.BLEReadCmdButton
+	             android:id="@+id/btnReadAudio"
+	             android:layout_width="wrap_content"
+	             android:layout_height="wrap_content"
+	             android:layout_below="@+id/btnHDCP"
+	             android:layout_toRightOf="@+id/btnAudio"
+	             android:paddingLeft="10dp"
+	             leCmdsStyleDef:LEBtnState1Cmd="audio"
+	             leCmdsStyleDef:LEBtnState1CmdRes="audio"
+	             leCmdsStyleDef:LEBtnState1CmdTitle="Get Audio" >
+	         </com.BLE.Buttons.BLEReadCmdButton>
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

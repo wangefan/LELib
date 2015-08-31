@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -50,6 +51,7 @@ public class ConnectionActivity extends BTSettingActivity {
 		
 	//Data members.
 	ImageButton   mBtnConn;
+	TextView      mTVConnectTo;
 	ImageButton   mBtnScan;
 	CheckBox      mAutoConn;
 	BLEDevice 	  mLastConnDevice;
@@ -76,6 +78,7 @@ public class ConnectionActivity extends BTSettingActivity {
 		
 		//init UI controls
 		mBtnConn = (ImageButton) findViewById(R.id.idConn);
+		mTVConnectTo = (TextView)  findViewById(R.id.tvConnectTo);
 		mBtnScan = (ImageButton) findViewById(R.id.idSetConn);
 		mAutoConn = (CheckBox) findViewById(R.id.idAutoConn);
 		mLastConnDevice = null;
@@ -121,10 +124,14 @@ public class ConnectionActivity extends BTSettingActivity {
 		{
 			mBtnConn.setEnabled(false);
 			mAutoConn.setEnabled(false);
+			mTVConnectTo.setVisibility(View.INVISIBLE);
 		}
 		else {
 			mBtnConn.setEnabled(true);
 			mAutoConn.setEnabled(true);
+			String text = "Connect To: " + IntegralSetting.getDeviceName();
+			mTVConnectTo.setText(text);
+			mTVConnectTo.setVisibility(View.VISIBLE);
 		}
 	}
 

@@ -8,6 +8,7 @@
     <string name="strConnActTitle">Set connection</string>
     <string name="strSeatchIntegral">Search Integral Devices</string>
     <string name="strMenuDisconnect">disconnect</string>
+    <string name="fontello_logo">fontello_logo</string>
 	
 	<string-array name="commands_entries">
 		<item>bs#a&amp;_LED1_\r</item>

@@ -24,7 +24,7 @@ public class SplashScreensActivity extends Activity {
 	public static final String SPLASH_SCREEN_OPTION_3 = "Option 3";
 	
 	// Splash screen timer
-    private static int SPLASH_TIME_OUT = 1000;
+    private static int SPLASH_TIME_OUT = 3000;
 	private KenBurnsView mKenBurns;
 	private FontelloTextView mLogo;
 	private TextView mWelcomeText;

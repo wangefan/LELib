@@ -10,7 +10,7 @@
         app:upText="@+string/strConnectTo"
         app:downText="+string/strSearchDevice"
         app:upDrawable="@drawable/connect"
-        app:downDrawable="@drawable/searchDevice"
+        app:downDrawable="@drawable/searchdevice"
         android:layout_centerInParent="true"
         android:layout_width="240dp"
         android:layout_height="240dp"/>

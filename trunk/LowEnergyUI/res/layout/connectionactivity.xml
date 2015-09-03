@@ -11,6 +11,12 @@
         app:downText="@+string/strSearchDevice"
         app:upDrawable="@drawable/connect"
         app:downDrawable="@drawable/searchdevice"
+        app:ringColor="#546D95"
+        app:circleColor="#B2C6DE"
+        app:textColor="#546D95"
+        app:dividerColor="#546D95"
+        app:ringWidth="4dp"
+        app:dividerSize="4dp"
         android:layout_centerInParent="true"
         android:layout_width="280dp"
         android:layout_height="280dp"/>

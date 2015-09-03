@@ -8,21 +8,12 @@
     <com.UI.LEDevice.RingButton
         android:id="@+id/ringButton"
         app:upText="@+string/strConnectTo"
-        app:downText="+string/strSearchDevice"
+        app:downText="@+string/strSearchDevice"
         app:upDrawable="@drawable/connect"
         app:downDrawable="@drawable/searchdevice"
         android:layout_centerInParent="true"
-        android:layout_width="240dp"
-        android:layout_height="240dp"/>
-
-    <TextView
-        android:id="@+id/tvConnectTo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/idConn"
-        android:layout_centerHorizontal="true"
-        android:text="none device" />
- 
+        android:layout_width="280dp"
+        android:layout_height="280dp"/>
 
     <CheckBox
         android:id="@+id/idAutoConn"

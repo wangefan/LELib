@@ -51,9 +51,6 @@ public class ConnectionActivity extends BTSettingActivity {
 		
 	//Data members.
 	RingButton    mRingButton;
-
-	TextView      mTVConnectTo;
-
 	CheckBox      mAutoConn;
 	BLEDevice 	  mLastConnDevice;
 	
@@ -79,7 +76,6 @@ public class ConnectionActivity extends BTSettingActivity {
 		
 		//init UI controls
 		mRingButton = (RingButton)findViewById(R.id.ringButton);
-		mTVConnectTo = (TextView)  findViewById(R.id.tvConnectTo);
 		mAutoConn = (CheckBox) findViewById(R.id.idAutoConn);
 		mLastConnDevice = null;
 				
@@ -118,16 +114,14 @@ public class ConnectionActivity extends BTSettingActivity {
 		super.onResume();
 		if( 0 >= IntegralSetting.getDeviceMACAddr().length() )
 		{
-		
+			mRingButton.setUpSideEnabled(false);
 			mAutoConn.setEnabled(false);
-			mTVConnectTo.setVisibility(View.INVISIBLE);
 		}
 		else {
-			
+			mRingButton.setUpSideEnabled(true);
 			mAutoConn.setEnabled(true);
 			String text = "Connect To: " + IntegralSetting.getDeviceName();
-			mTVConnectTo.setText(text);
-			mTVConnectTo.setVisibility(View.VISIBLE);
+			
 		}
 	}
 

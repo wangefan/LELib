@@ -39,6 +39,7 @@ public class RingButton extends View {
 
     private boolean upPressed = false;
     private boolean downPressed = false;
+    private boolean mBUpSideEnabled = true;
 
     private String upText = "up";
     private String downText = "down";
@@ -151,7 +152,7 @@ public class RingButton extends View {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (x > PRESS_RADIUS && x < centerX * 2 - PRESS_RADIUS) {
                 float upY = (float) Math.sqrt(Math.pow((outerRadius - PRESS_RADIUS / 2), 2) - Math.pow((outerRadius - x), 2));
-                if (y > centerY - upY && y < centerY) {
+                if (y > centerY - upY && y < centerY && mBUpSideEnabled) {
                     upPressed = true;
                     this.invalidate();
                 } else if (y > centerY && y < centerY + upY) {
@@ -160,7 +161,7 @@ public class RingButton extends View {
                 }
             }
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (upPressed) {
+            if (upPressed && mBUpSideEnabled) {
                 if (null != onClickListener) {
                     onClickListener.clickUp();
                 }
@@ -239,4 +240,8 @@ public class RingButton extends View {
         this.onClickListener = onClickListener;
     }
 
+    public void setUpSideEnabled(boolean bEnabled) {
+    	mBUpSideEnabled = bEnabled;
+    	invalidate();
+    }
 }

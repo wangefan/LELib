@@ -9,7 +9,7 @@
     <string name="strSeatchIntegral">Search Integral Devices</string>
     <string name="strMenuDisconnect">disconnect</string>
     <string name="fontello_logo">fontello_logo</string>
-    <string name="strConnectTo">Connect To</string>
-    <string name="strSearchDevice">Search Integral Device</string>
+    <string name="strConnectTo">Integral</string>
+    <string name="strSearchDevice">Search</string>
 	
 </resources>

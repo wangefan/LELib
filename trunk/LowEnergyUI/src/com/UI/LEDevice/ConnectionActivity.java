@@ -50,9 +50,10 @@ public class ConnectionActivity extends BTSettingActivity {
 	};
 		
 	//Data members.
-	ImageButton   mBtnConn;
+	RingButton    mRingButton;
+
 	TextView      mTVConnectTo;
-	ImageButton   mBtnScan;
+
 	CheckBox      mAutoConn;
 	BLEDevice 	  mLastConnDevice;
 	
@@ -77,31 +78,26 @@ public class ConnectionActivity extends BTSettingActivity {
 		setContentView(R.layout.connectionactivity);
 		
 		//init UI controls
-		mBtnConn = (ImageButton) findViewById(R.id.idConn);
+		mRingButton = (RingButton)findViewById(R.id.ringButton);
 		mTVConnectTo = (TextView)  findViewById(R.id.tvConnectTo);
-		mBtnScan = (ImageButton) findViewById(R.id.idSetConn);
 		mAutoConn = (CheckBox) findViewById(R.id.idAutoConn);
 		mLastConnDevice = null;
 				
-		if(mBtnConn != null)
+		if(mRingButton != null)
 		{
-			mBtnConn.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					ConnectionActivity.this.connectTo(IntegralSetting.getDeviceName(), IntegralSetting.getDeviceMACAddr());
-				}
-			});
-		}
-		
-		if(mBtnScan != null)
-		{
-			mBtnScan.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Intent i = new Intent(ConnectionActivity.this, ScanLEDeviceActivity.class);
+			mRingButton.setOnClickListener(new RingButton.OnClickListener()
+			{
+	            @Override
+	            public void clickUp() {
+	            	ConnectionActivity.this.connectTo(IntegralSetting.getDeviceName(), IntegralSetting.getDeviceMACAddr());
+	            }
+
+	            @Override
+	            public void clickDown() {
+	            	Intent i = new Intent(ConnectionActivity.this, ScanLEDeviceActivity.class);
 		            startActivityForResult(i, REQUEST_GET_LE_DEVICE);
-				}
-			});
+	            }
+	       });
 		}
 		
 		//initialize preference value
@@ -122,12 +118,12 @@ public class ConnectionActivity extends BTSettingActivity {
 		super.onResume();
 		if( 0 >= IntegralSetting.getDeviceMACAddr().length() )
 		{
-			mBtnConn.setEnabled(false);
+		
 			mAutoConn.setEnabled(false);
 			mTVConnectTo.setVisibility(View.INVISIBLE);
 		}
 		else {
-			mBtnConn.setEnabled(true);
+			
 			mAutoConn.setEnabled(true);
 			String text = "Connect To: " + IntegralSetting.getDeviceName();
 			mTVConnectTo.setText(text);

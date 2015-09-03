@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <ImageButton
-        android:id="@+id/idConn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <com.UI.LEDevice.RingButton
+        android:id="@+id/ringButton"
+        app:upText="@+string/strConnectTo"
+        app:downText="+string/strSearchDevice"
+        app:upDrawable="@drawable/connect"
+        app:downDrawable="@drawable/searchDevice"
         android:layout_centerInParent="true"
-        android:src="@android:drawable/ic_menu_call" />
+        android:layout_width="240dp"
+        android:layout_height="240dp"/>
 
     <TextView
         android:id="@+id/tvConnectTo"
@@ -18,14 +22,7 @@
         android:layout_below="@+id/idConn"
         android:layout_centerHorizontal="true"
         android:text="none device" />
-        
-    <ImageButton
-        android:id="@+id/idSetConn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvConnectTo"
-        android:layout_centerHorizontal="true"
-        android:src="@android:drawable/ic_search_category_default" />
+ 
 
     <CheckBox
         android:id="@+id/idAutoConn"
@@ -35,12 +32,5 @@
         android:layout_centerHorizontal="true"
         android:text="@+string/strAutoConn" />
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/idSetConn"
-        android:text="Serch integral device" />
 
 </RelativeLayout>

@@ -2,7 +2,6 @@ package com.UI.LEDevice;
 
 import com.BLE.BLEUtility.BLEUtility;
 import com.BLE.Buttons.BLEButton;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;

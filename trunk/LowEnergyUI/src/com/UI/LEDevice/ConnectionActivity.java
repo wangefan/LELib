@@ -8,14 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class ConnectionActivity extends BTSettingActivity {
+public class ConnectionActivity extends Activity {
 	//Constant
 	public static final String KEY_GET_BT_DEVICE = "KEY_GET_BT_DEVICE";
 	
@@ -131,25 +128,19 @@ public class ConnectionActivity extends BTSettingActivity {
 		super.onPause();
 	}
 
-	@Override
-	protected void mDoThingsAtrEnableBTActy() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	   @Override
-	    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	       switch (requestCode) {
-	        case REQUEST_GET_LE_DEVICE :
-	        {
-	        	if(resultCode == Activity.RESULT_OK ) 
-	        	{
-	        		final BLEDevice device = (BLEDevice) data.getSerializableExtra(KEY_GET_BT_DEVICE);
-	        		connectTo(device.getDeviceName(), device.getAddress());
-	        	}
-	        }
-	        break;
-	        }
-	       super.onActivityResult(requestCode, resultCode, data);
-	   }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+       switch (requestCode) {
+        case REQUEST_GET_LE_DEVICE :
+        {
+        	if(resultCode == Activity.RESULT_OK ) 
+        	{
+        		final BLEDevice device = (BLEDevice) data.getSerializableExtra(KEY_GET_BT_DEVICE);
+        		connectTo(device.getDeviceName(), device.getAddress());
+        	}
+        }
+        break;
+        }
+       super.onActivityResult(requestCode, resultCode, data);
+    }
 }

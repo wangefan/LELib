@@ -4,7 +4,7 @@
     <string name="app_name">LowEnergyUI</string>
     <string name="strWelcome">Integral (this is splash)</string>
     <string name="action_settings">Settings</string>
-    <string name="strAutoConn">Auto connect</string>
+    <string name="strAutoConn">Auto</string>
     <string name="strConnActTitle">Set connection</string>
     <string name="strSeatchIntegral">Search Integral Devices</string>
     <string name="strMenuDisconnect">disconnect</string>

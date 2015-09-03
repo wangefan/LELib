@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
+   
     <com.UI.LEDevice.RingButton
         android:id="@+id/ringButton"
         app:upText="@+string/strConnectTo"
@@ -25,9 +25,10 @@
         android:id="@+id/idAutoConn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/idConn"
-        android:layout_centerHorizontal="true"
+        android:layout_alignLeft="@+id/ringButton"
+        android:layout_alignTop="@+id/ringButton"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="90dp"
         android:text="@+string/strAutoConn" />
-
 
 </RelativeLayout>

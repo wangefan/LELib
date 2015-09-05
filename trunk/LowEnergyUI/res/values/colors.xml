@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
+    <!-- theme color -->
+    <color name="custom_base_color">#B2C6DE</color>
+    <color name="custom_fore_color">#546D95</color>
+    
+    <!-- theme color end -->
+    
     <color name="white">#ffffff</color>
     <color name="white_15_percent">#26ffffff</color>
     <color name="white_30_percent">#4Dffffff</color>

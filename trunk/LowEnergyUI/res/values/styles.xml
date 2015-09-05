@@ -16,5 +16,10 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-
+	
+	<style name="IntegralTheme" parent="android:Theme.Holo.Light">
+	    <item name="android:actionBarStyle">@style/custom_title_background</item>
+	    <item name="android:windowBackground">@color/custom_base_color</item>
+	    <item name="android:colorBackground">@color/custom_base_color</item>
+	</style>
 </resources>

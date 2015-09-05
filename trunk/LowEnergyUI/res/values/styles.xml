@@ -21,5 +21,6 @@
 	    <item name="android:actionBarStyle">@style/custom_title_background</item>
 	    <item name="android:windowBackground">@color/custom_base_color</item>
 	    <item name="android:colorBackground">@color/custom_base_color</item>
+	    <item name="android:textColor">@color/custom_fore_color</item>
 	</style>
 </resources>

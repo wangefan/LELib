@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">LowEnergyUI</string>
+    <string name="app_name">Integral</string>
     <string name="strWelcome">Integral (this is splash)</string>
     <string name="action_settings">Settings</string>
     <string name="strAutoConn">Auto</string>
     <string name="strConnActTitle">Set connection</string>
     <string name="strSeatchIntegral">Search Integral Devices</string>
     <string name="strMenuDisconnect">disconnect</string>
-    <string name="fontello_logo">&#xe802;</string>
+    <string name="fontello_logo">&#xe803;</string>
     <string name="strConnectTo">Integral</string>
     <string name="strSearchDevice">Search</string>
 	

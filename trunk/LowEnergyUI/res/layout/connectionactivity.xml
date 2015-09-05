@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" xmlns:app1="http://schemas.android.com/apk/res/com.UI.LEDevice">
    
     <com.UI.LEDevice.RingButton
         android:id="@+id/ringButton"
@@ -23,12 +23,33 @@
 
     <CheckBox
         android:id="@+id/idAutoConn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/CheckBoxStyle.Light"
         android:layout_alignLeft="@+id/ringButton"
         android:layout_alignTop="@+id/ringButton"
         android:layout_marginLeft="25dp"
         android:layout_marginTop="90dp"
         android:text="@+string/strAutoConn" />
 
+    <com.UI.font.RobotoTextView
+        android:id="@+id/upTexts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/ringButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="97dp"
+        android:text="@string/strConnectTo"
+        android:textColor="@color/custom_fore_color"
+        android:textSize="25sp"
+        app1:typeface="robotoCondensed" />
+   <com.UI.font.RobotoTextView
+        android:id="@+id/downTexts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/ringButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:text="@string/strSearchDevice"
+        android:textColor="@color/custom_fore_color"
+        android:textSize="25sp"
+        app1:typeface="robotoCondensed" />
 </RelativeLayout>

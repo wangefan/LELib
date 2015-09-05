@@ -100,7 +100,7 @@ public class RingButton extends View {
 
         // draw upText
         if (!TextUtils.isEmpty(upText)) {
-            canvas.drawText(upText, centerX - upRect.width() / 2, centerY - textDivider, textPaint);
+            //canvas.drawText(upText, centerX - upRect.width() / 2, centerY - textDivider, textPaint);
         }
         // draw upDrawable
         if (null != upBitmap) {
@@ -114,7 +114,7 @@ public class RingButton extends View {
         }
         // draw downText
         if (!TextUtils.isEmpty(downText)) {
-            canvas.drawText(downText, centerX - downRect.width() / 2, centerY + downBitmapHeight + upRect.height() + textDivider, textPaint);
+            //canvas.drawText(downText, centerX - downRect.width() / 2, centerY + downBitmapHeight + upRect.height() + textDivider, textPaint);
         }
 
         mainPaint.setStrokeWidth(dividerSize);

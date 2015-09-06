@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<declare-styleable name = "LECmdsStyleDef">
+	    <attr name = "posX" format = "float" />
+	    <attr name = "posY" format = "float" />
 	    <attr name = "LEBtnState1CmdTitle" format = "string" />
 	    <attr name = "LEBtnState2CmdTitle" format = "string" />
 	    <attr name = "LEBtnState3CmdTitle" format = "string" />

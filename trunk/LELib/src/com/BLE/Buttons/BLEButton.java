@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.LinearLayout;
 
 public abstract class BLEButton extends LinearLayout {
@@ -50,6 +51,8 @@ public abstract class BLEButton extends LinearLayout {
 	protected TypedArray mTypedArray;
 	protected ArrayList<LECmd> mCmdsColl;
 	protected Handler mUIHanlder = new Handler();
+	protected float mPosX = 0.0f;
+	protected float mPosY = 0.0f;
 	
 	//constructors
 	public BLEButton(Context context) {
@@ -67,7 +70,9 @@ public abstract class BLEButton extends LinearLayout {
 	
 	//To initialize BLEButton
 	private void initBLEButton(Context context, AttributeSet attrs)  {  
-		mTypedArray = context.obtainStyledAttributes(attrs, R.styleable.LECmdsStyleDef); 
+		mTypedArray = context.obtainStyledAttributes(attrs, R.styleable.LECmdsStyleDef);
+		mPosX = mTypedArray.getFloat(R.styleable.LECmdsStyleDef_posX, 0.0f);
+		mPosY = mTypedArray.getFloat(R.styleable.LECmdsStyleDef_posY, 0.0f);
     }  
 	
 	//Member functions
@@ -84,4 +89,15 @@ public abstract class BLEButton extends LinearLayout {
 		final Intent brdConnState = new Intent(action);
         getContext().sendBroadcast(brdConnState);
 	}	
+	
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+	
+		float destX = (float)(((View) (getParent())).getWidth()) * mPosX;
+		float destY = (float)(((View) (getParent())).getHeight()) * mPosY;
+		setX(destX);
+		setY(destY);
+		
+		super.onWindowFocusChanged(hasFocus);
+	}
 }

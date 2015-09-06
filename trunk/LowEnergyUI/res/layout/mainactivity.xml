@@ -10,13 +10,6 @@
          android:layout_height="fill_parent" >
 
          <ImageView
-             android:id="@+id/coordbasecenter"
-             android:layout_width="1dp"
-             android:layout_height="1dp"
-             android:layout_centerInParent="true"
-             android:src="@android:drawable/star_off" />
-
-         <ImageView
              android:id="@+id/integralback"
              android:layout_width="fill_parent"
              android:layout_height="match_parent"
@@ -69,8 +62,7 @@
            android:id="@+id/btnReadEdid"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:layout_toRightOf="@+id/btnEdid"
-           android:paddingLeft="10dp"
+           leCmdsStyleDef:posX="0.05"
            leCmdsStyleDef:LEBtnState1Cmd="edid"
            leCmdsStyleDef:LEBtnState1CmdRes="12"
            leCmdsStyleDef:LEBtnState1CmdTitle="Get edit" >
@@ -81,23 +73,20 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_below="@+id/btnEdid"
-           android:layout_toRightOf="@+id/btnSelectChan"
-           android:paddingLeft="10dp"
+           leCmdsStyleDef:posX="0.25"
            leCmdsStyleDef:LEBtnState1Cmd="insel"
            leCmdsStyleDef:LEBtnState1CmdRes="12"
-           leCmdsStyleDef:LEBtnState1CmdTitle="Get Channel" >
-       </com.BLE.Buttons.BLEReadCmdButton>
+           leCmdsStyleDef:LEBtnState1CmdTitle="Get Channel"/>
+       
        <com.BLE.Buttons.BLEReadCmdButton
            android:id="@+id/btnReadAudio"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_below="@+id/btnHDCP"
-           android:layout_toRightOf="@+id/btnAudio"
-           android:paddingLeft="10dp"
+           leCmdsStyleDef:posX="0.45"
            leCmdsStyleDef:LEBtnState1Cmd="audio"
            leCmdsStyleDef:LEBtnState1CmdRes="audio"
-           leCmdsStyleDef:LEBtnState1CmdTitle="Get Audio" >
-       </com.BLE.Buttons.BLEReadCmdButton>
+           leCmdsStyleDef:LEBtnState1CmdTitle="Get Audio" />
 
        <com.BLE.Buttons.BLEButton2State
            android:id="@+id/btnAudio"
@@ -110,9 +99,7 @@
            leCmdsStyleDef:LEBtnState1CmdTitle="audio from HDMI"
            leCmdsStyleDef:LEBtnState2Cmd="audio jack"
            leCmdsStyleDef:LEBtnState2CmdRes="ok"
-           leCmdsStyleDef:LEBtnState2CmdTitle="audio from input jack" >
-
-       </com.BLE.Buttons.BLEButton2State>
+           leCmdsStyleDef:LEBtnState2CmdTitle="audio from input jack" />
 
        <com.BLE.Buttons.BLEButton2State
            android:id="@+id/btnHDCP"
@@ -125,9 +112,7 @@
            leCmdsStyleDef:LEBtnState1CmdTitle="hdcp 2.2"
            leCmdsStyleDef:LEBtnState2Cmd="hdcp 14"
            leCmdsStyleDef:LEBtnState2CmdRes="ok"
-           leCmdsStyleDef:LEBtnState2CmdTitle="hdcp 14" >
-
-       </com.BLE.Buttons.BLEButton2State>
+           leCmdsStyleDef:LEBtnState2CmdTitle="hdcp 14" />
 
      </RelativeLayout>
 </LinearLayout>

@@ -11,6 +11,7 @@
         <attr name="dividerShadowColor" format="color"/>
         <attr name="textSize" format="dimension"/>
         <attr name="upDrawable" format="reference"/>
+        <attr name="upDisableDrawable" format="reference"/>
         <attr name="downDrawable" format="reference"/>
         <attr name="upText" format="string"/>
         <attr name="downText" format="string"/>

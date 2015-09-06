@@ -20,6 +20,7 @@
         app:ringWidth="4dp"
         app:textColor="@+color/custom_fore_color"
         app:upDrawable="@drawable/connect"
+        app:upDisableDrawable="@drawable/connect_disable"
         app:upText="@+string/strConnectTo" />
 
     <com.UI.font.RobotoTextView

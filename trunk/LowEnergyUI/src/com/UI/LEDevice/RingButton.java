@@ -52,6 +52,7 @@ public class RingButton extends View {
     private int dividerShadowColor = 0;
     private int dividerSize = DIVIDE_SIZE;
     private Bitmap upBitmap;
+    private Bitmap upDisableBitmap;
     private Bitmap downBitmap;
 
     private Rect upRect = new Rect();
@@ -104,7 +105,10 @@ public class RingButton extends View {
         }
         // draw upDrawable
         if (null != upBitmap) {
-            canvas.drawBitmap(upBitmap, centerX - upBitmap.getWidth() / 2, centerY - upRect.height() - upBitmap.getHeight() - (int) (textDivider * 1.5), textPaint);
+        	if(mBUpSideEnabled)
+        		canvas.drawBitmap(upBitmap, centerX - upBitmap.getWidth() / 2, centerY - upRect.height() - upBitmap.getHeight() - (int) (textDivider * 1.5), textPaint);
+        	else
+        		canvas.drawBitmap(upDisableBitmap, centerX - upDisableBitmap.getWidth() / 2, centerY - upRect.height() - upDisableBitmap.getHeight() - (int) (textDivider * 1.5), textPaint);
         }
         //draw downDrawable
         int downBitmapHeight = 0;
@@ -201,6 +205,7 @@ public class RingButton extends View {
             dividerShadowColor = typedArray.getColor(R.styleable.ringButton_dividerShadowColor, Color.WHITE);
             pressedColor = typedArray.getColor(R.styleable.ringButton_pressedColor, Color.parseColor("#dddddd"));
             int upDrawable = typedArray.getResourceId(R.styleable.ringButton_upDrawable, -1);
+            int upDisableDrawable = typedArray.getResourceId(R.styleable.ringButton_upDisableDrawable, -1);
             int downDrawable = typedArray.getResourceId(R.styleable.ringButton_downDrawable, -1);
             upText = typedArray.getString(R.styleable.ringButton_upText);
             downText = typedArray.getString(R.styleable.ringButton_downText);
@@ -208,9 +213,16 @@ public class RingButton extends View {
             typedArray.recycle();
 
             if (upDrawable > 0) {
-                Drawable camera = context.getResources().getDrawable(upDrawable);
-                BitmapDrawable bd = (BitmapDrawable) camera;
+                Drawable conn = context.getResources().getDrawable(upDrawable);
+                BitmapDrawable bd = (BitmapDrawable) conn;
                 upBitmap = bd.getBitmap();
+            }
+            
+            if (upDisableDrawable > 0)
+            {
+            	Drawable connDis = context.getResources().getDrawable(upDisableDrawable);
+                BitmapDrawable bd = (BitmapDrawable) connDis;
+                upDisableBitmap = bd.getBitmap();
             }
 
             if (downDrawable > 0) {

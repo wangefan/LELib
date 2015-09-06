@@ -12,12 +12,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class MainActivity extends BTSettingActivity 
+public class MainActivity extends CustomTitleActivity 
 {
 	//constant 
 	private final String mTAG = "MainActivity";
-	private static final int REQUEST_ENABLE_BT = 1;
-
 	//data member
 	
 	BroadcastReceiver mBtnReceiver = new BroadcastReceiver() {
@@ -126,8 +124,7 @@ public class MainActivity extends BTSettingActivity
 	}
 
 	@Override
-	protected void mDoThingsAtrEnableBTActy() {
-		// TODO Auto-generated method stub
-		
+	String getCustTitle() {
+		return getResources().getString(R.string.strMainActivity);
 	}
 }

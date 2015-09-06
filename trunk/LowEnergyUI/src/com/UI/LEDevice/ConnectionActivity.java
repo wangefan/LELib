@@ -3,6 +3,7 @@ package com.UI.LEDevice;
 import com.BLE.BLEUtility.BLEDevice;
 import com.BLE.BLEUtility.BLEUtility;
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -81,7 +82,13 @@ public class ConnectionActivity extends CustomTitleActivity {
 			{
 	            @Override
 	            public void clickUp() {
-	            	ConnectionActivity.this.connectTo(IntegralSetting.getDeviceName(), IntegralSetting.getDeviceMACAddr());
+	            	if(BluetoothAdapter.getDefaultAdapter() == null || BluetoothAdapter.getDefaultAdapter().isEnabled() == false)
+	            	{
+	            		Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+	                    startActivityForResult(enableBtIntent, BTSettingActivity.REQUEST_ENABLE_BT);
+	            	}
+	            	else
+	            		ConnectionActivity.this.connectTo(IntegralSetting.getDeviceName(), IntegralSetting.getDeviceMACAddr());
 	            }
 
 	            @Override
@@ -130,8 +137,8 @@ public class ConnectionActivity extends CustomTitleActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
        switch (requestCode) {
-        case REQUEST_GET_LE_DEVICE :
-        {
+       	case REQUEST_GET_LE_DEVICE :
+       	{
         	if(resultCode == Activity.RESULT_OK ) 
         	{
         		final BLEDevice device = (BLEDevice) data.getSerializableExtra(KEY_GET_BT_DEVICE);
@@ -139,7 +146,15 @@ public class ConnectionActivity extends CustomTitleActivity {
         	}
         }
         break;
-        }
+       	case BTSettingActivity.REQUEST_ENABLE_BT:
+       	{
+       		if(resultCode == Activity.RESULT_OK ) 
+        	{
+       			ConnectionActivity.this.connectTo(IntegralSetting.getDeviceName(), IntegralSetting.getDeviceMACAddr());
+        	}
+       	}
+       	break;
+       }
        super.onActivityResult(requestCode, resultCode, data);
     }
 

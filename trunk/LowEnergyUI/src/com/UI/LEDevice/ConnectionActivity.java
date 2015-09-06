@@ -12,7 +12,7 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 
-public class ConnectionActivity extends Activity {
+public class ConnectionActivity extends CustomTitleActivity {
 	//Constant
 	public static final String KEY_GET_BT_DEVICE = "KEY_GET_BT_DEVICE";
 	
@@ -68,7 +68,6 @@ public class ConnectionActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getActionBar().setTitle(getResources().getString(R.string.strConnActTitle));
 		setContentView(R.layout.connectionactivity);
 		
 		//init UI controls
@@ -143,4 +142,9 @@ public class ConnectionActivity extends Activity {
         }
        super.onActivityResult(requestCode, resultCode, data);
     }
+
+	@Override
+	String getCustTitle() {
+		return getResources().getString(R.string.strConnActTitle);
+	}
 }

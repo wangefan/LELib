@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app1="http://schemas.android.com/apk/res/com.UI.LEDevice"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:background="@android:color/transparent">
+    
+    <com.UI.font.RobotoTextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:textColor="@color/custom_fore_color"
+        android:textSize="25sp"
+        app1:typeface="robotoCondensed"
+        android:maxLines="1"/>
+
+</RelativeLayout>

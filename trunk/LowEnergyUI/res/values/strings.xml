@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Integral</string>
-    <string name="strWelcome">Integral (this is splash)</string>
+    <string name="strWelcome">Welcome</string>
     <string name="action_settings">Settings</string>
     <string name="strAutoConn">Auto</string>
     <string name="strConnActTitle">Set connection</string>

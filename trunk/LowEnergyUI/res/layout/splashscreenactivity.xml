@@ -14,15 +14,13 @@
     to become larger if user has set larger text in global
     settings. -->
 
-    <com.UI.font.FontelloTextView
+    <ImageView
         android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:alpha="0.0"
-        android:text="@string/fontello_logo"
-        
-        android:textSize="64dp"
+        android:src="@drawable/ic_launcher"
         tools:ignore="SpUsage" />
 
     <com.UI.font.RobotoTextView

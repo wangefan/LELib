@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -13,7 +14,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
-import com.UI.font.FontelloTextView;
+import com.UI.font.RobotoTextView;
 import com.UI.kenburnsview.KenBurnsView;
 
 public class SplashScreensActivity extends Activity {
@@ -24,10 +25,10 @@ public class SplashScreensActivity extends Activity {
 	public static final String SPLASH_SCREEN_OPTION_3 = "Option 3";
 	
 	// Splash screen timer
-    private static int SPLASH_TIME_OUT = 3000;
+    private static int SPLASH_TIME_OUT = 5000;
 	private KenBurnsView mKenBurns;
-	private FontelloTextView mLogo;
-	private TextView mWelcomeText;
+	private ImageView mLogo;
+	private RobotoTextView mWelcomeText;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,11 +39,11 @@ public class SplashScreensActivity extends Activity {
 		
 		//Init controls
 		mKenBurns = (KenBurnsView) findViewById(R.id.ken_burns_images);
-		mLogo = (FontelloTextView) findViewById(R.id.logo);
-		mWelcomeText = (TextView) findViewById(R.id.welcome_text);
+		mLogo = (ImageView) findViewById(R.id.logo);
+		mWelcomeText = (RobotoTextView) findViewById(R.id.welcome_text);
 		mKenBurns.setImageResource(R.drawable.splash_screen_background);
 		
-		String category = SPLASH_SCREEN_OPTION_1;
+		String category = SPLASH_SCREEN_OPTION_3;
 		setAnimation(category);
 		
 		new Handler().postDelayed(new Runnable() {

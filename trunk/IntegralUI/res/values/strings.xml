@@ -11,5 +11,6 @@
     <string name="strMenuDisconnect">disconnect</string>
     <string name="strConnectTo">Integral</string>
     <string name="strSearchDevice">Search</string>
-	
+    <string name="fontello_heart_full">&#xe80a;</string>
+	<string name="fontello_heart_empty">&#xe80b;</string>
 </resources>

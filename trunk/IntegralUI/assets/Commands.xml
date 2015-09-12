@@ -40,8 +40,8 @@
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="Read Audio" Cmd="audio">
-			<CmdRes>audio 1</CmdRes>
-			<CmdRes>audio 2</CmdRes>
+			<CmdRes>audio hdmi</CmdRes>
+			<CmdRes>audio jack</CmdRes>
 		</ReadCmd>
     </CmdGroup>
 	<CmdGroup Title="HDCP">
@@ -51,5 +51,9 @@
 		<WriteCmd Title="HDCP 14" Cmd="hdcp 14">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
+		<ReadCmd Title="Read HDCP" Cmd="hdcp">
+			<CmdRes>hdcp 22</CmdRes>
+			<CmdRes>hdcp 14</CmdRes>
+		</ReadCmd>
     </CmdGroup>	
 </Commands>

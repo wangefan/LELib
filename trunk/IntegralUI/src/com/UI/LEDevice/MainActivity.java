@@ -60,10 +60,6 @@ public class MainActivity extends CustomTitleActivity
             {
             	UIUtility.showProgressDlg(MainActivity.this, true, "sending cmd");
             }
-            else if (BLEUtility.ACTION_SENCMD_READ.equals(action)) 
-            {
-            	UIUtility.showProgressDlg(MainActivity.this, true, "sending read cmd");
-            }
             else if(BLEUtility.ACTION_SENCMD_OK.equals(action)) 
             {
             	UIUtility.showProgressDlg(MainActivity.this, false, "sending cmd OK");
@@ -73,6 +69,16 @@ public class MainActivity extends CustomTitleActivity
             {
             	UIUtility.showProgressDlg(MainActivity.this, false, "sending cmd fail");
             	Toast.makeText(MainActivity.this, "sending cmd fail", Toast.LENGTH_SHORT).show();
+            }
+            else if (BLEUtility.ACTION_SENCMD_READ.equals(action)) 
+            {
+            	UIUtility.showProgressDlg(MainActivity.this, true, "sending read cmd");
+            }
+            else if(BLEUtility.ACTION_SENCMD_READ_CONTENT.equals(action))
+            {
+            	UIUtility.showProgressDlg(MainActivity.this, false, "read cmd ok");
+            	String message = intent.getStringExtra(BLEUtility.ACTION_SENCMD_READ_CONTENT_KEY);
+            	Toast.makeText(MainActivity.this, "read cmd ok, response = " + message, Toast.LENGTH_SHORT).show();
             }
             else if(BLEUtility.ACTION_SENCMD_READ_FAIL.equals(action))
             {
@@ -102,7 +108,14 @@ public class MainActivity extends CustomTitleActivity
 		{
 			final Intent brdConnState = new Intent(action);
 	        MainActivity.this.sendBroadcast(brdConnState);
+		}
+		protected void broadCastActionMsg(String action, String key, String message)
+		{
+			final Intent brd = new Intent(action);
+			brd.putExtra(key, message);
+	        MainActivity.this.sendBroadcast(brd);
 		}	
+		
 	}
 
 	private class ChildWrtItem extends ChildItem {
@@ -150,7 +163,49 @@ public class MainActivity extends CustomTitleActivity
 	}
 	
 	private class ChildReadItem extends ChildItem {
+		private String mTag = "ChildWrtItem";
 		public List<String> mCommandResColl = new ArrayList<String>();
+		public void doWriteCmdAndReadRsp()
+		{
+			MyLog.d(mTag, "doWriteCmdAndReadRsp begin");
+			broadCastAction(BLEUtility.ACTION_SENCMD_READ);
+			
+			Thread workerThread = new Thread() {
+			    public void run() {
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd in thread" + Thread.currentThread().getId());
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write cmd = " + mCommand);
+			    	byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(mCommand, false));
+			    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
+			    	String strRspCal = "";
+			    	if(rspCal != null)
+			    		strRspCal = new String(rspCal);
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, read content = " + strRspCal);
+			    	for(final String itrRsp: mCommandResColl)
+			    	{
+			    		MyLog.d(mTag, "doWriteCmdAndReadRsp, compare from = " + itrRsp);
+			    		if(strRspCal.equals(itrRsp) == true)
+						{
+							MyLog.d(mTag, "doWriteCmdAndReadRsp, read ok");
+							mUIHanlder.post(new Runnable() {
+								@Override
+								public void run() {
+									broadCastActionMsg(BLEUtility.ACTION_SENCMD_READ_CONTENT, BLEUtility.ACTION_SENCMD_READ_CONTENT_KEY, itrRsp);
+								}
+							});
+							return;
+						}
+			    	}
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, read fail");
+					mUIHanlder.post(new Runnable() {
+						@Override
+						public void run() {
+							broadCastAction(BLEUtility.ACTION_SENCMD_READ_FAIL);
+						}
+					});
+			    }
+			};
+			workerThread.start();
+		}
 	}
 
 	private static class ChildHolder {
@@ -343,7 +398,6 @@ public class MainActivity extends CustomTitleActivity
 				    		{
 				    			String strVal = cmdResNode.getFirstChild().getNodeValue();
 				    			((ChildReadItem)command).mCommandResColl.add(new String(strVal));
-				    			break;
 				    		}
 		    			}
 		    			cmdgroup.items.add(command);
@@ -396,6 +450,7 @@ public class MainActivity extends CustomTitleActivity
 					}
 					else if(true == (childItem instanceof ChildReadItem))
 					{
+						((ChildReadItem)childItem).doWriteCmdAndReadRsp();
 						return true;
 					}
 				}
@@ -426,6 +481,7 @@ public class MainActivity extends CustomTitleActivity
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_OK);
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_FAIL);
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_CONTENT);
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_FAIL);
         intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_DISCONNECTED);
         intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);

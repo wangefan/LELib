@@ -123,8 +123,6 @@ public class ConnectionActivity extends CustomTitleActivity {
 		else {
 			mRingButton.setUpSideEnabled(true);
 			mAutoConn.setEnabled(true);
-			String text = "Connect To: " + IntegralSetting.getDeviceName();
-			
 		}
 	}
 

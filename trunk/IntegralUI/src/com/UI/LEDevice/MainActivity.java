@@ -31,8 +31,8 @@ public class MainActivity extends CustomTitleActivity
 	//constant 
 	private final String mTAG = "MainActivity";
 	//data member
-	private AnimatedExpandableListView listView;
-	private ExampleAdapter adapter;
+	private AnimatedExpandableListView mListView;
+	private ExampleAdapter mAdapter;
 	
 	//Inner classes
 	BroadcastReceiver mBtnReceiver = new BroadcastReceiver() {
@@ -227,15 +227,15 @@ public class MainActivity extends CustomTitleActivity
 		
 		
 
-		adapter = new ExampleAdapter(this);
-		adapter.setData(items);
+		mAdapter = new ExampleAdapter(this);
+		mAdapter.setData(items);
 
-		listView = (AnimatedExpandableListView) findViewById(R.id.list_view);
-		listView.setAdapter(adapter);
+		mListView = (AnimatedExpandableListView) findViewById(R.id.list_view);
+		mListView.setAdapter(mAdapter);
 
 		// In order to show animations, we need to use a custom click handler
 		// for our ExpandableListView.
-		listView.setOnGroupClickListener(new OnGroupClickListener() {
+		mListView.setOnGroupClickListener(new OnGroupClickListener() {
 
 			@Override
 			public boolean onGroupClick(ExpandableListView parent, View v,
@@ -243,10 +243,10 @@ public class MainActivity extends CustomTitleActivity
 				// We call collapseGroupWithAnimation(int) and
 				// expandGroupWithAnimation(int) to animate group
 				// expansion/collapse.
-				if (listView.isGroupExpanded(groupPosition)) {
-					listView.collapseGroupWithAnimation(groupPosition);
+				if (mListView.isGroupExpanded(groupPosition)) {
+					mListView.collapseGroupWithAnimation(groupPosition);
 				} else {
-					listView.expandGroupWithAnimation(groupPosition);
+					mListView.expandGroupWithAnimation(groupPosition);
 				}
 				return true;
 			}
@@ -263,9 +263,9 @@ public class MainActivity extends CustomTitleActivity
 		int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
 				50, r.getDisplayMetrics());
 		if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-			listView.setIndicatorBounds(width - px, width);
+			mListView.setIndicatorBounds(width - px, width);
 		} else {
-			listView.setIndicatorBoundsRelative(width - px, width);
+			mListView.setIndicatorBoundsRelative(width - px, width);
 		}
 	}
 	

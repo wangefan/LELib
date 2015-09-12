@@ -1,7 +1,20 @@
 package com.UI.LEDevice;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import com.BLE.BLEUtility.BLEUtility;
 import com.BLE.Buttons.BLEButton;
@@ -79,10 +92,18 @@ public class MainActivity extends CustomTitleActivity
 		String title;
 		List<ChildItem> items = new ArrayList<ChildItem>();
 	}
+	
+	private static abstract class ChildItem {
+		public String mTitle;
+		public String mCommand;
+	}
 
-	private static class ChildItem {
-		String title;
-		//String hint;
+	private static class ChildWrtItem extends ChildItem {
+		public String mCommandRes;
+	}
+	
+	private static class ChildReadItem extends ChildItem {
+		public List<String> mCommandResColl = new ArrayList<String>();
 	}
 
 	private static class ChildHolder {
@@ -100,19 +121,19 @@ public class MainActivity extends CustomTitleActivity
 	private class ExampleAdapter extends AnimatedExpandableListAdapter {
 		private LayoutInflater inflater;
 
-		private List<GroupItem> items;
+		private List<GroupItem> mCollItems;
 
 		public ExampleAdapter(Context context) {
 			inflater = LayoutInflater.from(context);
 		}
 
 		public void setData(List<GroupItem> items) {
-			this.items = items;
+			mCollItems = items;
 		}
 
 		@Override
 		public ChildItem getChild(int groupPosition, int childPosition) {
-			return items.get(groupPosition).items.get(childPosition);
+			return mCollItems.get(groupPosition).items.get(childPosition);
 		}
 
 		@Override
@@ -138,7 +159,7 @@ public class MainActivity extends CustomTitleActivity
 				holder = (ChildHolder) convertView.getTag();
 			}
 
-			holder.title.setText(item.title);
+			holder.title.setText(item.mTitle);
 			//holder.hint.setText(item.hint);
 
 			return convertView;
@@ -146,17 +167,17 @@ public class MainActivity extends CustomTitleActivity
 
 		@Override
 		public int getRealChildrenCount(int groupPosition) {
-			return items.get(groupPosition).items.size();
+			return mCollItems.get(groupPosition).items.size();
 		}
 
 		@Override
 		public GroupItem getGroup(int groupPosition) {
-			return items.get(groupPosition);
+			return mCollItems.get(groupPosition);
 		}
 
 		@Override
 		public int getGroupCount() {
-			return items.size();
+			return mCollItems.size();
 		}
 
 		@Override
@@ -206,29 +227,88 @@ public class MainActivity extends CustomTitleActivity
 		registerReceiver(mBtnReceiver, makeServiceActionsIntentFilter());	
 		setContentView(R.layout.activity_expandable_list_view);
 
-		List<GroupItem> items = new ArrayList<GroupItem>();
-
-		// Populate our list with groups and it's children
-		for (int i = 1; i < 100; i++) {
-			GroupItem item = new GroupItem();
-
-			item.title = "Expand this item " + i;
-
-			for (int j = 0; j < i; j++) {
-				ChildItem child = new ChildItem();
-				child.title = "Expanded " + j;
-				//child.hint = "Too awesome";
-
-				item.items.add(child);
-			}
-
-			items.add(item);
+		//parsing XML
+		List<GroupItem> groupItems = new ArrayList<GroupItem>();
+		XPath xpath = XPathFactory.newInstance().newXPath();  
+		String expression = "//CmdGroup";  
+		
+		InputSource inputSource = null;
+		try {
+			inputSource = new InputSource(getAssets().open("Commands.xml"));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}  
+		NodeList nodes = null;
+		try {
+			nodes = (NodeList) xpath.evaluate(expression, inputSource, XPathConstants.NODESET);
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		
 
+		for(int idxCmdGroup = 0; idxCmdGroup<nodes.getLength(); ++idxCmdGroup) {  
+		    Node cmdGroupNode = nodes.item(idxCmdGroup);  
+		    NamedNodeMap attributes = cmdGroupNode.getAttributes();  
+		    GroupItem cmdgroup = new GroupItem();
+		    cmdgroup.title = attributes.getNamedItem("Title").getNodeValue();
+		    groupItems.add(cmdgroup);
+		    NodeList cmdsList = cmdGroupNode.getChildNodes();
+		    if(cmdsList != null)
+		    {
+		    	for(int idxCmd = 0; idxCmd < cmdsList.getLength(); ++idxCmd) { 
+		    		Node cmdNode = cmdsList.item(idxCmd);  
+		    		String strNodeName = cmdNode.getLocalName();
+		    		if(strNodeName == null)
+		    			continue;
+		    		ChildItem command = null;
+		    		if(strNodeName.compareTo("WriteCmd") == 0)
+		    		{
+		    			command = new ChildWrtItem();
+		    			command.mTitle = cmdNode.getAttributes().getNamedItem("Title").getNodeValue();
+		    			command.mCommand = cmdNode.getAttributes().getNamedItem("Cmd").getNodeValue();
+		    					    			
+		    			for(int idxCmdRes = 0; idxCmdRes < cmdNode.getChildNodes().getLength(); ++idxCmdRes) { 
+		    				Node cmdResNode = cmdNode.getChildNodes().item(idxCmdRes); 
+				    		String strResNodeName = cmdResNode.getLocalName();
+				    		if(strResNodeName == null)
+				    			continue;
+				    		if(strResNodeName.compareTo("CmdRes") == 0)
+				    		{
+				    			String strVal = cmdResNode.getFirstChild().getNodeValue();
+				    			((ChildWrtItem)command).mCommandRes = new String(strVal);
+				    			break;
+				    		}
+		    			}
+		    			cmdgroup.items.add(command);
+		    		}
+		    		else if(strNodeName.compareTo("ReadCmd") == 0)
+		    		{
+		    			command = new ChildReadItem();
+		    			command.mTitle = cmdNode.getAttributes().getNamedItem("Title").getNodeValue();
+		    			command.mCommand = cmdNode.getAttributes().getNamedItem("Cmd").getNodeValue();
+		    			for(int idxCmdRes = 0; idxCmdRes < cmdNode.getChildNodes().getLength(); ++idxCmdRes) { 
+				    		Node cmdResNode = cmdNode.getChildNodes().item(idxCmdRes); 
+				    		String strResNodeName = cmdResNode.getLocalName();
+				    		if(strResNodeName == null)
+				    			continue;
+				    		if(strResNodeName.compareTo("CmdRes") == 0)
+				    		{
+				    			String strVal = cmdResNode.getFirstChild().getNodeValue();
+				    			((ChildReadItem)command).mCommandResColl.add(new String(strVal));
+				    			break;
+				    		}
+		    			}
+		    			cmdgroup.items.add(command);
+		    		}
+		    	}
+		    }
+		    
+		    
+		}
+		//parsing XML end
 		mAdapter = new ExampleAdapter(this);
-		mAdapter.setData(items);
+		mAdapter.setData(groupItems);
 
 		mListView = (AnimatedExpandableListView) findViewById(R.id.list_view);
 		mListView.setAdapter(mAdapter);

@@ -12,8 +12,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import com.BLE.BLEUtility.BLEUtility;
+import com.BLE.BLEUtility.MyLog;
 import com.BLE.Buttons.BLEButton;
+import com.BLE.Buttons.BLEButton.LECmd;
 import com.UI.LEDevice.AnimatedExpandableListView.AnimatedExpandableListAdapter;
+import com.utility.CmdProcObj;
+
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,6 +26,7 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -30,6 +35,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +47,7 @@ public class MainActivity extends CustomTitleActivity
 	//data member
 	private AnimatedExpandableListView mListView;
 	private ExampleAdapter mAdapter;
+	private static Handler mUIHanlder = new Handler();
 	
 	//Inner classes
 	BroadcastReceiver mBtnReceiver = new BroadcastReceiver() {
@@ -49,25 +56,25 @@ public class MainActivity extends CustomTitleActivity
 		public void onReceive(Context context, Intent intent) {
 			final String action = intent.getAction();
             
-            if (BLEButton.ACTION_SENCMD_BEGIN.equals(action)) 
+            if (BLEUtility.ACTION_SENCMD_BEGIN.equals(action)) 
             {
             	UIUtility.showProgressDlg(MainActivity.this, true, "sending cmd");
             }
-            else if (BLEButton.ACTION_SENCMD_READ.equals(action)) 
+            else if (BLEUtility.ACTION_SENCMD_READ.equals(action)) 
             {
             	UIUtility.showProgressDlg(MainActivity.this, true, "sending read cmd");
             }
-            else if(BLEButton.ACTION_SENCMD_OK.equals(action)) 
+            else if(BLEUtility.ACTION_SENCMD_OK.equals(action)) 
             {
             	UIUtility.showProgressDlg(MainActivity.this, false, "sending cmd OK");
             	Toast.makeText(MainActivity.this, "sending cmd OK", Toast.LENGTH_SHORT).show();
             }
-            else if(BLEButton.ACTION_SENCMD_FAIL.equals(action)) 
+            else if(BLEUtility.ACTION_SENCMD_FAIL.equals(action)) 
             {
             	UIUtility.showProgressDlg(MainActivity.this, false, "sending cmd fail");
             	Toast.makeText(MainActivity.this, "sending cmd fail", Toast.LENGTH_SHORT).show();
             }
-            else if(BLEButton.ACTION_SENCMD_READ_FAIL.equals(action))
+            else if(BLEUtility.ACTION_SENCMD_READ_FAIL.equals(action))
             {
             	UIUtility.showProgressDlg(MainActivity.this, false, "read cmd fail");
             	Toast.makeText(MainActivity.this, "read cmd fail", Toast.LENGTH_SHORT).show();
@@ -88,16 +95,61 @@ public class MainActivity extends CustomTitleActivity
 		List<ChildItem> items = new ArrayList<ChildItem>();
 	}
 	
-	private static abstract class ChildItem {
+	private class ChildItem {
 		public String mTitle;
 		public String mCommand;
+		protected void broadCastAction(String action)
+		{
+			final Intent brdConnState = new Intent(action);
+	        MainActivity.this.sendBroadcast(brdConnState);
+		}	
 	}
 
-	private static class ChildWrtItem extends ChildItem {
+	private class ChildWrtItem extends ChildItem {
+		private String mTag = "ChildWrtItem";
 		public String mCommandRes;
+		
+		public void doWriteCmdAndReadRsp()
+		{
+			MyLog.d(mTag, "doWriteCmdAndReadRsp begin");
+			broadCastAction(BLEUtility.ACTION_SENCMD_BEGIN);
+			
+			Thread workerThread = new Thread() {
+			    public void run() {
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd in thread" + Thread.currentThread().getId());
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write cmd = " + mCommand);
+			    	byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(mCommand, true));
+			    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
+			    	String strRspCal = "";
+			    	if(rspCal != null)
+			    		strRspCal = new String(rspCal);
+					if(strRspCal.equals(mCommandRes) == true)
+					{
+						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd match response");
+						mUIHanlder.post(new Runnable() {
+							@Override
+							public void run() {
+								broadCastAction(BLEUtility.ACTION_SENCMD_OK);
+							}
+						});
+					}
+					else
+					{
+						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd not match response");
+						mUIHanlder.post(new Runnable() {
+							@Override
+							public void run() {
+								broadCastAction(BLEUtility.ACTION_SENCMD_FAIL);
+							}
+						});
+					}
+			    }
+			};
+			workerThread.start();
+		}
 	}
 	
-	private static class ChildReadItem extends ChildItem {
+	private class ChildReadItem extends ChildItem {
 		public List<String> mCommandResColl = new ArrayList<String>();
 	}
 
@@ -327,6 +379,30 @@ public class MainActivity extends CustomTitleActivity
 			}
 
 		});
+		
+		mListView.setOnChildClickListener(new OnChildClickListener() {
+
+			@Override
+			public boolean onChildClick(ExpandableListView parent, View v,
+					int groupPosition, int childPosition, long id) {
+				
+				ChildItem childItem = mAdapter.getChild(groupPosition, childPosition);
+				if(childItem != null)
+				{
+					if(true == (childItem instanceof ChildWrtItem))
+					{
+						((ChildWrtItem)childItem).doWriteCmdAndReadRsp();
+						return true;
+					}
+					else if(true == (childItem instanceof ChildReadItem))
+					{
+						return true;
+					}
+				}
+				return false;
+			}
+			
+		});
 
 		// Set indicator (arrow) to the right
 		Display display = getWindowManager().getDefaultDisplay();
@@ -346,11 +422,11 @@ public class MainActivity extends CustomTitleActivity
 	
 	private static IntentFilter makeServiceActionsIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BLEButton.ACTION_SENCMD_BEGIN);
-        intentFilter.addAction(BLEButton.ACTION_SENCMD_OK);
-        intentFilter.addAction(BLEButton.ACTION_SENCMD_FAIL);
-        intentFilter.addAction(BLEButton.ACTION_SENCMD_READ);
-        intentFilter.addAction(BLEButton.ACTION_SENCMD_READ_FAIL);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_BEGIN);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_OK);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_FAIL);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_FAIL);
         intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_DISCONNECTED);
         intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         return intentFilter;

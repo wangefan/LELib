@@ -72,7 +72,7 @@ public class BLEReadCmdButton extends BLEButton{
 	protected void doWriteCmdAndReadRsp(LECmd leCmd)
 	{
 		MyLog.d(mTag, "doWriteCmdAndReadRsp begin");
-		broadCastAction(ACTION_SENCMD_READ);
+		broadCastAction(BLEUtility.ACTION_SENCMD_READ);
 		
 		final LECmd tempLeCmd = leCmd;
 		Thread workerThread = new Thread() {
@@ -91,7 +91,7 @@ public class BLEReadCmdButton extends BLEButton{
 
 						@Override
 						public void run() {
-							broadCastAction(ACTION_SENCMD_READ_CONTENT);
+							broadCastAction(BLEUtility.ACTION_SENCMD_READ_CONTENT);
 						}
 					});
 				}
@@ -101,7 +101,7 @@ public class BLEReadCmdButton extends BLEButton{
 					mUIHanlder.post(new Runnable() {
 						@Override
 						public void run() {
-							broadCastAction(ACTION_SENCMD_READ_FAIL);
+							broadCastAction(BLEUtility.ACTION_SENCMD_READ_FAIL);
 						}
 					});
 				}

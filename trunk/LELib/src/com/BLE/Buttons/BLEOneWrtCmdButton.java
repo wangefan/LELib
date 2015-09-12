@@ -80,7 +80,7 @@ public class BLEOneWrtCmdButton extends BLEButton {
 	protected void doWriteCmdAndReadRsp(LECmd leCmd)
 	{
 		MyLog.d(mTag, "doWriteCmdAndReadRsp begin");
-		broadCastAction(ACTION_SENCMD_BEGIN);
+		broadCastAction(BLEUtility.ACTION_SENCMD_BEGIN);
 		
 		final LECmd tempLeCmd = leCmd;
 		Thread workerThread = new Thread() {
@@ -100,7 +100,7 @@ public class BLEOneWrtCmdButton extends BLEButton {
 						@Override
 						public void run() {
 							
-							broadCastAction(ACTION_SENCMD_OK);
+							broadCastAction(BLEUtility.ACTION_SENCMD_OK);
 						}
 					});
 				}
@@ -111,7 +111,7 @@ public class BLEOneWrtCmdButton extends BLEButton {
 						@Override
 						public void run() {
 							
-							broadCastAction(ACTION_SENCMD_FAIL);
+							broadCastAction(BLEUtility.ACTION_SENCMD_FAIL);
 						}
 					});
 				}

@@ -36,8 +36,14 @@ public class BLEUtility
 	public final static String ACTION_CONNSTATE_CONNECTING = "ACTION_CONNSTATE_CONNECTING";
 	public final static String ACTION_DATA = "ACTION_DATA";
 	public final static String ACTION_DATA_KEY = "ACTION_DATA_KEY";
+	public static final String ACTION_SENCMD_BEGIN = "com.BLE.BLEUtility.ACTION_SENCMD_BEGIN";
+    public static final String ACTION_SENCMD_OK = "com.BLE.BLEUtility.ACTION_SENCMD_OK";
+    public static final String ACTION_SENCMD_FAIL = "com.BLE.BLEUtility.ACTION_SENCMD_FAIL";
+    public static final String ACTION_SENCMD_READ = "com.BLE.BLEUtility.ACTION_SENCMD_READ";
+    public static final String ACTION_SENCMD_READ_CONTENT = "com.BLE.BLEUtility.ACTION_SENCMD_READ_CONTENT";
+    public static final String ACTION_SENCMD_READ_FAIL = "com.BLE.BLEUtility.ACTION_SENCMD_READ_FAIL";
 	
-	//inner define
+    //inner define
 	final private String mTag = "BLEUtility";
 	final private static UUID mSUUIDString = UUID.fromString("edee2909-12b0-3e9d-1042-4c0bc820c4dc");
 	final private static UUID mCUUIDString = UUID.fromString("1249c28c-63b4-219b-814a-393944dec8c1");
@@ -484,7 +490,7 @@ public class BLEUtility
 			mResData = null;
 			write(command);
 			mBWaitData = true;
-			Thread.sleep(1500);
+			Thread.sleep(100);
 			read();
 			final int nWaitMilliSecs = 2000;
 			final int nWaitStep = 100;

@@ -1,5 +1,8 @@
 package com.UI.LEDevice;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,6 +28,7 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.TypedValue;
 import android.view.Display;
@@ -378,13 +382,30 @@ public class MainActivity extends CustomTitleActivity
 		XPath xpath = XPathFactory.newInstance().newXPath();  
 		String expression = "//CmdGroup";  
 		
+		File path = Environment.getExternalStoragePublicDirectory(
+	            Environment.DIRECTORY_DOWNLOADS);
+				
+	    File file = new File(path, "Commands.xml");
 		InputSource inputSource = null;
-		try {
-			inputSource = new InputSource(getAssets().open("Commands.xml"));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}  
+		if(file.exists())
+		{
+			try {
+				inputSource = new InputSource(new FileInputStream(file));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			try {
+				inputSource = new InputSource(getAssets().open("Commands.xml"));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}  
+		}
+		
 		NodeList nodes = null;
 		try {
 			nodes = (NodeList) xpath.evaluate(expression, inputSource, XPathConstants.NODESET);

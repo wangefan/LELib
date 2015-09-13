@@ -60,4 +60,19 @@
 			<CmdRes>edid automix</CmdRes>
 		</ReadCmd>
     </CmdGroup>
+    <CmdGroup Title="EPlay with CEC " Icon="&#xe860;">
+	    <WriteCmd Title="TURN EVERYTHING ON" Cmd="cec on" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+			<CmdRes>ok</CmdRes>
+		</WriteCmd>
+	    <WriteCmd Title="TURN EVERYTHING OFF" Cmd="cec off" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+			<CmdRes>ok</CmdRes>
+		</WriteCmd>
+		<WriteCmd Title="Play CEC" Cmd="CEC 0F:36" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">
+			<CmdRes>ok</CmdRes>
+		</WriteCmd>
+		<ReadCmd Title="READ CEC status" Cmd="cec">
+			<CmdRes>cec on</CmdRes>
+			<CmdRes>cec off</CmdRes>
+		</ReadCmd>
+    </CmdGroup>
 </Commands>

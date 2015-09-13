@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import com.BLE.BLEUtility.BLEDevice;
 import com.BLE.BLEUtility.BLEUtility;
+import com.UI.font.RobotoTextView;
+
 import android.app.Activity;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -176,7 +178,14 @@ public class ScanLEDeviceActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getActionBar().setTitle(getResources().getString(R.string.strSeatchIntegral));
+		this.getActionBar().setDisplayShowCustomEnabled(true);
+		this.getActionBar().setDisplayShowTitleEnabled(false);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
+		LayoutInflater inflator = LayoutInflater.from(this);
+		View customtitleview = inflator.inflate(R.layout.customtitleview, null);
+		((RobotoTextView)customtitleview.findViewById(R.id.title)).setText(getResources().getString(R.string.strSeatchIntegral));
+		//assign the view to the actionbar
+		getActionBar().setCustomView(customtitleview);
 		
 		registerReceiver(mReceiver, makeServiceActionsIntentFilter());	
 		setContentView(R.layout.scanledeviceactivity);

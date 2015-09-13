@@ -67,7 +67,7 @@
 	    <WriteCmd Title="TURN EVERYTHING OFF" Cmd="cec off" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
-		<WriteCmd Title="Play CEC" Cmd="CEC 0F:36" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">
+		<WriteCmd Title="Play CEC (CEC 0F:36)" Cmd="CEC 0F:36" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="READ CEC status" Cmd="cec">

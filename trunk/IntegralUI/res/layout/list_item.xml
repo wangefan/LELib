@@ -18,7 +18,7 @@
         android:padding="8dp"
         android:text="@string/fontello_heart_full"
         android:textColor="@color/main_color_grey_700"
-        android:textSize="16sp" />
+        android:textSize="20sp" />
 
     <com.UI.font.RobotoTextView
         android:id="@+id/textTitle"
@@ -30,7 +30,7 @@
         android:minHeight="48dp"
         android:padding="8dp"
         android:textColor="@color/main_color_grey_700"
-        android:textSize="16sp"
+        android:textSize="20sp"
         app:typeface="robotoRegular" />
 
 </LinearLayout>

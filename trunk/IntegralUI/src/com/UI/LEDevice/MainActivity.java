@@ -1,6 +1,7 @@
 package com.UI.LEDevice;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.xpath.XPath;
@@ -13,12 +14,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import com.BLE.BLEUtility.BLEUtility;
 import com.BLE.BLEUtility.MyLog;
-import com.BLE.Buttons.BLEButton;
-import com.BLE.Buttons.BLEButton.LECmd;
 import com.UI.LEDevice.AnimatedExpandableListView.AnimatedExpandableListAdapter;
 import com.UI.font.FontelloTextView;
 import com.utility.CmdProcObj;
-
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -45,6 +43,8 @@ public class MainActivity extends CustomTitleActivity
 {
 	//constant 
 	private final String mTAG = "MainActivity";
+	private final static String ACTION_UPDATE_WRT_CMD_UI = "ACTION_UPDATE_WRT_CMD_UI";
+	private final String ACTION_UPDATE_WRT_CMD_UI_KEY = "ACTION_UPDATE_WRT_CMD_UI_KEY";
 	//data member
 	private AnimatedExpandableListView mListView;
 	private ExampleAdapter mAdapter;
@@ -94,37 +94,70 @@ public class MainActivity extends CustomTitleActivity
             	finish();
                 return;
             }
+            else if(ACTION_UPDATE_WRT_CMD_UI.equals(action))
+            {
+            	int [] idArr = intent.getIntArrayExtra(ACTION_UPDATE_WRT_CMD_UI_KEY);
+            	ChildWrtItem childItem =(ChildWrtItem) mAdapter.getChild(idArr[0], idArr[1]) ;
+            	if(childItem != null)
+            	{
+            		if(childItem.mParentItem != null)
+            			childItem.mParentItem.unCheckAllWrtChild();
+            		childItem.mBIsChecked = true;
+            		mAdapter.notifyDataSetChanged();
+            	}
+            }
 		}
 	};
 	
 	private static class GroupItem {
-		String mGroupTitle;
+		public int mID = -1;
+		public String mGroupTitle;
 		public String mGroupIcon;
 		List<ChildItem> items = new ArrayList<ChildItem>();
+		
+		public void unCheckAllWrtChild()
+		{
+			for(ChildItem childItem: items)
+				if(childItem instanceof ChildWrtItem)
+					((ChildWrtItem)childItem).mBIsChecked = false;
+		}
 	}
 	
-	private class ChildItem {
+	private abstract class ChildItem {
+		public GroupItem mParentItem =  null;
+		public int mID = -1;
 		public String mTitle;
-		public String mIcon;
 		public String mCommand;
+		public abstract String getIcon();
 		
 		protected void broadCastAction(String action)
 		{
-			final Intent brdConnState = new Intent(action);
-	        MainActivity.this.sendBroadcast(brdConnState);
+			final Intent brd = new Intent(action);
+	        MainActivity.this.sendBroadcast(brd);
 		}
+		
 		protected void broadCastActionMsg(String action, String key, String message)
 		{
 			final Intent brd = new Intent(action);
 			brd.putExtra(key, message);
 	        MainActivity.this.sendBroadcast(brd);
 		}	
-		
 	}
 
-	private class ChildWrtItem extends ChildItem {
+	private class ChildWrtItem extends ChildItem  {
 		private String mTag = "ChildWrtItem";
-		public String mCommandRes;
+		public boolean mBIsChecked = false;
+		public String mCheckedIcon = "";
+		public String mUnCheckedIcon = "";
+		public String mCommandRes = "";
+		
+		@Override
+		public String getIcon() {
+			if(mBIsChecked)
+				return mCheckedIcon;
+			else
+				return mUnCheckedIcon;
+		}
 		
 		public void doWriteCmdAndReadRsp()
 		{
@@ -146,6 +179,9 @@ public class MainActivity extends CustomTitleActivity
 						mUIHanlder.post(new Runnable() {
 							@Override
 							public void run() {
+								final Intent brd = new Intent(ACTION_UPDATE_WRT_CMD_UI);
+								brd.putExtra(ACTION_UPDATE_WRT_CMD_UI_KEY, new int[] {mParentItem.mID, mID});
+						        MainActivity.this.sendBroadcast(brd);
 								broadCastAction(BLEUtility.ACTION_SENCMD_OK);
 							}
 						});
@@ -166,9 +202,17 @@ public class MainActivity extends CustomTitleActivity
 		}
 	}
 	
-	private class ChildReadItem extends ChildItem {
-		private String mTag = "ChildWrtItem";
+	private class ChildReadItem extends ChildItem implements Serializable{
+		private static final long serialVersionUID = 4L;
+		private String mTag = "ChildReadItem";
+		public String mIcon = "";
 		public List<String> mCommandResColl = new ArrayList<String>();
+		
+		@Override
+		public String getIcon() {
+			return mIcon;
+		}
+		
 		public void doWriteCmdAndReadRsp()
 		{
 			MyLog.d(mTag, "doWriteCmdAndReadRsp begin");
@@ -264,7 +308,7 @@ public class MainActivity extends CustomTitleActivity
 			}
 
 			chdholder.mTitle.setText(item.mTitle);
-			chdholder.mIcon.setText(item.mIcon);
+			chdholder.mIcon.setText(item.getIcon());
 
 			return convertView;
 		}
@@ -355,13 +399,15 @@ public class MainActivity extends CustomTitleActivity
 		    Node cmdGroupNode = nodes.item(idxCmdGroup);  
 		    NamedNodeMap attributes = cmdGroupNode.getAttributes();  
 		    GroupItem cmdgroup = new GroupItem();
+		    cmdgroup.mID = idxCmdGroup;
 		    cmdgroup.mGroupTitle = attributes.getNamedItem("Title").getNodeValue();
 		    cmdgroup.mGroupIcon = attributes.getNamedItem("Icon").getNodeValue();
 		    groupItems.add(cmdgroup);
 		    NodeList cmdsList = cmdGroupNode.getChildNodes();
 		    if(cmdsList != null)
 		    {
-		    	for(int idxCmd = 0; idxCmd < cmdsList.getLength(); ++idxCmd) { 
+		    	int nID = 0;
+		    	for(int idxCmd = 0; idxCmd < cmdsList.getLength(); ++idxCmd) {
 		    		Node cmdNode = cmdsList.item(idxCmd);  
 		    		String strNodeName = cmdNode.getLocalName();
 		    		if(strNodeName == null)
@@ -370,9 +416,12 @@ public class MainActivity extends CustomTitleActivity
 		    		if(strNodeName.compareTo("WriteCmd") == 0)
 		    		{
 		    			command = new ChildWrtItem();
+		    			command.mParentItem = cmdgroup;
+		    			command.mID = nID++;
 		    			command.mTitle = cmdNode.getAttributes().getNamedItem("Title").getNodeValue();
 		    			command.mCommand = cmdNode.getAttributes().getNamedItem("Cmd").getNodeValue();
-		    			command.mIcon = cmdNode.getAttributes().getNamedItem("Icon").getNodeValue();		    					    			
+		    			((ChildWrtItem)command).mCheckedIcon = cmdNode.getAttributes().getNamedItem("CheckedIcon").getNodeValue();
+		    			((ChildWrtItem)command).mUnCheckedIcon = cmdNode.getAttributes().getNamedItem("UnCheckedIcon").getNodeValue();
 		    			for(int idxCmdRes = 0; idxCmdRes < cmdNode.getChildNodes().getLength(); ++idxCmdRes) { 
 		    				Node cmdResNode = cmdNode.getChildNodes().item(idxCmdRes); 
 				    		String strResNodeName = cmdResNode.getLocalName();
@@ -390,6 +439,8 @@ public class MainActivity extends CustomTitleActivity
 		    		else if(strNodeName.compareTo("ReadCmd") == 0)
 		    		{
 		    			command = new ChildReadItem();
+		    			command.mParentItem = cmdgroup;
+		    			command.mID = nID++;
 		    			command.mTitle = cmdNode.getAttributes().getNamedItem("Title").getNodeValue();
 		    			command.mCommand = cmdNode.getAttributes().getNamedItem("Cmd").getNodeValue();
 		    			for(int idxCmdRes = 0; idxCmdRes < cmdNode.getChildNodes().getLength(); ++idxCmdRes) { 
@@ -487,6 +538,7 @@ public class MainActivity extends CustomTitleActivity
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_CONTENT);
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_FAIL);
         intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_DISCONNECTED);
+        intentFilter.addAction(ACTION_UPDATE_WRT_CMD_UI);
         intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         return intentFilter;
     }

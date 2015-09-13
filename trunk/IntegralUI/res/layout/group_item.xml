@@ -30,6 +30,6 @@
         android:padding="8dp"
         android:textColor="@color/main_color_grey_700"
         android:textSize="22sp"
-        app:typeface="robotoRegular" />
+        app:typeface="robotoCondensed" />
 
 </LinearLayout>

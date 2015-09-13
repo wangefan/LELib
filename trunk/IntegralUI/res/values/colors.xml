@@ -2,8 +2,9 @@
 <resources>
     
     <!-- theme color -->
-    <color name="custom_base_color">#B2C6DE</color>
-    <color name="custom_fore_color">#546D95</color>
+    <color name="custom_base_color">#ffffff</color>
+    <color name="custom_fore_color">#616161</color>
+    <color name="custom_green_color">#75AD38</color>
     
     <!-- theme color end -->
     

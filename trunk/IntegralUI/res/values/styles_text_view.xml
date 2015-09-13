@@ -2,7 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     
     <style name="custom_title_background" parent="android:Widget.Holo.Light.ActionBar.Solid">
-        <item name="android:background">@color/custom_base_color</item>                   
+        <item name="android:background">@color/custom_green_color</item>                   
     </style>
 
     <style name="TextViewAppearance" parent="@android:style/TextAppearance.Widget.TextView">

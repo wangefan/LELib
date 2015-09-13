@@ -16,6 +16,7 @@ import com.BLE.BLEUtility.MyLog;
 import com.BLE.Buttons.BLEButton;
 import com.BLE.Buttons.BLEButton.LECmd;
 import com.UI.LEDevice.AnimatedExpandableListView.AnimatedExpandableListAdapter;
+import com.UI.font.FontelloTextView;
 import com.utility.CmdProcObj;
 
 import android.bluetooth.BluetoothAdapter;
@@ -97,13 +98,16 @@ public class MainActivity extends CustomTitleActivity
 	};
 	
 	private static class GroupItem {
-		String title;
+		String mGroupTitle;
+		public String mGroupIcon;
 		List<ChildItem> items = new ArrayList<ChildItem>();
 	}
 	
 	private class ChildItem {
 		public String mTitle;
+		public String mIcon;
 		public String mCommand;
+		
 		protected void broadCastAction(String action)
 		{
 			final Intent brdConnState = new Intent(action);
@@ -209,12 +213,13 @@ public class MainActivity extends CustomTitleActivity
 	}
 
 	private static class ChildHolder {
-		TextView title;
-		//TextView hint;
+		TextView mTitle;
+		FontelloTextView  mIcon;
 	}
 
 	private static class GroupHolder {
-		TextView title;
+		TextView mGroupTitle;
+		FontelloTextView  mGroupIcon;
 	}
 
 	/**
@@ -246,23 +251,20 @@ public class MainActivity extends CustomTitleActivity
 		@Override
 		public View getRealChildView(int groupPosition, int childPosition,
 				boolean isLastChild, View convertView, ViewGroup parent) {
-			ChildHolder holder;
+			ChildHolder chdholder;
 			ChildItem item = getChild(groupPosition, childPosition);
 			if (convertView == null) {
-				holder = new ChildHolder();
-				convertView = inflater.inflate(R.layout.list_item, parent,
-						false);
-				holder.title = (TextView) convertView
-						.findViewById(R.id.textTitle);
-				/*holder.hint = (TextView) convertView
-						.findViewById(R.id.textHint);*/
-				convertView.setTag(holder);
+				chdholder = new ChildHolder();
+				convertView = inflater.inflate(R.layout.list_item, parent, false);
+				chdholder.mTitle = (TextView) convertView.findViewById(R.id.textTitle);
+				chdholder.mIcon = (FontelloTextView) convertView.findViewById(R.id.lstChildItemIcon);
+				convertView.setTag(chdholder);
 			} else {
-				holder = (ChildHolder) convertView.getTag();
+				chdholder = (ChildHolder) convertView.getTag();
 			}
 
-			holder.title.setText(item.mTitle);
-			//holder.hint.setText(item.hint);
+			chdholder.mTitle.setText(item.mTitle);
+			chdholder.mIcon.setText(item.mIcon);
 
 			return convertView;
 		}
@@ -294,16 +296,16 @@ public class MainActivity extends CustomTitleActivity
 			GroupItem item = getGroup(groupPosition);
 			if (convertView == null) {
 				holder = new GroupHolder();
-				convertView = inflater.inflate(R.layout.group_item, parent,
-						false);
-				holder.title = (TextView) convertView
-						.findViewById(R.id.textTitle);
+				convertView = inflater.inflate(R.layout.group_item, parent, false);
+				holder.mGroupTitle = (TextView) convertView.findViewById(R.id.textTitle);
+				holder.mGroupIcon = (FontelloTextView) convertView.findViewById(R.id.lstGroupItemIcon);
 				convertView.setTag(holder);
 			} else {
 				holder = (GroupHolder) convertView.getTag();
 			}
 
-			holder.title.setText(item.title);
+			holder.mGroupTitle.setText(item.mGroupTitle);
+			holder.mGroupIcon.setText(item.mGroupIcon);
 
 			return convertView;
 		}
@@ -353,7 +355,8 @@ public class MainActivity extends CustomTitleActivity
 		    Node cmdGroupNode = nodes.item(idxCmdGroup);  
 		    NamedNodeMap attributes = cmdGroupNode.getAttributes();  
 		    GroupItem cmdgroup = new GroupItem();
-		    cmdgroup.title = attributes.getNamedItem("Title").getNodeValue();
+		    cmdgroup.mGroupTitle = attributes.getNamedItem("Title").getNodeValue();
+		    cmdgroup.mGroupIcon = attributes.getNamedItem("Icon").getNodeValue();
 		    groupItems.add(cmdgroup);
 		    NodeList cmdsList = cmdGroupNode.getChildNodes();
 		    if(cmdsList != null)
@@ -369,7 +372,7 @@ public class MainActivity extends CustomTitleActivity
 		    			command = new ChildWrtItem();
 		    			command.mTitle = cmdNode.getAttributes().getNamedItem("Title").getNodeValue();
 		    			command.mCommand = cmdNode.getAttributes().getNamedItem("Cmd").getNodeValue();
-		    					    			
+		    			command.mIcon = cmdNode.getAttributes().getNamedItem("Icon").getNodeValue();		    					    			
 		    			for(int idxCmdRes = 0; idxCmdRes < cmdNode.getChildNodes().getLength(); ++idxCmdRes) { 
 		    				Node cmdResNode = cmdNode.getChildNodes().item(idxCmdRes); 
 				    		String strResNodeName = cmdResNode.getLocalName();

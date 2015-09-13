@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
@@ -71,6 +72,9 @@ public class ConnectionActivity extends CustomTitleActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.connectionactivity);
 		
+		//initialize preference value
+		IntegralSetting.initSharedPreferences(this);
+		
 		//init UI controls
 		mRingButton = (RingButton)findViewById(R.id.ringButton);
 		mAutoConn = (CheckBox) findViewById(R.id.idAutoConn);
@@ -99,10 +103,23 @@ public class ConnectionActivity extends CustomTitleActivity {
 	       });
 		}
 		
-		//initialize preference value
-		IntegralSetting.initSharedPreferences(this);
+		if(mAutoConn != null)
+		{
+			mAutoConn.setChecked(IntegralSetting.isAutoConn());
+			mAutoConn.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					CheckBox ck = (CheckBox)v;
+					if(ck != null)
+						IntegralSetting.setAutoConn(ck.isChecked());
+				}
+			});
+		}
 		
 		registerReceiver(mReceiver, makeIntentFilter());	
+		
+		if(IntegralSetting.isAutoConn() && IntegralSetting.getDeviceMACAddr().length() > 0)
+			connectTo(IntegralSetting.getDeviceName(), IntegralSetting.getDeviceMACAddr());
 	}
 
 	@Override

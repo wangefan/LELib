@@ -89,8 +89,6 @@ public class MainActivity extends CustomTitleActivity
             else if(BLEUtility.ACTION_CONNSTATE_DISCONNECTED.equals(action))
             {
             	UIUtility.showProgressDlg(MainActivity.this, false, "disconnected");
-            	String message = intent.getStringExtra(BLEUtility.ACTION_CONNSTATE_DISCONNECTED_KEY);
-            	Toast.makeText(MainActivity.this, "disconnected, cause = " + message, Toast.LENGTH_SHORT).show();
             	finish();
                 return;
             }
@@ -579,8 +577,6 @@ public class MainActivity extends CustomTitleActivity
 		switch (item.getItemId()) {
         
         case android.R.id.home:
-            onBackPressed();
-            return true;
         case R.id.menu_disconnect:
         	BLEUtility.getInstance().disconnect();
 		}

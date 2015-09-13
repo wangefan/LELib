@@ -1,30 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Commands>
-    <CmdGroup Title="Reset">
-        <WriteCmd Title="Reset" Cmd="reset">
+    <CmdGroup Title="DEVICE SETTINGS">
+        <WriteCmd Title="RESET" Cmd="reset">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
-    </CmdGroup>
-	<CmdGroup Title="EDID">
-        <WriteCmd Title="edid fixed" Cmd="edid fixed">
-			<CmdRes>ok</CmdRes>
-		</WriteCmd>
-		<WriteCmd Title="edid custom" Cmd="edid custom">
-			<CmdRes>ok</CmdRes>
-		</WriteCmd>
-		<WriteCmd Title="edid remix" Cmd="edid remix">
-			<CmdRes>ok</CmdRes>
-		</WriteCmd>
-		<ReadCmd Title="Read EDID" Cmd="edid">
-			<CmdRes>edid 1</CmdRes>
-			<CmdRes>edid 2</CmdRes>
+		<ReadCmd Title="INFO" Cmd="man">
+			<CmdRes>man Integral</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-	<CmdGroup Title="Select Channel">
-        <WriteCmd Title="Channel 1" Cmd="insel 1">
+	<CmdGroup Title="CHANNEL SELECTION">
+        <WriteCmd Title="CHANNEL/INPUT 1" Cmd="insel 1">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
-		<WriteCmd Title="Channel 2" Cmd="insel 2">
+		<WriteCmd Title="CHANNEL/INPUT 2" Cmd="insel 2">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="Read Channel" Cmd="insel">
@@ -32,11 +20,23 @@
 			<CmdRes>insel 2</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-	<CmdGroup Title="Audio">
-        <WriteCmd Title="audio from HDMI" Cmd="audio hdmi">
+	<CmdGroup Title="HDCP SETTINGS">
+	    <WriteCmd Title="HDCP 1.4 only" Cmd="hdcp 14">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
-		<WriteCmd Title="audio from input jack" Cmd="audio jack">
+        <WriteCmd Title="HDCP 2.2 + 1.4" Cmd="hdcp 22">
+			<CmdRes>ok</CmdRes>
+		</WriteCmd>
+		<ReadCmd Title="Read HDCP" Cmd="hdcp">
+			<CmdRes>hdcp 14</CmdRes>
+			<CmdRes>hdcp 22</CmdRes>
+		</ReadCmd>
+    </CmdGroup>	
+    <CmdGroup Title="SOUND SETTINGS">
+        <WriteCmd Title="EXTERNAL AUDIO," Cmd="audio jack">
+			<CmdRes>ok</CmdRes>
+		</WriteCmd>
+        <WriteCmd Title="FROM HDMI" Cmd="audio hdmi">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="Read Audio" Cmd="audio">
@@ -44,16 +44,21 @@
 			<CmdRes>audio jack</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-	<CmdGroup Title="HDCP">
-        <WriteCmd Title="HDCP 2.2" Cmd="hdcp 22">
+	<CmdGroup Title="EDID SETTINGS">
+	    <WriteCmd Title="AUTO MIX MODE" Cmd="edid automix">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
-		<WriteCmd Title="HDCP 14" Cmd="hdcp 14">
+		<WriteCmd Title="CUSTOM" Cmd="edid custom">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
-		<ReadCmd Title="Read HDCP" Cmd="hdcp">
-			<CmdRes>hdcp 22</CmdRes>
-			<CmdRes>hdcp 14</CmdRes>
+        <WriteCmd Title="Fixed with L/R stereo" Cmd="edid fixed">
+			<CmdRes>ok</CmdRes>
+		</WriteCmd>
+		<ReadCmd Title="Read EDID" Cmd="edid">
+			<CmdRes>edid fixed</CmdRes>
+			<CmdRes>edid custom</CmdRes>
+			<CmdRes>edid automix</CmdRes>
 		</ReadCmd>
-    </CmdGroup>	
+    </CmdGroup>
+	
 </Commands>

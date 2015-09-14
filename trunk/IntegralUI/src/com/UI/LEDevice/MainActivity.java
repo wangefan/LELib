@@ -583,6 +583,11 @@ public class MainActivity extends CustomTitleActivity
 		
         super.onActivityResult(requestCode, resultCode, data);
     }
+	
+	@Override
+	public void onBackPressed() {
+		BLEUtility.getInstance().disconnect();
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

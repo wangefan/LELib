@@ -119,7 +119,15 @@ public class ConnectionActivity extends CustomTitleActivity {
 		registerReceiver(mReceiver, makeIntentFilter());	
 		
 		if(IntegralSetting.isAutoConn() && IntegralSetting.getDeviceMACAddr().length() > 0)
-			connectTo(IntegralSetting.getDeviceName(), IntegralSetting.getDeviceMACAddr());
+		{
+        	if(BluetoothAdapter.getDefaultAdapter() == null || BluetoothAdapter.getDefaultAdapter().isEnabled() == false)
+        	{
+        		Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        		startActivityForResult(enableBtIntent, BTSettingActivity.REQUEST_ENABLE_BT);
+        	}
+        	else
+        		connectTo(IntegralSetting.getDeviceName(), IntegralSetting.getDeviceMACAddr());
+		}
 	}
 
 	@Override

@@ -60,6 +60,30 @@
 			<CmdRes>edid automix</CmdRes>
 		</ReadCmd>
     </CmdGroup>
+    <CmdGroup Title=" 4:2:0 Downsampling mode" Icon="&#xe860;">
+	    <WriteCmd Title="Enable 4:4:4 -> 4:2:0" Cmd="420 on" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+			<CmdRes>ok</CmdRes>
+		</WriteCmd>
+	    <WriteCmd Title="Disable 4:4:4 -> 4:2:0" Cmd="420 off" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+			<CmdRes>ok</CmdRes>
+		</WriteCmd>
+		<ReadCmd Title="READ current 4:2:0 selection status" Cmd="420">
+			<CmdRes>420 on</CmdRes>
+			<CmdRes>420 off</CmdRes>
+		</ReadCmd>
+    </CmdGroup>
+    <CmdGroup Title=" Power" Icon="&#xe860;">
+	    <WriteCmd Title="Power on" Cmd="pwr on" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+			<CmdRes>ok</CmdRes>
+		</WriteCmd>
+	    <WriteCmd Title="Power off" Cmd="pwr off" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+			<CmdRes>ok</CmdRes>
+		</WriteCmd>
+		<ReadCmd Title="READ power status" Cmd="power">
+			<CmdRes>power on</CmdRes>
+			<CmdRes>power off</CmdRes>
+		</ReadCmd>
+    </CmdGroup>
     <CmdGroup Title="EPlay with CEC " Icon="&#xe860;">
 	    <WriteCmd Title="TURN EVERYTHING ON" Cmd="cec on" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
 			<CmdRes>ok</CmdRes>

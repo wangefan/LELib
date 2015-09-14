@@ -215,10 +215,12 @@ public class MainActivity extends CustomTitleActivity
 			return mIcon;
 		}
 		
-		public void doWriteCmdAndReadRsp()
+		public void doWriteCmdAndReadRsp(boolean bBroadCast)
 		{
 			MyLog.d(mTag, "doWriteCmdAndReadRsp begin");
-			broadCastAction(BLEUtility.ACTION_SENCMD_READ);
+			if(bBroadCast)
+				broadCastAction(BLEUtility.ACTION_SENCMD_READ);
+			final boolean bBroadCastTemp = bBroadCast;
 			
 			Thread workerThread = new Thread() {
 			    public void run() {
@@ -239,7 +241,8 @@ public class MainActivity extends CustomTitleActivity
 							mUIHanlder.post(new Runnable() {
 								@Override
 								public void run() {
-									broadCastActionMsg(BLEUtility.ACTION_SENCMD_READ_CONTENT, BLEUtility.ACTION_SENCMD_READ_CONTENT_KEY, itrRsp);
+									if(bBroadCastTemp)
+										broadCastActionMsg(BLEUtility.ACTION_SENCMD_READ_CONTENT, BLEUtility.ACTION_SENCMD_READ_CONTENT_KEY, itrRsp);
 								}
 							});
 							return;
@@ -249,7 +252,8 @@ public class MainActivity extends CustomTitleActivity
 					mUIHanlder.post(new Runnable() {
 						@Override
 						public void run() {
-							broadCastAction(BLEUtility.ACTION_SENCMD_READ_FAIL);
+							if(bBroadCastTemp)
+								broadCastAction(BLEUtility.ACTION_SENCMD_READ_FAIL);
 						}
 					});
 			    }
@@ -523,7 +527,7 @@ public class MainActivity extends CustomTitleActivity
 					}
 					else if(true == (childItem instanceof ChildReadItem))
 					{
-						((ChildReadItem)childItem).doWriteCmdAndReadRsp();
+						((ChildReadItem)childItem).doWriteCmdAndReadRsp(true);
 						return true;
 					}
 				}

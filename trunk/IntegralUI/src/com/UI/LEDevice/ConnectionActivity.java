@@ -72,9 +72,6 @@ public class ConnectionActivity extends CustomTitleActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.connectionactivity);
 		
-		//initialize preference value
-		IntegralSetting.initSharedPreferences(this);
-		
 		//init UI controls
 		mRingButton = (RingButton)findViewById(R.id.ringButton);
 		mAutoConn = (CheckBox) findViewById(R.id.idAutoConn);

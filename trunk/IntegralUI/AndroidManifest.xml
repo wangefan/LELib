@@ -30,16 +30,6 @@
             </intent-filter>
         </activity>
         
-        <!-- ConnectionActivity -->
-        <activity
-            android:name=".ConnectionActivity"
-            android:screenOrientation="portrait" >
-        </activity>
-        
-        <!-- ScanLEDeviceActivity -->
-     	<activity android:name=".ScanLEDeviceActivity"
-   	  		android:screenOrientation="portrait"/>
-        
         <!-- Main activity -->
         <activity
             android:name=".MainActivity"

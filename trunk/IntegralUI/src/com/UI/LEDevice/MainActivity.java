@@ -380,6 +380,9 @@ public class MainActivity extends CustomTitleActivity
 		 
 		registerReceiver(mBtnReceiver, makeServiceActionsIntentFilter());	
 		setContentView(R.layout.activity_expandable_list_view);
+		
+		String devName = getIntent().getStringExtra("DeviceName");
+		String devAddr = getIntent().getStringExtra("DeviceAddr");
 
 		//parsing XML
 		List<GroupItem> groupItems = new ArrayList<GroupItem>();

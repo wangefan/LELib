@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
+import org.apache.commons.lang3.ArrayUtils;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -57,31 +57,40 @@ public class BLEUtility
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) 
         {
-        	// check if has device already?
-        	boolean bAdd = true; 
-        	for(BLEDevice cBTDevice : mbtDeviceList) 
-        	{
-				String strSrcDevice = cBTDevice.getAddress();
-				if(true == device.getAddress().equals(strSrcDevice)) {
-					bAdd = false;
-					break;
-				}
-			}
         	
-        	if(bAdd) 
-        	{
-        		String name = device.getName();
-        		String add = device.getAddress();
-        		if(name != null && add != null)
-        		{
-        			BLEDevice cBTDeivce = new BLEDevice(name, add);
-    				mbtDeviceList.add(cBTDeivce);
-    				
-    				//Broadcast.
-    				final Intent brdConnState = new Intent(ACTION_GET_LEDEVICE);
-    				brdConnState.putExtra(ACTION_GET_LEDEVICE_KEY, cBTDeivce);
-    		        mContext.sendBroadcast(brdConnState);
-        		}
+        	ArrayUtils.reverse(scanRecord);	 //数组反转
+			
+        	String discoveryServceID = String.format("%x", new BigInteger(1, scanRecord));
+        	
+        				
+        	//
+        	if(discoveryServceID.indexOf(mSUUIDString.toString().replace("-", "")) != -1){
+        		// check if has device already?
+            	boolean bAdd = true; 
+            	for(BLEDevice cBTDevice : mbtDeviceList) 
+            	{
+    				String strSrcDevice = cBTDevice.getAddress();
+    				if(true == device.getAddress().equals(strSrcDevice)) {
+    					bAdd = false;
+    					break;
+    				}
+    			}
+            	
+            	if(bAdd) 
+            	{
+            		String name = device.getName();
+            		String add = device.getAddress();
+            		if(name != null && add != null)
+            		{
+            			BLEDevice cBTDeivce = new BLEDevice(name, add);
+        				mbtDeviceList.add(cBTDeivce);
+        				
+        				//Broadcast.
+        				final Intent brdConnState = new Intent(ACTION_GET_LEDEVICE);
+        				brdConnState.putExtra(ACTION_GET_LEDEVICE_KEY, cBTDeivce);
+        		        mContext.sendBroadcast(brdConnState);
+            		}
+            	}
         	}
         }
     };
@@ -323,7 +332,8 @@ public class BLEUtility
     	if(mBluetoothAdapter != null && mBluetoothAdapter.isEnabled())
 		{
     		mbtDeviceList.clear();
-			mBluetoothAdapter.startLeScan(mLeScanCallback);
+    		UUID [] ua = new UUID[] {mSUUIDString};
+			mBluetoothAdapter.startLeScan( mLeScanCallback);
 		}
 	}
 	

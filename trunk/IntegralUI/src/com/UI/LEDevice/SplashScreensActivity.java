@@ -11,14 +11,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Window;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.bluetooth.BluetoothAdapter;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-
 import com.UI.font.RobotoTextView;
 import com.UI.kenburnsview.KenBurnsView;
 

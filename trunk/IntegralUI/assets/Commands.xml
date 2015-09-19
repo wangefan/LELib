@@ -4,6 +4,8 @@
         <WriteCmd Title="RESET" Cmd="reset" CheckedIcon="&#xe8fd;" UnCheckedIcon="&#xe8fd;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
+		<ReadAllCmd Title="Read Config" Cmd="" CheckedIcon="&#xe8fd;" UnCheckedIcon="&#xe8fd;">
+		</ReadAllCmd>
 		<ReadCmd Title="INFO" Cmd="man">
 			<CmdRes>man Integral</CmdRes>
 		</ReadCmd>

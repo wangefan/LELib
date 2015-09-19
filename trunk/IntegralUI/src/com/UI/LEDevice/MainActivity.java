@@ -54,8 +54,10 @@ public class MainActivity extends CustomTitleActivity
 {
 	//constant 
 	private final String mTAG = "MainActivity";
-	private final static String ACTION_UPDATE_WRT_CMD_UI = "ACTION_UPDATE_WRT_CMD_UI";
-	private final String ACTION_UPDATE_WRT_CMD_UI_KEY = "ACTION_UPDATE_WRT_CMD_UI_KEY";
+	private final static String ACTION_GROUP_READ_OK = "ACTION_GROUP_READ_OK";
+	private final static String ACTION_GROUP_READ_OK_KEY = "ACTION_GROUP_READ_OK_KEY";
+	private final static String ACTION_GROUP_READ_FAIL = "ACTION_GROUP_READ_FAIL";
+	private final static String ACTION_GROUP_READ_FAIL_KEY = "ACTION_GROUP_READ_FAIL_KEY";
 	private static final long SCAN_PERIOD = 5000; // Stops scanning after 8 seconds.
 	//data member
 	private AnimatedExpandableListView mListView;
@@ -66,6 +68,8 @@ public class MainActivity extends CustomTitleActivity
 	BLEDevice mPreDevice = null;
 	private boolean mBConnected = false;
 	private Menu mMenu = null;
+	private int mGoalReadCount = 0;
+	private int mReadCount = 0; 
 	
 	//Inner classes
 	BroadcastReceiver mBtnReceiver = new BroadcastReceiver() {
@@ -135,9 +139,9 @@ public class MainActivity extends CustomTitleActivity
             	UIUtility.showProgressDlg(MainActivity.this, false, "read cmd fail");
             	Toast.makeText(MainActivity.this, "read cmd fail", Toast.LENGTH_SHORT).show();
             }
-            else if(ACTION_UPDATE_WRT_CMD_UI.equals(action))
+            else if(ACTION_GROUP_READ_OK.equals(action))
             {
-            	int [] idArr = intent.getIntArrayExtra(ACTION_UPDATE_WRT_CMD_UI_KEY);
+            	int [] idArr = intent.getIntArrayExtra(ACTION_GROUP_READ_OK_KEY);
             	ChildWrtItem childItem =(ChildWrtItem) mAdapter.getChild(idArr[0], idArr[1]) ;
             	if(childItem != null)
             	{
@@ -145,6 +149,28 @@ public class MainActivity extends CustomTitleActivity
             			childItem.mParentItem.unCheckAllWrtChild();
             		childItem.mBIsChecked = true;
             		mAdapter.notifyDataSetChanged();
+            	}
+            	++mReadCount;
+            	if(mReadCount >= mGoalReadCount)
+            	{
+            		UIUtility.showProgressDlg(MainActivity.this, false, "read done");
+            		Toast.makeText(MainActivity.this, "read done", Toast.LENGTH_SHORT).show();
+            	}
+            }
+            else if(ACTION_GROUP_READ_FAIL.equals(action))
+            {
+            	int [] idArr = intent.getIntArrayExtra(ACTION_GROUP_READ_FAIL_KEY);
+            	GroupItem groupItem =(GroupItem) mAdapter.getGroup(idArr[0]);
+            	if(groupItem != null)
+            	{
+            		MyLog.d(mTAG, "Group item " + groupItem.mGroupTitle + " read fail.");
+            		//Todo: log read fail cmd
+            	}
+            	++mReadCount;
+            	if(mReadCount >= mGoalReadCount)
+            	{
+            		UIUtility.showProgressDlg(MainActivity.this, false, "read done");
+            		Toast.makeText(MainActivity.this, "read done", Toast.LENGTH_SHORT).show();
             	}
             }
             else if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
@@ -158,11 +184,75 @@ public class MainActivity extends CustomTitleActivity
 		}
 	};
 	
-	private static class GroupItem {
+	private class GroupItem {
 		public int mID = -1;
+		private String mTag = "GroupItem";
 		public String mGroupTitle;
 		public String mGroupIcon;
 		List<ChildItem> items = new ArrayList<ChildItem>();
+		
+		public void doReadRsp()
+		{
+			MyLog.d(mTag, "doReadRsp begin");
+			ChildReadItem readItem = null; 
+			for(ChildItem chdItem: items)
+			{
+				if(chdItem instanceof ChildReadItem)
+					readItem = (ChildReadItem) chdItem;
+			}
+			if(readItem != null)
+			{
+				final ChildReadItem chdReadItemTemp = readItem;
+				final List<ChildItem> itemsTemp = items;
+				Thread workerThread = new Thread() 
+				{
+				    public void run() {
+				    	MyLog.d(mTag, "doReadRsp, BLEUtility.writeCmd in thread" + Thread.currentThread().getId());
+				    	MyLog.d(mTag, "doReadRsp, BLEUtility.writeCmd write cmd = " + chdReadItemTemp.mCommand);
+				    	byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(chdReadItemTemp.mCommand, false));
+				    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
+				    	String strRspCal = "";
+				    	if(rspCal != null)
+				    		strRspCal = new String(rspCal);
+				    	MyLog.d(mTag, "doReadRsp, read content = " + strRspCal);
+				    	for(ChildItem item: itemsTemp)
+				    	{
+				    		if(item instanceof ChildWrtItem == false)
+				    			continue;
+				    		final ChildWrtItem wrtItem = (ChildWrtItem) item;
+
+				    		String itrRsp = wrtItem.mCommand;
+				    		MyLog.d(mTag, "doReadRsp, compare from = " + itrRsp);
+				    		if(strRspCal.equals(itrRsp) == true)
+							{
+								MyLog.d(mTag, "doReadRsp, read ok");
+								mUIHanlder.post(new Runnable() {
+									@Override
+									public void run() {
+										final Intent brd = new Intent(ACTION_GROUP_READ_OK);
+										brd.putExtra(ACTION_GROUP_READ_OK_KEY, new int[] {mID, wrtItem.mID});
+								        MainActivity.this.sendBroadcast(brd);
+									}
+								});
+								return;
+							}
+				    	}
+				    	MyLog.d(mTag, "doReadRsp, read fail");
+						mUIHanlder.post(new Runnable() {
+							@Override
+							public void run() {
+								final Intent brd = new Intent(ACTION_GROUP_READ_FAIL);
+								brd.putExtra(ACTION_GROUP_READ_FAIL_KEY, new int[] {mID, -1});
+						        MainActivity.this.sendBroadcast(brd);
+							}
+						});
+				    }
+				};
+				workerThread.start();
+			}
+			else
+				MyLog.d(mTag, "doReadRsp, GroupItem has no read item");
+		}
 		
 		public void unCheckAllWrtChild()
 		{
@@ -228,8 +318,8 @@ public class MainActivity extends CustomTitleActivity
 						mUIHanlder.post(new Runnable() {
 							@Override
 							public void run() {
-								final Intent brd = new Intent(ACTION_UPDATE_WRT_CMD_UI);
-								brd.putExtra(ACTION_UPDATE_WRT_CMD_UI_KEY, new int[] {mParentItem.mID, mID});
+								final Intent brd = new Intent(ACTION_GROUP_READ_OK);
+								brd.putExtra(ACTION_GROUP_READ_OK_KEY, new int[] {mParentItem.mID, mID});
 						        MainActivity.this.sendBroadcast(brd);
 								broadCastAction(BLEUtility.ACTION_SENCMD_OK);
 							}
@@ -306,6 +396,28 @@ public class MainActivity extends CustomTitleActivity
 			    }
 			};
 			workerThread.start();
+		}
+	}
+	
+	private class ChildReadAllItem extends ChildItem implements Serializable{
+		private static final long serialVersionUID = 5L;
+		private String mTag = "ChildReadAllItem";
+		public String mIcon = "";
+		
+		@Override
+		public String getIcon() {
+			return mIcon;
+		}
+		
+		public void doIt()
+		{
+			MyLog.d(mTag, "Read config begin");
+			//UIUtility.showProgressDlg(MainActivity.this, true, "Read Config..");
+			for(int idxGroup = 1; idxGroup < mAdapter.getGroupCount(); ++idxGroup)
+			{
+				GroupItem groupItem = mAdapter.getGroup(idxGroup);
+				groupItem.doReadRsp();
+			}
 		}
 	}
 
@@ -437,6 +549,7 @@ public class MainActivity extends CustomTitleActivity
 
 		//parsing XML
 		List<GroupItem> groupItems = new ArrayList<GroupItem>();
+		mGoalReadCount = 0;
 		XPath xpath = XPathFactory.newInstance().newXPath();  
 		String expression = "//CmdGroup";  
 		
@@ -532,6 +645,16 @@ public class MainActivity extends CustomTitleActivity
 				    		}
 		    			}
 		    			cmdgroup.items.add(command);
+		    			++mGoalReadCount;
+		    		}
+	    			else if(strNodeName.compareTo("ReadAllCmd") == 0)
+		    		{
+		    			command = new ChildReadAllItem();
+		    			command.mParentItem = cmdgroup;
+		    			command.mID = nID++;
+		    			command.mTitle = cmdNode.getAttributes().getNamedItem("Title").getNodeValue();
+		    			command.mCommand = cmdNode.getAttributes().getNamedItem("Cmd").getNodeValue();
+		    			cmdgroup.items.add(command);
 		    		}
 		    	}
 		    }
@@ -584,6 +707,11 @@ public class MainActivity extends CustomTitleActivity
 						((ChildReadItem)childItem).doWriteCmdAndReadRsp(true);
 						return true;
 					}
+					else if(true == (childItem instanceof ChildReadAllItem))
+					{
+						((ChildReadAllItem)childItem).doIt();
+						return true;
+					}
 				}
 				return false;
 			}
@@ -620,7 +748,8 @@ public class MainActivity extends CustomTitleActivity
         intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_CONNECTED);
         intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_DISCONNECTED);
         intentFilter.addAction(BLEUtility.ACTION_GET_LEDEVICE);
-        intentFilter.addAction(ACTION_UPDATE_WRT_CMD_UI);
+        intentFilter.addAction(ACTION_GROUP_READ_OK);
+        intentFilter.addAction(ACTION_GROUP_READ_FAIL);
         intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         return intentFilter;
     }

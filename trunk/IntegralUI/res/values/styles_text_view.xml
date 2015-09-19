@@ -16,7 +16,7 @@
         <!-- Supports API Level 17+ -->
         <!-- <item name="android:paddingStart">26dp</item> -->
         <!-- Supports API Level 17+ -->
-        <!-- <item name="android:paddingEnd">26dp</item> -->
+        <!-- <item name="android:paddingEnd">26dp</item> -->s
     </style>
     
 	<!-- Typography style 1 -->
@@ -60,7 +60,9 @@
     </style>
     
 	<style name="TextViewAppearance.Headline2" parent="@style/TextViewAppearance">
-        <item name="android:textColor">@color/white</item>
+        <item name="typeface">robotoLight</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/main_color_grey_600</item>
     </style>
     
 	<style name="TextViewAppearance.Title2" parent="@style/TextViewAppearance">

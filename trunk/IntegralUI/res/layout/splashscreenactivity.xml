@@ -32,6 +32,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:alpha="0.0"
-        android:text="@string/strWelcome" />
+        android:text="@string/strWelcome" 
+        android:textColor="@color/white"/>
 
 </RelativeLayout>

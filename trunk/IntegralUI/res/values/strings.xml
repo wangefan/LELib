@@ -2,17 +2,23 @@
 <resources>
 
     <string name="app_name">Integral</string>
-    <string name="strWelcome">TOTAL CONTROL</string>
+    <string name="strWelcome">Total Control</string>
     <string name="action_settings">Settings</string>
     <string name="strAutoConn">Auto</string>
     <string name="strConnActTitle">Set connection</string>
     <string name="strMainActivity">Main Page</string>
     <string name="strSeatchIntegral">Search Devic</string>
     <string name="strMenuDisconnect">disconnect</string>
+    <string name="msgResetConn">Previous Connection has been reset"</string>
+    <string name="clearConn">Clear Previous Connecntion</string>
     <string name="strConnectTo">Integral</string>
     <string name="strSearchDevice">Search</string>
     <string name="fontello_heart_full">&#xe80a;</string>
 	<string name="fontello_heart_empty">&#xe80b;</string>
 	<string name="scan">Scan</string>
 	<string name="stop">Stop</string>
+	<string name="menu_conn">Connect</string>
+	<string name="dlgChooseIntegral">Select One"</string>
+	<string name="dlgCancel">Cancel</string>
+	<string name="menu_disconn">Disconnect</string>
 </resources>

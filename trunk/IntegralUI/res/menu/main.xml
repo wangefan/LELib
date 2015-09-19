@@ -5,10 +5,17 @@
     tools:context="com.UI.LEDevice.MainActivity" >
 
 
-    <item android:id="@+id/menu_disconnect"
+    <item android:id="@+id/menu_connect"
           android:title="@+string/strMenuDisconnect"
           android:orderInCategory="100"
           android:showAsAction="ifRoom|withText"
+          android:textColor="@+color/white"
+          app1:typeface="robotoCondensed"/>
+    
+    <item android:id="@+id/menu_clearConn"
+          android:title="@+string/clearConn"
+          android:orderInCategory="100"
+          android:showAsAction="never"
           android:textColor="@+color/white"
           app1:typeface="robotoCondensed"/>
 

@@ -15,14 +15,20 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+
+import com.BLE.BLEUtility.BLEDevice;
 import com.BLE.BLEUtility.BLEUtility;
 import com.BLE.BLEUtility.MyLog;
 import com.UI.LEDevice.AnimatedExpandableListView.AnimatedExpandableListAdapter;
 import com.UI.font.FontelloTextView;
 import com.utility.CmdProcObj;
+
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
@@ -37,6 +43,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
@@ -49,10 +56,16 @@ public class MainActivity extends CustomTitleActivity
 	private final String mTAG = "MainActivity";
 	private final static String ACTION_UPDATE_WRT_CMD_UI = "ACTION_UPDATE_WRT_CMD_UI";
 	private final String ACTION_UPDATE_WRT_CMD_UI_KEY = "ACTION_UPDATE_WRT_CMD_UI_KEY";
+	private static final long SCAN_PERIOD = 5000; // Stops scanning after 8 seconds.
 	//data member
 	private AnimatedExpandableListView mListView;
 	private ExampleAdapter mAdapter;
 	private static Handler mUIHanlder = new Handler();
+	private Handler mScanPeriodHandler = new Handler();
+	private ArrayList<BLEDevice> mLeDevices = new ArrayList<BLEDevice>();
+	BLEDevice mPreDevice = null;
+	private boolean mBConnected = false;
+	private Menu mMenu = null;
 	
 	//Inner classes
 	BroadcastReceiver mBtnReceiver = new BroadcastReceiver() {
@@ -61,7 +74,39 @@ public class MainActivity extends CustomTitleActivity
 		public void onReceive(Context context, Intent intent) {
 			final String action = intent.getAction();
             
-            if (BLEUtility.ACTION_SENCMD_BEGIN.equals(action)) 
+			if(BLEUtility.ACTION_CONNSTATE_DISCONNECTED.equals(action))
+            {
+            	UIUtility.showProgressDlg(MainActivity.this, false, "disconnected");
+            	String message = intent.getStringExtra(BLEUtility.ACTION_CONNSTATE_DISCONNECTED_KEY);
+				Toast.makeText(MainActivity.this, "Disconnected, cause = " + message, Toast.LENGTH_SHORT).show();
+            	mBConnected = false;
+            	updateUIForConn();
+                return;
+            }
+			else if(BLEUtility.ACTION_CONNSTATE_CONNECTING.equals(action))
+			{
+				UIUtility.showProgressDlg(MainActivity.this, true, "connecting");
+			}
+			else if(BLEUtility.ACTION_CONNSTATE_CONNECTED.equals(action))
+			{
+				UIUtility.showProgressDlg(MainActivity.this, false, "connected");
+				IntegralSetting.setDeviceName(mPreDevice.getDeviceName());
+				IntegralSetting.setDeviceMACAddr(mPreDevice.getAddress());
+				mBConnected = true;
+				updateUIForConn();
+				Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+			}
+			else if(BLEUtility.ACTION_GET_LEDEVICE.equals(action))
+			{
+				BLEDevice integralDevice = (BLEDevice) intent.getSerializableExtra(BLEUtility.ACTION_GET_LEDEVICE_KEY);
+				if(integralDevice != null)
+				{
+					mLeDevices.add(integralDevice);
+					MyLog.d(mTAG, "Get le device , "+mLeDevices.size()+"=>[" + integralDevice.getAddress()+"]");
+				}
+			}
+			//Blew are commands relaive 
+			else if (BLEUtility.ACTION_SENCMD_BEGIN.equals(action)) 
             {
             	UIUtility.showProgressDlg(MainActivity.this, true, "sending cmd");
             }
@@ -90,12 +135,6 @@ public class MainActivity extends CustomTitleActivity
             	UIUtility.showProgressDlg(MainActivity.this, false, "read cmd fail");
             	Toast.makeText(MainActivity.this, "read cmd fail", Toast.LENGTH_SHORT).show();
             }
-            else if(BLEUtility.ACTION_CONNSTATE_DISCONNECTED.equals(action))
-            {
-            	UIUtility.showProgressDlg(MainActivity.this, false, "disconnected");
-            	finish();
-                return;
-            }
             else if(ACTION_UPDATE_WRT_CMD_UI.equals(action))
             {
             	int [] idArr = intent.getIntArrayExtra(ACTION_UPDATE_WRT_CMD_UI_KEY);
@@ -108,6 +147,14 @@ public class MainActivity extends CustomTitleActivity
             		mAdapter.notifyDataSetChanged();
             	}
             }
+            else if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
+                        BluetoothAdapter.ERROR);
+				if (state == BluetoothAdapter.STATE_OFF) 
+				{
+					BLEUtility.getInstance().disconnect();
+				}
+			}
 		}
 	};
 	
@@ -376,13 +423,17 @@ public class MainActivity extends CustomTitleActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getActionBar().setTitle("Low Energy Devices");
-		getActionBar().setDisplayHomeAsUpEnabled(true);
 		 
 		registerReceiver(mBtnReceiver, makeServiceActionsIntentFilter());	
 		setContentView(R.layout.activity_expandable_list_view);
 		
 		String devName = getIntent().getStringExtra("DeviceName");
 		String devAddr = getIntent().getStringExtra("DeviceAddr");
+		if(devName.length() > 0 && devAddr.length() > 0)
+		{
+			IntegralSetting.setDeviceName(devName);
+			IntegralSetting.setDeviceMACAddr(devAddr);
+		}
 
 		//parsing XML
 		List<GroupItem> groupItems = new ArrayList<GroupItem>();
@@ -553,6 +604,8 @@ public class MainActivity extends CustomTitleActivity
 		} else {
 			mListView.setIndicatorBoundsRelative(width - px, width);
 		}
+		
+		requestBTOrConn();
 	}
 	
 	private static IntentFilter makeServiceActionsIntentFilter() {
@@ -563,14 +616,115 @@ public class MainActivity extends CustomTitleActivity
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ);
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_CONTENT);
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_FAIL);
+        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_CONNECTING);
+        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_CONNECTED);
         intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_DISCONNECTED);
+        intentFilter.addAction(BLEUtility.ACTION_GET_LEDEVICE);
         intentFilter.addAction(ACTION_UPDATE_WRT_CMD_UI);
         intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         return intentFilter;
     }
 	
+	private void updateUIForConn()
+	{
+		if(mBConnected)
+		{
+			mListView.setEnabled(true);
+			if(mMenu != null)
+				mMenu.findItem(R.id.menu_connect).setTitle(getResources().getString(R.string.menu_disconn));
+		}
+		else 
+		{
+			mListView.setEnabled(false);
+			if(mMenu != null)
+				mMenu.findItem(R.id.menu_connect).setTitle(getResources().getString(R.string.menu_conn));
+		}
+	}
+	
+	private void requestBTOrConn(){
+		if(BluetoothAdapter.getDefaultAdapter() == null || BluetoothAdapter.getDefaultAdapter().isEnabled() == false)
+		{
+			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+	        startActivityForResult(enableBtIntent, BTSettingActivity.REQUEST_ENABLE_BT);
+		}	
+		else
+		{
+			connectToIntegral();
+		}
+	}
+	
+	private void connectToIntegral(){
+		if(BluetoothAdapter.getDefaultAdapter() != null && BluetoothAdapter.getDefaultAdapter().isEnabled() == true)
+		{
+			if(IntegralSetting.getDeviceMACAddr().length() <= 0)
+			{
+				UIUtility.showProgressDlg(MainActivity.this, true, "scan devices");
+				mLeDevices.clear();
+				BLEUtility.getInstance().startScanLEDevices();
+				mScanPeriodHandler.postDelayed(new Runnable() {
+	                @Override
+	                public void run() {
+	                    BLEUtility.getInstance().stopScanLEDevices();
+	                    UIUtility.showProgressDlg(MainActivity.this, false, "find devices end");
+	                    if(mLeDevices.size() == 0)
+	                    {
+	                    	Toast.makeText(MainActivity.this, "find no devices", Toast.LENGTH_SHORT).show();
+	                    }
+	                    /*else if(mLeDevices.size() == 1)
+	                    {
+	                    	BLEDevice device = mLeDevices.get(0);
+	                    	if(device != null)
+	                    	{
+	                    		mPreDevice = device;
+	                    		BLEUtility.getInstance().connect(device.getAddress());
+	                    	}
+	                    }*/
+	                    else //mLeDevices.size() > 1
+	                    {
+	                    	AlertDialog.Builder builderSingle = new AlertDialog.Builder(
+	                                MainActivity.this);
+	                        builderSingle.setIcon(R.drawable.ic_icon);
+	                        builderSingle.setTitle(getResources().getString(R.string.dlgChooseIntegral));
+	                        builderSingle.setNegativeButton(getResources().getString(R.string.dlgCancel),
+	                                new DialogInterface.OnClickListener() {
+
+	                                    @Override
+	                                    public void onClick(DialogInterface dialog, int which) {
+	                                        dialog.dismiss();
+	                                    }
+	                                });
+	                        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+	                        		MainActivity.this,
+	                                android.R.layout.select_dialog_singlechoice);
+	                        for(BLEDevice leDevice: mLeDevices)
+	                        	arrayAdapter.add(leDevice.getDeviceName() + " [" + leDevice.getAddress() + "]");
+
+	                        builderSingle.setAdapter(arrayAdapter,
+	                                new DialogInterface.OnClickListener() {
+
+	                                    @Override
+	                                    public void onClick(DialogInterface dialog, int which) {
+	                                        BLEDevice device = mLeDevices.get(which);
+	                                        mPreDevice = device;
+	                                        BLEUtility.getInstance().connect(device.getAddress());
+	                                    }
+	                                });
+	                        builderSingle.show();
+	                    }
+	                }
+	            }, SCAN_PERIOD);
+			}
+			else
+			{
+				mPreDevice = new BLEDevice(IntegralSetting.getDeviceName(), IntegralSetting.getDeviceMACAddr());
+				BLEUtility.getInstance().connect(IntegralSetting.getDeviceMACAddr());
+			}
+		}	
+	}
+	
 	@Override
     protected void onResume() {
+		updateUIForConn();
 		super.onResume();
 	}
 	
@@ -582,25 +736,31 @@ public class MainActivity extends CustomTitleActivity
 	@Override
 	protected void onDestroy() {
 		unregisterReceiver(mBtnReceiver);
+		BLEUtility.getInstance().disconnect();
 		super.onDestroy();
 	}
 	
 	@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
+		switch (requestCode) {
+       	case BTSettingActivity.REQUEST_ENABLE_BT:
+       	{
+       		if(resultCode == Activity.RESULT_OK ) 
+        	{
+       			connectToIntegral();
+        	}
+       	}
+       	break;
+       }
         super.onActivityResult(requestCode, resultCode, data);
     }
-	
-	@Override
-	public void onBackPressed() {
-		BLEUtility.getInstance().disconnect();
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
-		menu.findItem(R.id.menu_disconnect).setVisible(true);
+		menu.findItem(R.id.menu_connect).setVisible(true);
+		mMenu = menu;
 		return true;
 	}
 
@@ -610,9 +770,25 @@ public class MainActivity extends CustomTitleActivity
 		switch (item.getItemId()) {
         
         case android.R.id.home:
-        case R.id.menu_disconnect:
         	BLEUtility.getInstance().disconnect();
-		}
+        	break;
+        case R.id.menu_connect:
+        {
+        	String tle = (String) item.getTitle(); 
+        	if(tle.compareTo(getResources().getString(R.string.menu_disconn)) == 0)
+        		BLEUtility.getInstance().disconnect();
+        	else if(tle.compareTo(getResources().getString(R.string.menu_conn)) == 0)
+        		requestBTOrConn();
+        }
+        break;
+        case R.id.menu_clearConn:
+        {
+        	IntegralSetting.setDeviceMACAddr("");
+        	Toast.makeText(MainActivity.this, R.string.msgResetConn, Toast.LENGTH_SHORT).show();
+        }
+        break;
+        default:	
+		}	
 		return super.onOptionsItemSelected(item);
 	}
 

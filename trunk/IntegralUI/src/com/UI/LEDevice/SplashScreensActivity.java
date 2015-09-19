@@ -70,7 +70,7 @@ public class SplashScreensActivity extends Activity {
 		mIntegralDevice = null;
 		
 		//Scan integral first if no logged device and BT opened
-		if(IntegralSetting.getDeviceMACAddr().length() <= 0 && 
+		/*if(IntegralSetting.getDeviceMACAddr().length() <= 0 && 
 		   BluetoothAdapter.getDefaultAdapter() != null && 
 		   BluetoothAdapter.getDefaultAdapter().isEnabled())
 		{
@@ -80,7 +80,7 @@ public class SplashScreensActivity extends Activity {
 			mBRegGetIntegral = true;
 			
 			BLEUtility.getInstance().startScanLEDevices();
-		}
+		}*/
 		
 		new Handler().postDelayed(new Runnable() {
 			 

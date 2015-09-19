@@ -43,6 +43,12 @@ public class BLEUtility
     public final static String ACTION_SENCMD_READ_CONTENT_KEY = "com.BLE.BLEUtility.ACTION_SENCMD_READ_CONTENT_KEY";
     public static final String ACTION_SENCMD_READ_CONTENT = "com.BLE.BLEUtility.ACTION_SENCMD_READ_CONTENT";
     public static final String ACTION_SENCMD_READ_FAIL = "com.BLE.BLEUtility.ACTION_SENCMD_READ_FAIL";
+    
+    //Messages
+    public static final String DISCONNECTED_CAUSE_NORSP = "Connect no response";
+    public static final String DISCONNECTED_CAUSE_DIS = "disconnted";
+    public static final String DISCONNECTED_CAUSE_NOSERVICE = "discover no services";
+    public static final String DISCONNECTED_CAUSE_PFLDIS = "BluetoothProfile.STATE_DISCONNECTED";
 	
     //inner define
 	final private String mTag = "BLEUtility";
@@ -57,14 +63,11 @@ public class BLEUtility
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) 
         {
-        	
-        	ArrayUtils.reverse(scanRecord);	 //数组反转
-			
+        	ArrayUtils.reverse(scanRecord);	 
         	String discoveryServceID = String.format("%x", new BigInteger(1, scanRecord));
         	
-        				
-        	//
-        	if(discoveryServceID.indexOf(mSUUIDString.toString().replace("-", "")) != -1){
+        	if(discoveryServceID.indexOf(mSUUIDString.toString().replace("-", "")) != -1)
+        	{
         		// check if has device already?
             	boolean bAdd = true; 
             	for(BLEDevice cBTDevice : mbtDeviceList) 
@@ -134,7 +137,7 @@ public class BLEUtility
             
             //discover no services.
             mDisconnect();
-        	mFireDisconnected("discover no services.");
+        	mFireDisconnected(DISCONNECTED_CAUSE_NOSERVICE);
             if(mBAutoReconnect)
 	        	mSetCheckConnTimer(true);
         }
@@ -146,13 +149,13 @@ public class BLEUtility
             	if(mBluetoothGatt == null || false == mBluetoothGatt.discoverServices())
             	{
             		mDisconnect();
-            		mFireDisconnected("discover services = false");
+            		mFireDisconnected(DISCONNECTED_CAUSE_NOSERVICE);
             		if(mBAutoReconnect)
         	        	mSetCheckConnTimer(true);
             	}
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
             	mDisconnect();
-            	mFireDisconnected("BluetoothProfile.STATE_DISCONNECTED");
+            	mFireDisconnected(DISCONNECTED_CAUSE_PFLDIS);
     	        if(mBAutoReconnect)
     	        	mSetCheckConnTimer(true);
             }
@@ -419,7 +422,7 @@ public class BLEUtility
                 public void run() {
                     if(ConnStatus.CONN_STATE_CONNECTED != mConnStatus) {
                     	mDisconnect();
-                    	mFireDisconnected("Connect no response");
+                    	mFireDisconnected(DISCONNECTED_CAUSE_NORSP);
             	        if(mBAutoReconnect)
             	        	mSetCheckConnTimer(true);
                     }
@@ -445,7 +448,7 @@ public class BLEUtility
 	
 	public void disconnect() {
 		mDisconnect();
-		mFireDisconnected("disconnted");
+		mFireDisconnected(DISCONNECTED_CAUSE_DIS);
 	}
 	
 	public void read() throws BLEUtilityException

@@ -670,7 +670,7 @@ public class MainActivity extends CustomTitleActivity
 	                    {
 	                    	Toast.makeText(MainActivity.this, "find no devices", Toast.LENGTH_SHORT).show();
 	                    }
-	                    /*else if(mLeDevices.size() == 1)
+	                    else if(mLeDevices.size() == 1)
 	                    {
 	                    	BLEDevice device = mLeDevices.get(0);
 	                    	if(device != null)
@@ -678,7 +678,7 @@ public class MainActivity extends CustomTitleActivity
 	                    		mPreDevice = device;
 	                    		BLEUtility.getInstance().connect(device.getAddress());
 	                    	}
-	                    }*/
+	                    }
 	                    else //mLeDevices.size() > 1
 	                    {
 	                    	AlertDialog.Builder builderSingle = new AlertDialog.Builder(

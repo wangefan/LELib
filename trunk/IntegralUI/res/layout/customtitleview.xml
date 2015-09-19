@@ -12,8 +12,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
         android:textColor="@color/white"
-        android:textSize="25sp"
-        app1:typeface="robotoCondensed"
+        android:textSize="20sp"
         android:maxLines="1"/>
 
 </RelativeLayout>

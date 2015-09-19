@@ -21,7 +21,6 @@
 
     <com.UI.font.RobotoTextView
         android:id="@+id/textTitle"
-        style="@style/TextViewAppearance.Title1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
@@ -29,7 +28,6 @@
         android:minHeight="64dp"
         android:padding="8dp"
         android:textColor="@color/main_color_grey_700"
-        android:textSize="22sp"
-        app:typeface="robotoCondensed" />
+        android:textSize="18sp" />
 
 </LinearLayout>

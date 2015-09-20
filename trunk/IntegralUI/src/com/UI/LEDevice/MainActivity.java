@@ -66,7 +66,8 @@ public class MainActivity extends CustomTitleActivity
 	private static Handler mUIHanlder = new Handler();
 	private Handler mScanPeriodHandler = new Handler();
 	private ArrayList<BLEDevice> mLeDevices = new ArrayList<BLEDevice>();
-	BLEDevice mPreDevice = null;
+	private BLEDevice mPreDevice = null;
+	private ChildReadAllItem mReadAllCmd = null;
 	private boolean mBConnected = false;
 	private Menu mMenu = null;
 	private int mGoalReadCount = 0;
@@ -100,6 +101,8 @@ public class MainActivity extends CustomTitleActivity
 				mBConnected = true;
 				updateUIForConn();
 				Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+				if(mReadAllCmd != null)
+					mReadAllCmd.doIt();
 			}
 			else if(BLEUtility.ACTION_GET_LEDEVICE.equals(action))
 			{
@@ -762,6 +765,7 @@ public class MainActivity extends CustomTitleActivity
 		    			command.mTitle = cmdNode.getAttributes().getNamedItem("Title").getNodeValue();
 		    			command.mCommand = cmdNode.getAttributes().getNamedItem("Cmd").getNodeValue();
 		    			cmdgroup.items.add(command);
+		    			mReadAllCmd = (ChildReadAllItem) command;
 		    		}
 		    	}
 		    }

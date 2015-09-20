@@ -55,7 +55,8 @@ public class MainActivity extends CustomTitleActivity
 	//constant 
 	private final String mTAG = "MainActivity";
 	private final static String ACTION_GROUP_READ_OK = "ACTION_GROUP_READ_OK";
-	private final static String ACTION_GROUP_READ_OK_KEY = "ACTION_GROUP_READ_OK_KEY";
+	private final static String ACTION_GROUP_READ_OK_GETITEMID_KEY = "ACTION_GROUP_READ_OK_GETITEMID_KEY";
+	private final static String ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY = "ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY";
 	private final static String ACTION_GROUP_READ_FAIL = "ACTION_GROUP_READ_FAIL";
 	private final static String ACTION_GROUP_READ_FAIL_KEY = "ACTION_GROUP_READ_FAIL_KEY";
 	private static final long SCAN_PERIOD = 5000; // Stops scanning after 8 seconds.
@@ -141,22 +142,25 @@ public class MainActivity extends CustomTitleActivity
             }
             else if(ACTION_GROUP_READ_OK.equals(action))
             {
-            	int [] idArr = intent.getIntArrayExtra(ACTION_GROUP_READ_OK_KEY);
+            	int [] idArr = intent.getIntArrayExtra(ACTION_GROUP_READ_OK_GETITEMID_KEY);
+            	String groupStatus = intent.getStringExtra(ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY);
+            	//update GroupItem first
+            	GroupItem groupItem = mAdapter.getGroup(idArr[0]);
+            	groupItem.mGroupResponse = groupStatus;
+            	groupItem.unCheckAllWrtChild();
+        		MyLog.d(mTAG, "Group item " + groupItem.mGroupTitle + " read OK.");
+        		
+            	//update ChildItem if needed
             	ChildWrtItem childItem = null;
             	if(idArr[1] >= 0 ) 
             		childItem = (ChildWrtItem) mAdapter.getChild(idArr[0], idArr[1]) ;
             	if(childItem != null)
             	{
-            		if(childItem.mParentItem != null)
-            			childItem.mParentItem.unCheckAllWrtChild();
             		childItem.mBIsChecked = true;
-            		mAdapter.notifyDataSetChanged();
-            		MyLog.d(mTAG, "Group item " + childItem.mParentItem.mGroupTitle + " read OK.");
+            		MyLog.d(mTAG, "ChildWrtItem " + childItem.mTitle + " update OK.");
             	}
-            	else {
-            		GroupItem groupItem = mAdapter.getGroup(idArr[0]);
-            		MyLog.d(mTAG, "Group item " + groupItem.mGroupTitle + " read OK.");
-            	}
+            	
+            	mAdapter.notifyDataSetChanged();
             	++mReadCount;
             	if(mReadCount >= mGoalReadCount)
             	{
@@ -194,8 +198,9 @@ public class MainActivity extends CustomTitleActivity
 	private class GroupItem {
 		public int mID = -1;
 		private String mTag = "GroupItem";
-		public String mGroupTitle;
-		public String mGroupIcon;
+		public String mGroupTitle = "";
+		public String mGroupResponse = "";
+		public String mGroupIcon = "";
 		List<ChildItem> items = new ArrayList<ChildItem>();
 		
 		public void unCheckAllWrtChild()
@@ -242,7 +247,8 @@ public class MainActivity extends CustomTitleActivity
 									@Override
 									public void run() {
 										final Intent brd = new Intent(ACTION_GROUP_READ_OK);
-										brd.putExtra(ACTION_GROUP_READ_OK_KEY, new int[] {mID, Integer.parseInt(rdCmdStr.mRefWrtCmdID)});
+										brd.putExtra(ACTION_GROUP_READ_OK_GETITEMID_KEY, new int[] {mID, Integer.parseInt(rdCmdStr.mRefWrtCmdID)});
+										brd.putExtra(ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY, rdCmdStr.mResponseTitleString);
 								        MainActivity.this.sendBroadcast(brd);
 									}
 								});
@@ -324,7 +330,7 @@ public class MainActivity extends CustomTitleActivity
 							@Override
 							public void run() {
 								final Intent brd = new Intent(ACTION_GROUP_READ_OK);
-								brd.putExtra(ACTION_GROUP_READ_OK_KEY, new int[] {mParentItem.mID, mID});
+								brd.putExtra(ACTION_GROUP_READ_OK_GETITEMID_KEY, new int[] {mParentItem.mID, mID});
 						        MainActivity.this.sendBroadcast(brd);
 								broadCastAction(BLEUtility.ACTION_SENCMD_OK);
 							}
@@ -348,9 +354,11 @@ public class MainActivity extends CustomTitleActivity
 
 	public class ReadCmdStructur {
 		public String mResponseString = "";
+		public String mResponseTitleString = "";
 		public String mRefWrtCmdID = "";
-		public ReadCmdStructur(String responseString, String refWrtCmdID) {
+		public ReadCmdStructur(String responseString, String responseTitleString, String refWrtCmdID) {
 			mResponseString = new String(responseString);
+			mResponseTitleString = new String(responseTitleString);
 			mRefWrtCmdID = new String(refWrtCmdID);
 		}
 	}
@@ -456,6 +464,7 @@ public class MainActivity extends CustomTitleActivity
 
 	private static class GroupHolder {
 		TextView mGroupTitle;
+		TextView mGroupRespStatus;
 		FontelloTextView  mGroupIcon;
 	}
 
@@ -535,6 +544,7 @@ public class MainActivity extends CustomTitleActivity
 				holder = new GroupHolder();
 				convertView = inflater.inflate(R.layout.group_item, parent, false);
 				holder.mGroupTitle = (TextView) convertView.findViewById(R.id.textTitle);
+				holder.mGroupRespStatus = (TextView) convertView.findViewById(R.id.textRespStatus);
 				holder.mGroupIcon = (FontelloTextView) convertView.findViewById(R.id.lstGroupItemIcon);
 				convertView.setTag(holder);
 			} else {
@@ -542,6 +552,7 @@ public class MainActivity extends CustomTitleActivity
 			}
 
 			holder.mGroupTitle.setText(item.mGroupTitle);
+			holder.mGroupRespStatus.setText(item.mGroupResponse);
 			holder.mGroupIcon.setText(item.mGroupIcon);
 
 			return convertView;
@@ -674,8 +685,9 @@ public class MainActivity extends CustomTitleActivity
 				    		if(strResNodeName.compareTo("CmdRes") == 0)
 				    		{
 				    			String strVal = cmdResNode.getFirstChild().getNodeValue();
+				    			String reRespTitle = cmdResNode.getAttributes().getNamedItem("Title").getNodeValue();
 				    			String refWrtCmdID = cmdResNode.getAttributes().getNamedItem("refWmdID").getNodeValue();
-				    			ReadCmdStructur rs = new ReadCmdStructur(strVal, refWrtCmdID);
+				    			ReadCmdStructur rs = new ReadCmdStructur(strVal, reRespTitle, refWrtCmdID);
 				    			((ChildReadItem)command).mCommandResColl.add(rs);
 				    		}
 		    			}

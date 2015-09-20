@@ -7,7 +7,7 @@
 		<ReadAllCmd Title="Read Config" Cmd="" CheckedIcon="&#xe8fd;" UnCheckedIcon="&#xe8fd;">
 		</ReadAllCmd>
 		<ReadCmd Title="INFO" Cmd="man">
-			<CmdRes refWmdID = "-1">man Integral</CmdRes>
+			<CmdRes Title="" refWmdID = "-1">man Integral</CmdRes>
 		</ReadCmd>
     </CmdGroup>
 	<CmdGroup Title="Channel Selection" Icon="&#xeaa0;" CanRead="true">
@@ -18,8 +18,8 @@
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="Read Channel" Cmd="insel">
-			<CmdRes refWmdID = "0">insel 1</CmdRes>
-			<CmdRes refWmdID = "1">insel 2</CmdRes>
+			<CmdRes Title="Channel/Input 1" refWmdID = "0">insel 1</CmdRes>
+			<CmdRes Title="Channel/Input 2" refWmdID = "1">insel 2</CmdRes>
 		</ReadCmd>
     </CmdGroup>
 	<CmdGroup Title="HDCP Settings" Icon="&#xeaff;" CanRead="true">
@@ -30,9 +30,9 @@
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="Read HDCP" Cmd="hdcp" Icon="&#xeaa0;">
-			<CmdRes refWmdID = "0">hdcp 14</CmdRes>
-			<CmdRes refWmdID = "1">hdcp 22</CmdRes>
-			<CmdRes refWmdID = "-1">hdcp auto</CmdRes>
+			<CmdRes Title="HDCP 1.4 only" refWmdID = "0">hdcp 14</CmdRes>
+			<CmdRes Title="HDCP 2.2 + 1.4" refWmdID = "1">hdcp 22</CmdRes>
+			<CmdRes Title="HDCP Auto" refWmdID = "-1">hdcp auto</CmdRes>
 		</ReadCmd>
     </CmdGroup>	
     <CmdGroup Title="Sound Settings" Icon="&#xeb47;" CanRead="true">
@@ -43,28 +43,28 @@
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="Read Audio" Cmd="audio" Icon="&#xeaa0;">
-			<CmdRes refWmdID = "1">audio hdmi</CmdRes>
-			<CmdRes refWmdID = "0">audio jack</CmdRes>
-			<CmdRes refWmdID = "-1">audio auto</CmdRes>
+			<CmdRes Title="From HDMI" refWmdID = "1">audio hdmi</CmdRes>
+			<CmdRes Title="External Audio" refWmdID = "0">audio jack</CmdRes>
+			<CmdRes Title="Audio Auto" refWmdID = "-1">audio auto</CmdRes>
 		</ReadCmd>
     </CmdGroup>
 	<CmdGroup Title="EDID Settings" Icon="&#xeaa0;" CanRead="true">
-	    <WriteCmd Title="AUTO MIX MODE" Cmd="edid automix" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+	    <WriteCmd Title="Auto Mix Mode" Cmd="edid automix" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
-		<WriteCmd Title="CUSTOM" Cmd="edid custom" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+		<WriteCmd Title="Custom" Cmd="edid custom" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
         <WriteCmd Title="Fixed with L/R stereo" Cmd="edid fixed" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="Read EDID" Cmd="edid">
-			<CmdRes refWmdID = "2">edid fixed</CmdRes>
-			<CmdRes refWmdID = "1">edid custom</CmdRes>
-			<CmdRes refWmdID = "0">edid automix</CmdRes>
+			<CmdRes Title="Fixed with L/R stereo" refWmdID = "2">edid fixed</CmdRes>
+			<CmdRes Title="Custom" refWmdID = "1">edid custom</CmdRes>
+			<CmdRes Title="Auto Mix Mode" refWmdID = "0">edid automix</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-    <CmdGroup Title=" 4:2:0 Downsampling mode" Icon="&#xe860;" CanRead="true">
+    <CmdGroup Title="4:2:0 Downsampling mode" Icon="&#xe860;" CanRead="true">
 	    <WriteCmd Title="Enable 4:4:4 -> 4:2:0" Cmd="420 on" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
@@ -72,8 +72,8 @@
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="READ current 4:2:0 selection status" Cmd="420">
-			<CmdRes refWmdID = "0">420 on</CmdRes>
-			<CmdRes refWmdID = "1">420 off</CmdRes>
+			<CmdRes Title="Enable 4:4:4 -> 4:2:0" refWmdID = "0">420 on</CmdRes>
+			<CmdRes Title="Disable 4:4:4 -> 4:2:0" refWmdID = "1">420 off</CmdRes>
 		</ReadCmd>
     </CmdGroup>
     <CmdGroup Title=" Power" Icon="&#xe860;" CanRead="true">
@@ -84,23 +84,23 @@
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="READ power status" Cmd="power">
-			<CmdRes refWmdID = "0">power on</CmdRes>
-			<CmdRes refWmdID = "1">power off</CmdRes>
+			<CmdRes Title="Power on" refWmdID = "0">power on</CmdRes>
+			<CmdRes Title="Power off" refWmdID = "1">power off</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-    <CmdGroup Title="EPlay with CEC " Icon="&#xe860;" CanRead="true">
-	    <WriteCmd Title="TURN EVERYTHING ON" Cmd="cec on" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+    <CmdGroup Title="Play with CEC " Icon="&#xe860;" CanRead="true">
+	    <WriteCmd Title="Turn Everything On" Cmd="cec on" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
-	    <WriteCmd Title="TURN EVERYTHING OFF" Cmd="cec off" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+	    <WriteCmd Title="Turn Everything Off" Cmd="cec off" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<WriteCmd Title="Play CEC (CEC 0F:36)" Cmd="CEC 0F:36" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="READ CEC status" Cmd="cec">
-			<CmdRes refWmdID = "0">cec on</CmdRes>
-			<CmdRes refWmdID = "1">cec off</CmdRes>
+			<CmdRes Title="Turn Everything On" refWmdID = "0">cec on</CmdRes>
+			<CmdRes Title="Turn Everything Off" refWmdID = "1">cec off</CmdRes>
 		</ReadCmd>
     </CmdGroup>
 </Commands>

@@ -16,7 +16,6 @@
 package com.UI.kenburnsview;
 
 import android.graphics.RectF;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 
 public class Transition {

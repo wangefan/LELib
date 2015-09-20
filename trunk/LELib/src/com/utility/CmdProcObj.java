@@ -3,7 +3,6 @@ package com.utility;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
-import com.BLE.BLEUtility.MyLog;
 
 //Cmd structure
 // HEADER[2 byte] + cmd length[1 byte] + cmds(include 0d)[xx bytes] + crc[1 byte] 
@@ -20,7 +19,6 @@ public class CmdProcObj {
 	}
 	
 	static public byte [] addCRC(String cmd, boolean bWrite) {
-		String strHex = "";
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			if(bWrite)
@@ -36,7 +34,6 @@ public class CmdProcObj {
 			e.printStackTrace();
 		}
 				
-		strHex = String.format("%x", new BigInteger(1, baos.toByteArray()));
 		return baos.toByteArray();
 	}
 	

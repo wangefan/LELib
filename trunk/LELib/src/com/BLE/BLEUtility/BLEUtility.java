@@ -319,7 +319,6 @@ public class BLEUtility
     	if(mBluetoothAdapter != null && mBluetoothAdapter.isEnabled())
 		{
     		mbtDeviceList.clear();
-    		UUID [] ua = new UUID[] {mSUUIDString};
 			mBluetoothAdapter.startLeScan( mLeScanCallback);
 		}
 	}

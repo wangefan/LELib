@@ -376,7 +376,8 @@ public class MainActivity extends CustomTitleActivity
 								mParentItem.mBIsOutofDate= false; 
 								final Intent brd = new Intent(BLEUtility.ACTION_SENCMD_OK);
 								brd.putExtra(ACTION_GROUP_READ_OK_GETITEMID_KEY, new int[] {mParentItem.mID, mID});
-								brd.putExtra(ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY, readcmdStrTemp.mResponseTitleString);
+								if(readcmdStrTemp != null)
+									brd.putExtra(ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY, readcmdStrTemp.mResponseTitleString);
 						        MainActivity.this.sendBroadcast(brd);
 							}
 						});

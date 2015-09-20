@@ -174,14 +174,6 @@ public class BLEUtility
             	mResData = resDataTemp;
             }
         }
-        
-        @Override
-        public void onCharacteristicWrite(BluetoothGatt gatt,
-                                         BluetoothGattCharacteristic characteristic,
-                                         int status) {
-            if (status == BluetoothGatt.GATT_SUCCESS) 
-            	final byte[] data = characteristic.getValue();
-        }
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,

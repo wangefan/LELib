@@ -7,7 +7,7 @@
 		<ReadAllCmd Title="Read Config" Cmd="" CheckedIcon="&#xe8fd;" UnCheckedIcon="&#xe8fd;">
 		</ReadAllCmd>
 		<ReadCmd Title="INFO" Cmd="man">
-			<CmdRes>man Integral</CmdRes>
+			<CmdRes refWmdID = "-1">man Integral</CmdRes>
 		</ReadCmd>
     </CmdGroup>
 	<CmdGroup Title="Channel Selection" Icon="&#xeaa0;" CanRead="true">
@@ -18,8 +18,8 @@
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="Read Channel" Cmd="insel">
-			<CmdRes>insel 1</CmdRes>
-			<CmdRes>insel 2</CmdRes>
+			<CmdRes refWmdID = "0">insel 1</CmdRes>
+			<CmdRes refWmdID = "1">insel 2</CmdRes>
 		</ReadCmd>
     </CmdGroup>
 	<CmdGroup Title="HDCP Settings" Icon="&#xeaff;" CanRead="true">
@@ -30,8 +30,9 @@
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="Read HDCP" Cmd="hdcp" Icon="&#xeaa0;">
-			<CmdRes>hdcp 14</CmdRes>
-			<CmdRes>hdcp 22</CmdRes>
+			<CmdRes refWmdID = "0">hdcp 14</CmdRes>
+			<CmdRes refWmdID = "1">hdcp 22</CmdRes>
+			<CmdRes refWmdID = "-1">hdcp auto</CmdRes>
 		</ReadCmd>
     </CmdGroup>	
     <CmdGroup Title="Sound Settings" Icon="&#xeb47;" CanRead="true">
@@ -42,8 +43,9 @@
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="Read Audio" Cmd="audio" Icon="&#xeaa0;">
-			<CmdRes>audio hdmi</CmdRes>
-			<CmdRes>audio jack</CmdRes>
+			<CmdRes refWmdID = "1">audio hdmi</CmdRes>
+			<CmdRes refWmdID = "0">audio jack</CmdRes>
+			<CmdRes refWmdID = "-1">audio auto</CmdRes>
 		</ReadCmd>
     </CmdGroup>
 	<CmdGroup Title="EDID Settings" Icon="&#xeaa0;" CanRead="true">
@@ -57,9 +59,9 @@
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="Read EDID" Cmd="edid">
-			<CmdRes>edid fixed</CmdRes>
-			<CmdRes>edid custom</CmdRes>
-			<CmdRes>edid automix</CmdRes>
+			<CmdRes refWmdID = "2">edid fixed</CmdRes>
+			<CmdRes refWmdID = "1">edid custom</CmdRes>
+			<CmdRes refWmdID = "0">edid automix</CmdRes>
 		</ReadCmd>
     </CmdGroup>
     <CmdGroup Title=" 4:2:0 Downsampling mode" Icon="&#xe860;" CanRead="true">
@@ -70,8 +72,8 @@
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="READ current 4:2:0 selection status" Cmd="420">
-			<CmdRes>420 on</CmdRes>
-			<CmdRes>420 off</CmdRes>
+			<CmdRes refWmdID = "0">420 on</CmdRes>
+			<CmdRes refWmdID = "1">420 off</CmdRes>
 		</ReadCmd>
     </CmdGroup>
     <CmdGroup Title=" Power" Icon="&#xe860;" CanRead="true">
@@ -82,8 +84,8 @@
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="READ power status" Cmd="power">
-			<CmdRes>power on</CmdRes>
-			<CmdRes>power off</CmdRes>
+			<CmdRes refWmdID = "0">power on</CmdRes>
+			<CmdRes refWmdID = "1">power off</CmdRes>
 		</ReadCmd>
     </CmdGroup>
     <CmdGroup Title="EPlay with CEC " Icon="&#xe860;" CanRead="true">
@@ -97,8 +99,8 @@
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="READ CEC status" Cmd="cec">
-			<CmdRes>cec on</CmdRes>
-			<CmdRes>cec off</CmdRes>
+			<CmdRes refWmdID = "0">cec on</CmdRes>
+			<CmdRes refWmdID = "1">cec off</CmdRes>
 		</ReadCmd>
     </CmdGroup>
 </Commands>

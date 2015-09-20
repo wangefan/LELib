@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.xpath.XPath;
@@ -22,7 +23,6 @@ import com.BLE.BLEUtility.MyLog;
 import com.UI.LEDevice.AnimatedExpandableListView.AnimatedExpandableListAdapter;
 import com.UI.font.FontelloTextView;
 import com.utility.CmdProcObj;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -142,7 +142,9 @@ public class MainActivity extends CustomTitleActivity
             else if(ACTION_GROUP_READ_OK.equals(action))
             {
             	int [] idArr = intent.getIntArrayExtra(ACTION_GROUP_READ_OK_KEY);
-            	ChildWrtItem childItem =(ChildWrtItem) mAdapter.getChild(idArr[0], idArr[1]) ;
+            	ChildWrtItem childItem = null;
+            	if(idArr[1] >= 0 ) 
+            		childItem = (ChildWrtItem) mAdapter.getChild(idArr[0], idArr[1]) ;
             	if(childItem != null)
             	{
             		if(childItem.mParentItem != null)
@@ -150,6 +152,10 @@ public class MainActivity extends CustomTitleActivity
             		childItem.mBIsChecked = true;
             		mAdapter.notifyDataSetChanged();
             		MyLog.d(mTAG, "Group item " + childItem.mParentItem.mGroupTitle + " read OK.");
+            	}
+            	else {
+            		GroupItem groupItem = mAdapter.getGroup(idArr[0]);
+            		MyLog.d(mTAG, "Group item " + groupItem.mGroupTitle + " read OK.");
             	}
             	++mReadCount;
             	if(mReadCount >= mGoalReadCount)
@@ -214,7 +220,7 @@ public class MainActivity extends CustomTitleActivity
 			if(readItem != null)
 			{
 				final ChildReadItem chdReadItemTemp = readItem;
-				final List<ChildItem> itemsTemp = items;
+				final List<ReadCmdStructur> resCollTemp = chdReadItemTemp.mCommandResColl;
 				Thread workerThread = new Thread() 
 				{
 				    public void run() {
@@ -225,13 +231,9 @@ public class MainActivity extends CustomTitleActivity
 				    	if(rspCal != null)
 				    		strRspCal = new String(rspCal);
 				    	MyLog.d(mTag, "doReadRsp, read content = " + strRspCal + ", in thread = " + Thread.currentThread().getId());
-				    	for(ChildItem item: itemsTemp)
+				    	for(final ReadCmdStructur rdCmdStr: resCollTemp)
 				    	{
-				    		if(item instanceof ChildWrtItem == false)
-				    			continue;
-				    		final ChildWrtItem wrtItem = (ChildWrtItem) item;
-
-				    		String itrRsp = wrtItem.mCommand;
+				    		String itrRsp = rdCmdStr.mResponseString;
 				    		MyLog.d(mTag, "doReadRsp, compare from = " + itrRsp+ ", in thread = " + Thread.currentThread().getId());
 				    		if(strRspCal.equals(itrRsp) == true)
 							{
@@ -240,7 +242,7 @@ public class MainActivity extends CustomTitleActivity
 									@Override
 									public void run() {
 										final Intent brd = new Intent(ACTION_GROUP_READ_OK);
-										brd.putExtra(ACTION_GROUP_READ_OK_KEY, new int[] {mID, wrtItem.mID});
+										brd.putExtra(ACTION_GROUP_READ_OK_KEY, new int[] {mID, Integer.parseInt(rdCmdStr.mRefWrtCmdID)});
 								        MainActivity.this.sendBroadcast(brd);
 									}
 								});
@@ -265,7 +267,7 @@ public class MainActivity extends CustomTitleActivity
 		}
 	}
 	
-	private abstract class ChildItem {
+	public abstract class ChildItem {
 		public GroupItem mParentItem =  null;
 		public int mID = -1;
 		public String mTitle;
@@ -343,12 +345,23 @@ public class MainActivity extends CustomTitleActivity
 			workerThread.start();
 		}
 	}
+
+	public class ReadCmdStructur {
+		public String mResponseString = "";
+		public String mRefWrtCmdID = "";
+		public ReadCmdStructur(String responseString, String refWrtCmdID) {
+			mResponseString = new String(responseString);
+			mRefWrtCmdID = new String(refWrtCmdID);
+		}
+	}
 	
-	private class ChildReadItem extends ChildItem implements Serializable{
+	public class ChildReadItem extends ChildItem implements Serializable{
 		private static final long serialVersionUID = 4L;
 		private String mTag = "ChildReadItem";
 		public String mIcon = "";
-		public List<String> mCommandResColl = new ArrayList<String>();
+		
+		
+		public List<ReadCmdStructur> mCommandResColl = new ArrayList<ReadCmdStructur>();
 		
 		@Override
 		public String getIcon() {
@@ -368,21 +381,32 @@ public class MainActivity extends CustomTitleActivity
 			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write cmd = " + mCommand);
 			    	byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(mCommand, false));
 			    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
-			    	String strRspCal = "";
+			    	String strRsp = "", strRspHex = "", strRspCal = "", strRspCalHex = "";
+			    	if(rsp != null)
+			    	{
+			    		strRsp = new String(rsp);
+			    		strRspHex = String.format("%x", new BigInteger(1, rsp));
+			    	}
 			    	if(rspCal != null)
+			    	{
 			    		strRspCal = new String(rspCal);
-			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, read content = " + strRspCal);
-			    	for(final String itrRsp: mCommandResColl)
+			    		strRspCalHex = String.format("%x", new BigInteger(1, rspCal));
+			    	}
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, read from integral = " + strRsp);
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, read from integral hex = " + strRspHex);
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, read after CRC = " + strRspCal);
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, read after CRC hex = " + strRspCalHex);
+			    	for(final ReadCmdStructur itrRsp: mCommandResColl)
 			    	{
 			    		MyLog.d(mTag, "doWriteCmdAndReadRsp, compare from = " + itrRsp);
-			    		if(strRspCal.equals(itrRsp) == true)
+			    		if(strRspCal.equals(itrRsp.mResponseString) == true)
 						{
 							MyLog.d(mTag, "doWriteCmdAndReadRsp, read ok");
 							mUIHanlder.post(new Runnable() {
 								@Override
 								public void run() {
 									if(bBroadCastTemp)
-										broadCastActionMsg(BLEUtility.ACTION_SENCMD_READ_CONTENT, BLEUtility.ACTION_SENCMD_READ_CONTENT_KEY, itrRsp);
+										broadCastActionMsg(BLEUtility.ACTION_SENCMD_READ_CONTENT, BLEUtility.ACTION_SENCMD_READ_CONTENT_KEY, itrRsp.mResponseString);
 								}
 							});
 							return;
@@ -650,7 +674,9 @@ public class MainActivity extends CustomTitleActivity
 				    		if(strResNodeName.compareTo("CmdRes") == 0)
 				    		{
 				    			String strVal = cmdResNode.getFirstChild().getNodeValue();
-				    			((ChildReadItem)command).mCommandResColl.add(new String(strVal));
+				    			String refWrtCmdID = cmdResNode.getAttributes().getNamedItem("refWmdID").getNodeValue();
+				    			ReadCmdStructur rs = new ReadCmdStructur(strVal, refWrtCmdID);
+				    			((ChildReadItem)command).mCommandResColl.add(rs);
 				    		}
 		    			}
 		    			cmdgroup.items.add(command);

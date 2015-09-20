@@ -196,6 +196,7 @@ public class MainActivity extends CustomTitleActivity
             		MyLog.d(mTAG, "Group item " + groupItem.mGroupTitle + " read fail.");
             		//Todo: log read fail cmd
             	}
+            	mAdapter.notifyDataSetChanged();
             	++mReadCount;
             	if(mReadCount >= mGoalReadCount)
             	{
@@ -219,6 +220,7 @@ public class MainActivity extends CustomTitleActivity
 		private String mTag = "GroupItem";
 		public String mGroupTitle = "";
 		public String mGroupResponse = "";
+		public boolean mBIsOutofDate = false;
 		public String mGroupIcon = "";
 		List<ChildItem> items = new ArrayList<ChildItem>();
 		
@@ -267,6 +269,7 @@ public class MainActivity extends CustomTitleActivity
 				    		MyLog.d(mTag, "doReadRsp, compare from = " + itrRsp+ ", in thread = " + Thread.currentThread().getId());
 				    		if(strRspCal.equals(itrRsp) == true)
 							{
+				    			mBIsOutofDate= false; 
 								MyLog.d(mTag, "doReadRsp, read ok, post ACTION_GROUP_READ_OK to UI, in thread = " + Thread.currentThread().getId());
 								mUIHanlder.post(new Runnable() {
 									@Override
@@ -280,6 +283,7 @@ public class MainActivity extends CustomTitleActivity
 								return;
 							}
 				    	}
+				    	mBIsOutofDate= true; 
 				    	MyLog.d(mTag, "doReadRsp, read fail, post ACTION_GROUP_READ_FAIL to UI, in thread = " + Thread.currentThread().getId());
 						mUIHanlder.post(new Runnable() {
 							@Override
@@ -369,6 +373,7 @@ public class MainActivity extends CustomTitleActivity
 						mUIHanlder.post(new Runnable() {
 							@Override
 							public void run() {
+								mParentItem.mBIsOutofDate= false; 
 								final Intent brd = new Intent(BLEUtility.ACTION_SENCMD_OK);
 								brd.putExtra(ACTION_GROUP_READ_OK_GETITEMID_KEY, new int[] {mParentItem.mID, mID});
 								brd.putExtra(ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY, readcmdStrTemp.mResponseTitleString);
@@ -493,7 +498,9 @@ public class MainActivity extends CustomTitleActivity
 			{
 				GroupItem groupItem = mAdapter.getGroup(idxGroup);
 				if(groupItem instanceof CanReadGroup)
+				{
 					((CanReadGroup)groupItem).doReadRsp();
+				}
 			}
 		}
 	}
@@ -594,6 +601,10 @@ public class MainActivity extends CustomTitleActivity
 
 			holder.mGroupTitle.setText(item.mGroupTitle);
 			holder.mGroupRespStatus.setText(item.mGroupResponse);
+			if(item.mBIsOutofDate)
+				holder.mGroupRespStatus.setTextColor(getResources().getColor(R.color.material_purple_500));
+			else
+				holder.mGroupRespStatus.setTextColor(getResources().getColor(R.color.main_color_grey_700));
 			holder.mGroupIcon.setText(item.mGroupIcon);
 
 			return convertView;

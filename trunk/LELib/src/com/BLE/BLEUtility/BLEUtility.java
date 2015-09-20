@@ -171,11 +171,6 @@ public class BLEUtility
             	byte resDataTemp[] = new byte [data.length];
             	for(int idxData = 0; idxData < data.length; ++idxData)
             		resDataTemp[idxData] = data[idxData];
-            	String strHex = String.format("%x", new BigInteger(1, resDataTemp));
-    			MyLog.d(mTag, "read resDataTemp, hex = " + strHex);	
-    			strHex = String.format("%x", new BigInteger(1, data));
-    			MyLog.d(mTag, "read data, hex = " + strHex);	
-            	MyLog.d(mTag, "onCharacteristicRead, Thread id = " + android.os.Process.myTid() + " , data = [" + data + "]");
             	mResData = resDataTemp;
             }
         }
@@ -185,10 +180,7 @@ public class BLEUtility
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) 
-            {
             	final byte[] data = characteristic.getValue();
-            	MyLog.d(mTag, "onCharacteristicWrite, Thread id = " + android.os.Process.myTid() + ", data = [" + data + "]");
-            }
         }
 
         @Override
@@ -478,8 +470,9 @@ public class BLEUtility
 			throw new BLEUtilityException(BLEUtilityException.CHAR_NOTREADY);
 		if ((mBTCharct.getProperties() | BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) 
 		{
+			String strCmd = new String(command);
 			String strHex = String.format("%x", new BigInteger(1, command));
-			MyLog.d(mTag, "command hex = " + strHex);
+			MyLog.d(mTag, "command = " + strCmd +", hex = " + strHex);
 			mBTCharct.setValue(command);
 			if(mBluetoothGatt.writeCharacteristic(mBTCharct) == false)
 			{
@@ -487,7 +480,7 @@ public class BLEUtility
 				throw new BLEUtilityException(BLEUtilityException.CHAR_WRITEFAIL);
 			}
 			else
-				MyLog.d(mTag, "write success, Thread id = " + android.os.Process.myTid() + " , command = [" + command + "]");
+				MyLog.d(mTag, "write success, Thread id = " + Thread.currentThread().getId() + " , command = [" + strCmd + "]");
         }
 		else
 		{
@@ -498,8 +491,8 @@ public class BLEUtility
 	//blocking call, return read data
 	public byte[] writeCmd(byte[] command)
 	{
-		MyLog.d(mTag, "writeCmd begin");
 		mlockWriteRead.lock();
+		MyLog.d(mTag, "writeCmd begin (in lock now), in thread = " + Thread.currentThread().getId());
 		try {
 			mResData = null;
 			write(command);
@@ -534,11 +527,18 @@ public class BLEUtility
 			mResData = null;
 		}
 		finally {
-			MyLog.d(mTag, "mlockWriteRead.unlock()");
+			String strData = "", strHex = "";
+			if(mResData != null)
+			{
+				strData = new String(mResData);
+				strHex = String.format("%x", new BigInteger(1, mResData));
+			}
+			MyLog.d(mTag, "read data = " + strData + ", hex = " + strHex);	
+			MyLog.d(mTag, "mlockWriteRead.unlock(), in thread = " + Thread.currentThread().getId() + ", writeCmd end");
 			mBWaitData = false;
 			mlockWriteRead.unlock();
 		}
-		MyLog.d(mTag, "writeCmd end");
+		
 		return mResData;
 	}
 }

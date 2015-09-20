@@ -37,7 +37,6 @@ public class CmdProcObj {
 		}
 				
 		strHex = String.format("%x", new BigInteger(1, baos.toByteArray()));
-		MyLog.d(mTag, "strCmdFull hex = " + strHex);
 		return baos.toByteArray();
 	}
 	

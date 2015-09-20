@@ -149,6 +149,7 @@ public class MainActivity extends CustomTitleActivity
             			childItem.mParentItem.unCheckAllWrtChild();
             		childItem.mBIsChecked = true;
             		mAdapter.notifyDataSetChanged();
+            		MyLog.d(mTAG, "Group item " + childItem.mParentItem.mGroupTitle + " read OK.");
             	}
             	++mReadCount;
             	if(mReadCount >= mGoalReadCount)
@@ -191,9 +192,19 @@ public class MainActivity extends CustomTitleActivity
 		public String mGroupIcon;
 		List<ChildItem> items = new ArrayList<ChildItem>();
 		
+		public void unCheckAllWrtChild()
+		{
+			for(ChildItem childItem: items)
+				if(childItem instanceof ChildWrtItem)
+					((ChildWrtItem)childItem).mBIsChecked = false;
+		}
+	}
+	
+	private class CanReadGroup extends GroupItem {
+		private String mTag = "CanReadGroup";
+	
 		public void doReadRsp()
 		{
-			MyLog.d(mTag, "doReadRsp begin");
 			ChildReadItem readItem = null; 
 			for(ChildItem chdItem: items)
 			{
@@ -207,14 +218,13 @@ public class MainActivity extends CustomTitleActivity
 				Thread workerThread = new Thread() 
 				{
 				    public void run() {
-				    	MyLog.d(mTag, "doReadRsp, BLEUtility.writeCmd in thread" + Thread.currentThread().getId());
-				    	MyLog.d(mTag, "doReadRsp, BLEUtility.writeCmd write cmd = " + chdReadItemTemp.mCommand);
+				    	MyLog.d(mTag, "doReadRsp begin, in thread = " + Thread.currentThread().getId());
 				    	byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(chdReadItemTemp.mCommand, false));
 				    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
 				    	String strRspCal = "";
 				    	if(rspCal != null)
 				    		strRspCal = new String(rspCal);
-				    	MyLog.d(mTag, "doReadRsp, read content = " + strRspCal);
+				    	MyLog.d(mTag, "doReadRsp, read content = " + strRspCal + ", in thread = " + Thread.currentThread().getId());
 				    	for(ChildItem item: itemsTemp)
 				    	{
 				    		if(item instanceof ChildWrtItem == false)
@@ -222,10 +232,10 @@ public class MainActivity extends CustomTitleActivity
 				    		final ChildWrtItem wrtItem = (ChildWrtItem) item;
 
 				    		String itrRsp = wrtItem.mCommand;
-				    		MyLog.d(mTag, "doReadRsp, compare from = " + itrRsp);
+				    		MyLog.d(mTag, "doReadRsp, compare from = " + itrRsp+ ", in thread = " + Thread.currentThread().getId());
 				    		if(strRspCal.equals(itrRsp) == true)
 							{
-								MyLog.d(mTag, "doReadRsp, read ok");
+								MyLog.d(mTag, "doReadRsp, read ok, post ACTION_GROUP_READ_OK to UI, in thread = " + Thread.currentThread().getId());
 								mUIHanlder.post(new Runnable() {
 									@Override
 									public void run() {
@@ -237,7 +247,7 @@ public class MainActivity extends CustomTitleActivity
 								return;
 							}
 				    	}
-				    	MyLog.d(mTag, "doReadRsp, read fail");
+				    	MyLog.d(mTag, "doReadRsp, read fail, post ACTION_GROUP_READ_FAIL to UI, in thread = " + Thread.currentThread().getId());
 						mUIHanlder.post(new Runnable() {
 							@Override
 							public void run() {
@@ -252,13 +262,6 @@ public class MainActivity extends CustomTitleActivity
 			}
 			else
 				MyLog.d(mTag, "doReadRsp, GroupItem has no read item");
-		}
-		
-		public void unCheckAllWrtChild()
-		{
-			for(ChildItem childItem: items)
-				if(childItem instanceof ChildWrtItem)
-					((ChildWrtItem)childItem).mBIsChecked = false;
 		}
 	}
 	
@@ -413,10 +416,11 @@ public class MainActivity extends CustomTitleActivity
 		{
 			MyLog.d(mTag, "Read config begin");
 			//UIUtility.showProgressDlg(MainActivity.this, true, "Read Config..");
-			for(int idxGroup = 1; idxGroup < mAdapter.getGroupCount(); ++idxGroup)
+			for(int idxGroup = 0; idxGroup < mAdapter.getGroupCount(); ++idxGroup)
 			{
 				GroupItem groupItem = mAdapter.getGroup(idxGroup);
-				groupItem.doReadRsp();
+				if(groupItem instanceof CanReadGroup)
+					((CanReadGroup)groupItem).doReadRsp();
 			}
 		}
 	}
@@ -588,7 +592,12 @@ public class MainActivity extends CustomTitleActivity
 		for(int idxCmdGroup = 0; idxCmdGroup<nodes.getLength(); ++idxCmdGroup) {  
 		    Node cmdGroupNode = nodes.item(idxCmdGroup);  
 		    NamedNodeMap attributes = cmdGroupNode.getAttributes();  
-		    GroupItem cmdgroup = new GroupItem();
+		    String isCanReadGroup = attributes.getNamedItem("CanRead").getNodeValue();
+		    GroupItem cmdgroup = null;
+		    if(isCanReadGroup.equals("false"))
+		    	cmdgroup = new GroupItem();
+		    else
+		    	cmdgroup = new CanReadGroup();
 		    cmdgroup.mID = idxCmdGroup;
 		    cmdgroup.mGroupTitle = attributes.getNamedItem("Title").getNodeValue();
 		    cmdgroup.mGroupIcon = attributes.getNamedItem("Icon").getNodeValue();

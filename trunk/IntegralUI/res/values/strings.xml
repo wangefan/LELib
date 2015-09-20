@@ -8,6 +8,7 @@
     <string name="strConnActTitle">Set connection</string>
     <string name="strMainActivity">Main Page</string>
     <string name="strSeatchIntegral">Search Devic</string>
+    <string name="groupOutofDate">Fail</string>
     <string name="strMenuDisconnect">disconnect</string>
     <string name="msgResetConn">Previous Connection has been reset"</string>
     <string name="clearConn">Clear Previous Connecntion</string>

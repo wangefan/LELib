@@ -600,11 +600,16 @@ public class MainActivity extends CustomTitleActivity
 			}
 
 			holder.mGroupTitle.setText(item.mGroupTitle);
-			holder.mGroupRespStatus.setText(item.mGroupResponse);
 			if(item.mBIsOutofDate)
-				holder.mGroupRespStatus.setTextColor(getResources().getColor(R.color.material_purple_500));
+			{
+				holder.mGroupRespStatus.setTextColor(getResources().getColor(R.color.material_red_200));
+				holder.mGroupRespStatus.setText(getResources().getString(R.string.groupOutofDate));
+			}
 			else
+			{
 				holder.mGroupRespStatus.setTextColor(getResources().getColor(R.color.main_color_grey_700));
+				holder.mGroupRespStatus.setText(item.mGroupResponse);
+			}
 			holder.mGroupIcon.setText(item.mGroupIcon);
 
 			return convertView;

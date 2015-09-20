@@ -203,6 +203,16 @@ public class MainActivity extends CustomTitleActivity
 		public String mGroupIcon = "";
 		List<ChildItem> items = new ArrayList<ChildItem>();
 		
+		public ChildReadItem getReadItem() {
+			ChildReadItem readItem = null;
+			for(ChildItem chdItem: items)
+			{
+				if(chdItem instanceof ChildReadItem)
+					readItem = (ChildReadItem) chdItem;
+			}
+			return readItem;
+		}
+		
 		public void unCheckAllWrtChild()
 		{
 			for(ChildItem childItem: items)
@@ -216,12 +226,8 @@ public class MainActivity extends CustomTitleActivity
 	
 		public void doReadRsp()
 		{
-			ChildReadItem readItem = null; 
-			for(ChildItem chdItem: items)
-			{
-				if(chdItem instanceof ChildReadItem)
-					readItem = (ChildReadItem) chdItem;
-			}
+			ChildReadItem readItem = getReadItem(); 
+			
 			if(readItem != null)
 			{
 				final ChildReadItem chdReadItemTemp = readItem;
@@ -326,11 +332,27 @@ public class MainActivity extends CustomTitleActivity
 					if(strRspCal.equals(mCommandRes) == true)
 					{
 						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd match response");
+						ChildReadItem readItem = mParentItem.getReadItem();
+						ReadCmdStructur readcmdStr = null;
+						if(readItem != null)
+						{
+							for(ReadCmdStructur readcmdStrItr: readItem.mCommandResColl)
+							{
+								if(Integer.parseInt(readcmdStrItr.mRefWrtCmdID) == mID)
+								{
+									readcmdStr = readcmdStrItr;
+									break;
+								}
+							}
+						}
+						final ReadCmdStructur readcmdStrTemp = readcmdStr;
+						
 						mUIHanlder.post(new Runnable() {
 							@Override
 							public void run() {
 								final Intent brd = new Intent(ACTION_GROUP_READ_OK);
 								brd.putExtra(ACTION_GROUP_READ_OK_GETITEMID_KEY, new int[] {mParentItem.mID, mID});
+								brd.putExtra(ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY, readcmdStrTemp.mResponseTitleString);
 						        MainActivity.this.sendBroadcast(brd);
 								broadCastAction(BLEUtility.ACTION_SENCMD_OK);
 							}
@@ -447,7 +469,8 @@ public class MainActivity extends CustomTitleActivity
 		public void doIt()
 		{
 			MyLog.d(mTag, "Read config begin");
-			//UIUtility.showProgressDlg(MainActivity.this, true, "Read Config..");
+			UIUtility.showProgressDlg(MainActivity.this, true, "Read Config...");
+			mReadCount = 0;
 			for(int idxGroup = 0; idxGroup < mAdapter.getGroupCount(); ++idxGroup)
 			{
 				GroupItem groupItem = mAdapter.getGroup(idxGroup);
@@ -632,7 +655,10 @@ public class MainActivity extends CustomTitleActivity
 		    if(isCanReadGroup.equals("false"))
 		    	cmdgroup = new GroupItem();
 		    else
+		    {
 		    	cmdgroup = new CanReadGroup();
+		    	++mGoalReadCount;
+		    }
 		    cmdgroup.mID = idxCmdGroup;
 		    cmdgroup.mGroupTitle = attributes.getNamedItem("Title").getNodeValue();
 		    cmdgroup.mGroupIcon = attributes.getNamedItem("Icon").getNodeValue();
@@ -692,7 +718,6 @@ public class MainActivity extends CustomTitleActivity
 				    		}
 		    			}
 		    			cmdgroup.items.add(command);
-		    			++mGoalReadCount;
 		    		}
 	    			else if(strNodeName.compareTo("ReadAllCmd") == 0)
 		    		{

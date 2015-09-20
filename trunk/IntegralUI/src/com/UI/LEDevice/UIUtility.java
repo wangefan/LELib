@@ -11,12 +11,19 @@ public class UIUtility {
     {
     	if(bShow)
     	{
-    		mPDialog = ProgressDialog.show(context, "Process...", message);
+    		if(mPDialog == null)
+    		{
+    			mPDialog = new ProgressDialog(context, R.style.MyProgressDlg);
+    			mPDialog.setCancelable(false);
+        		mPDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
+    		}
+    		mPDialog.setMessage(message);
+    		mPDialog.show();
     	}
     	else
     	{
     		if(mPDialog != null)
-    			mPDialog.dismiss();
+    			mPDialog.hide();
     	}
     }
 }

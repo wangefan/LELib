@@ -117,6 +117,25 @@ public class MainActivity extends CustomTitleActivity
             }
             else if(BLEUtility.ACTION_SENCMD_OK.equals(action)) 
             {
+            	int [] idArr = intent.getIntArrayExtra(ACTION_GROUP_READ_OK_GETITEMID_KEY);
+            	String groupStatus = intent.getStringExtra(ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY);
+            	//update GroupItem first
+            	GroupItem groupItem = mAdapter.getGroup(idArr[0]);
+            	groupItem.mGroupResponse = groupStatus;
+            	groupItem.unCheckAllWrtChild();
+        		MyLog.d(mTAG, "Group item " + groupItem.mGroupTitle + " read OK.");
+        		
+            	//update ChildItem if needed
+            	ChildWrtItem childItem = null;
+            	if(idArr[1] >= 0 ) 
+            		childItem = (ChildWrtItem) mAdapter.getChild(idArr[0], idArr[1]) ;
+            	if(childItem != null)
+            	{
+            		childItem.mBIsChecked = true;
+            		MyLog.d(mTAG, "ChildWrtItem " + childItem.mTitle + " update OK.");
+            	}
+            	
+            	mAdapter.notifyDataSetChanged();
             	UIUtility.showProgressDlg(MainActivity.this, false, "sending cmd OK");
             	Toast.makeText(MainActivity.this, "sending cmd OK", Toast.LENGTH_SHORT).show();
             }
@@ -350,11 +369,10 @@ public class MainActivity extends CustomTitleActivity
 						mUIHanlder.post(new Runnable() {
 							@Override
 							public void run() {
-								final Intent brd = new Intent(ACTION_GROUP_READ_OK);
+								final Intent brd = new Intent(BLEUtility.ACTION_SENCMD_OK);
 								brd.putExtra(ACTION_GROUP_READ_OK_GETITEMID_KEY, new int[] {mParentItem.mID, mID});
 								brd.putExtra(ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY, readcmdStrTemp.mResponseTitleString);
 						        MainActivity.this.sendBroadcast(brd);
-								broadCastAction(BLEUtility.ACTION_SENCMD_OK);
 							}
 						});
 					}

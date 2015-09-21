@@ -525,6 +525,7 @@ public class MainActivity extends CustomTitleActivity
 	 */
 	private class ExampleAdapter extends AnimatedExpandableListAdapter {
 		private LayoutInflater inflater;
+		private ArrayList<ArrayList<Integer>> mHhiddenPositionsColl = new ArrayList<ArrayList<Integer>>();  //[group, list hidden index]
 
 		private List<GroupItem> mCollItems;
 
@@ -534,6 +535,21 @@ public class MainActivity extends CustomTitleActivity
 
 		public void setData(List<GroupItem> items) {
 			mCollItems = items;
+			for(int idxGrp = 0; idxGrp < mCollItems.size(); ++idxGrp)
+			{
+				GroupItem grpItem = mCollItems.get(idxGrp);
+				if(grpItem != null)
+				{
+					ArrayList<Integer> hiddenChdsIndex = new ArrayList<Integer>();
+					mHhiddenPositionsColl.add(hiddenChdsIndex);
+					for(int idxChd = 0; idxChd < grpItem.items.size(); ++idxChd)
+					{
+						ChildItem chdItem = grpItem.items.get(idxChd);
+						if(chdItem != null && chdItem instanceof ChildReadItem)
+							hiddenChdsIndex.add(idxChd);
+					}
+				}
+			}
 		}
 
 		@Override
@@ -549,6 +565,16 @@ public class MainActivity extends CustomTitleActivity
 		@Override
 		public View getRealChildView(int groupPosition, int childPosition,
 				boolean isLastChild, View convertView, ViewGroup parent) {
+			
+			ArrayList<Integer> hiddenPositions = mHhiddenPositionsColl.get(groupPosition);
+			for(Integer hiddenIndex : hiddenPositions) {
+	            if(hiddenIndex <= childPosition) {
+	            	childPosition = childPosition + 1;
+	            }
+	            else
+	            	break;
+	        }
+			
 			ChildHolder chdholder;
 			ChildItem item = getChild(groupPosition, childPosition);
 			if (convertView == null) {
@@ -563,13 +589,15 @@ public class MainActivity extends CustomTitleActivity
 
 			chdholder.mTitle.setText(item.mTitle);
 			chdholder.mIcon.setText(item.getIcon());
-
 			return convertView;
 		}
 
 		@Override
 		public int getRealChildrenCount(int groupPosition) {
-			return mCollItems.get(groupPosition).items.size();
+			GroupItem grpItem = mCollItems.get(groupPosition);
+			int nTotalChdCount = grpItem.items.size();
+			int nHiddenCount = mHhiddenPositionsColl.get(groupPosition).size();
+			return nTotalChdCount - nHiddenCount;
 		}
 
 		@Override
@@ -628,7 +656,6 @@ public class MainActivity extends CustomTitleActivity
 		public boolean isChildSelectable(int arg0, int arg1) {
 			return true;
 		}
-
 	}
 
 	@Override

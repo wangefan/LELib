@@ -55,7 +55,7 @@
 		<WriteCmd Title="Custom" Cmd="edid custom" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
-        <WriteCmd Title="Fixed with L/R stereo" Cmd="edid fixed" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+        <WriteCmd Title="Fixed With L/R Stereo" Cmd="edid fixed" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadCmd Title="Read EDID" Cmd="edid">
@@ -64,26 +64,26 @@
 			<CmdRes Title="Mix" refWmdID = "0">edid automix</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-    <CmdGroup Title="4:2:0 Downsampling mode" Icon="&#xe860;" CanRead="true">
+    <CmdGroup Title="4:2:0 Downsampling Mode" Icon="&#xe860;" CanRead="true">
 	    <WriteCmd Title="Enable 4:4:4 -> 4:2:0" Cmd="420 on" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 	    <WriteCmd Title="Disable 4:4:4 -> 4:2:0" Cmd="420 off" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
-		<ReadCmd Title="READ current 4:2:0 selection status" Cmd="420">
+		<ReadCmd Title="Read Current 4:2:0 Selection Status" Cmd="420">
 			<CmdRes Title="Enable 4:4:4 -> 4:2:0" refWmdID = "0">420 on</CmdRes>
 			<CmdRes Title="Disable 4:4:4 -> 4:2:0" refWmdID = "1">420 off</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-    <CmdGroup Title=" Power" Icon="&#xe860;" CanRead="true">
-	    <WriteCmd Title="Power on" Cmd="pwr on" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+    <CmdGroup Title="Power" Icon="&#xe860;" CanRead="true">
+	    <WriteCmd Title="Power On" Cmd="pwr on" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
-	    <WriteCmd Title="Power off" Cmd="pwr off" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+	    <WriteCmd Title="Power Off" Cmd="pwr off" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
-		<ReadCmd Title="READ power status" Cmd="power">
+		<ReadCmd Title="Read Power Status" Cmd="power">
 			<CmdRes Title="on" refWmdID = "0">power on</CmdRes>
 			<CmdRes Title="off" refWmdID = "1">power off</CmdRes>
 		</ReadCmd>
@@ -98,7 +98,7 @@
 		<WriteCmd Title="Play CEC (CEC 0F:36)" Cmd="CEC 0F:36" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
-		<ReadCmd Title="READ CEC status" Cmd="cec">
+		<ReadCmd Title="Read CEC status" Cmd="cec">
 			<CmdRes Title="On" refWmdID = "0">cec on</CmdRes>
 			<CmdRes Title="Off" refWmdID = "1">cec off</CmdRes>
 		</ReadCmd>

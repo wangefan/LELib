@@ -28,17 +28,17 @@ public class ConnectionActivity extends CustomTitleActivity {
 			final String action = intent.getAction();
 			if(action.equals(BLEUtility.ACTION_CONNSTATE_CONNECTING))
 			{
-				UIUtility.showProgressDlg(ConnectionActivity.this, true, "connecting...");
+				UIUtility.showProgressDlg(ConnectionActivity.this, true, R.string.prgsConnting);
 			}
 			else if(action.equals(BLEUtility.ACTION_CONNSTATE_DISCONNECTED))
 			{
-				UIUtility.showProgressDlg(ConnectionActivity.this, false, "disconnect");
+				UIUtility.showProgressDlg(ConnectionActivity.this, false, R.string.prgsDisconn);
 				String message = intent.getStringExtra(BLEUtility.ACTION_CONNSTATE_DISCONNECTED_KEY);
 				Toast.makeText(ConnectionActivity.this, "disconnect, cause = " + message, Toast.LENGTH_SHORT).show();
 			}
 			if(action.equals(BLEUtility.ACTION_CONNSTATE_CONNECTED))
 			{
-				UIUtility.showProgressDlg(ConnectionActivity.this, false, "connected");
+				UIUtility.showProgressDlg(ConnectionActivity.this, false, R.string.prgsConnted);
             	Toast.makeText(ConnectionActivity.this, "Connected", Toast.LENGTH_SHORT).show();
             	IntegralSetting.setDeviceMACAddr(mLastConnDevice.getAddress());
             	IntegralSetting.setDeviceName(mLastConnDevice.getDeviceName());

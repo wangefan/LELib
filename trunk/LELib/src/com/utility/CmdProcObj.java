@@ -2,7 +2,6 @@ package com.utility;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.math.BigInteger;
 
 //Cmd structure
 // HEADER[2 byte] + cmd length[1 byte] + cmds(include 0d)[xx bytes] + crc[1 byte] 

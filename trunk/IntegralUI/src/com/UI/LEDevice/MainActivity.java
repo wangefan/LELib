@@ -82,7 +82,7 @@ public class MainActivity extends CustomTitleActivity
             
 			if(BLEUtility.ACTION_CONNSTATE_DISCONNECTED.equals(action))
             {
-            	UIUtility.showProgressDlg(MainActivity.this, false, "disconnected");
+            	UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsDisconn);
             	String message = intent.getStringExtra(BLEUtility.ACTION_CONNSTATE_DISCONNECTED_KEY);
 				Toast.makeText(MainActivity.this, "Disconnected, cause = " + message, Toast.LENGTH_SHORT).show();
             	mBConnected = false;
@@ -91,11 +91,11 @@ public class MainActivity extends CustomTitleActivity
             }
 			else if(BLEUtility.ACTION_CONNSTATE_CONNECTING.equals(action))
 			{
-				UIUtility.showProgressDlg(MainActivity.this, true, "connecting");
+				UIUtility.showProgressDlg(MainActivity.this, true, R.string.prgsConnting);
 			}
 			else if(BLEUtility.ACTION_CONNSTATE_CONNECTED.equals(action))
 			{
-				UIUtility.showProgressDlg(MainActivity.this, false, "connected");
+				UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsConnted);
 				IntegralSetting.setDeviceName(mPreDevice.getDeviceName());
 				IntegralSetting.setDeviceMACAddr(mPreDevice.getAddress());
 				mBConnected = true;
@@ -116,7 +116,7 @@ public class MainActivity extends CustomTitleActivity
 			//Blew are commands relaive 
 			else if (BLEUtility.ACTION_SENCMD_BEGIN.equals(action)) 
             {
-            	UIUtility.showProgressDlg(MainActivity.this, true, "sending cmd");
+            	UIUtility.showProgressDlg(MainActivity.this, true, R.string.prgsSendingCmd);
             }
             else if(BLEUtility.ACTION_SENCMD_OK.equals(action)) 
             {
@@ -139,28 +139,28 @@ public class MainActivity extends CustomTitleActivity
             	}
             	
             	mAdapter.notifyDataSetChanged();
-            	UIUtility.showProgressDlg(MainActivity.this, false, "sending cmd OK");
-            	Toast.makeText(MainActivity.this, "sending cmd OK", Toast.LENGTH_SHORT).show();
+            	UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsSedingCmdOK);
+            	Toast.makeText(MainActivity.this, R.string.prgsSedingCmdOK, Toast.LENGTH_SHORT).show();
             }
             else if(BLEUtility.ACTION_SENCMD_FAIL.equals(action)) 
             {
-            	UIUtility.showProgressDlg(MainActivity.this, false, "sending cmd fail");
-            	Toast.makeText(MainActivity.this, "sending cmd fail", Toast.LENGTH_SHORT).show();
+            	UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsSedingCmdFail);
+            	Toast.makeText(MainActivity.this, R.string.prgsSedingCmdFail, Toast.LENGTH_SHORT).show();
             }
             else if (BLEUtility.ACTION_SENCMD_READ.equals(action)) 
             {
-            	UIUtility.showProgressDlg(MainActivity.this, true, "sending read cmd");
+            	UIUtility.showProgressDlg(MainActivity.this, true, R.string.prgsSedingReadCmd);
             }
             else if(BLEUtility.ACTION_SENCMD_READ_CONTENT.equals(action))
             {
-            	UIUtility.showProgressDlg(MainActivity.this, false, "read cmd ok");
+            	UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsSedingReadCmdOK);
             	String message = intent.getStringExtra(BLEUtility.ACTION_SENCMD_READ_CONTENT_KEY);
             	Toast.makeText(MainActivity.this, "read cmd ok, response = " + message, Toast.LENGTH_SHORT).show();
             }
             else if(BLEUtility.ACTION_SENCMD_READ_FAIL.equals(action))
             {
-            	UIUtility.showProgressDlg(MainActivity.this, false, "read cmd fail");
-            	Toast.makeText(MainActivity.this, "read cmd fail", Toast.LENGTH_SHORT).show();
+            	UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsReadCmdFail);
+            	Toast.makeText(MainActivity.this, R.string.prgsReadCmdFail, Toast.LENGTH_SHORT).show();
             }
             else if(ACTION_GROUP_READ_OK.equals(action))
             {
@@ -186,8 +186,8 @@ public class MainActivity extends CustomTitleActivity
             	++mReadCount;
             	if(mReadCount >= mGoalReadCount)
             	{
-            		UIUtility.showProgressDlg(MainActivity.this, false, "read done");
-            		Toast.makeText(MainActivity.this, "read done", Toast.LENGTH_SHORT).show();
+            		UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsReadConfigEnd);
+            		Toast.makeText(MainActivity.this, R.string.prgsReadConfigEnd, Toast.LENGTH_SHORT).show();
             	}
             }
             else if(ACTION_GROUP_READ_FAIL.equals(action))
@@ -203,8 +203,8 @@ public class MainActivity extends CustomTitleActivity
             	++mReadCount;
             	if(mReadCount >= mGoalReadCount)
             	{
-            		UIUtility.showProgressDlg(MainActivity.this, false, "read done");
-            		Toast.makeText(MainActivity.this, "read done", Toast.LENGTH_SHORT).show();
+            		UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsReadConfigEnd);
+            		Toast.makeText(MainActivity.this, R.string.prgsReadConfigEnd, Toast.LENGTH_SHORT).show();
             	}
             }
             else if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
@@ -496,7 +496,7 @@ public class MainActivity extends CustomTitleActivity
 		public void doIt()
 		{
 			MyLog.d(mTag, "Read config begin");
-			UIUtility.showProgressDlg(MainActivity.this, true, "Read Config...");
+			UIUtility.showProgressDlg(MainActivity.this, true, R.string.prgsReadConfig);
 			mReadCount = 0;
 			for(int idxGroup = 0; idxGroup < mAdapter.getGroupCount(); ++idxGroup)
 			{
@@ -898,17 +898,17 @@ public class MainActivity extends CustomTitleActivity
 		{
 			if(IntegralSetting.getDeviceMACAddr().length() <= 0)
 			{
-				UIUtility.showProgressDlg(MainActivity.this, true, "scan devices");
+				UIUtility.showProgressDlg(MainActivity.this, true, R.string.prgsScanDev);
 				mLeDevices.clear();
 				BLEUtility.getInstance().startScanLEDevices();
 				mScanPeriodHandler.postDelayed(new Runnable() {
 	                @Override
 	                public void run() {
 	                    BLEUtility.getInstance().stopScanLEDevices();
-	                    UIUtility.showProgressDlg(MainActivity.this, false, "find devices end");
+	                    UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsScanNoDev);
 	                    if(mLeDevices.size() == 0)
 	                    {
-	                    	Toast.makeText(MainActivity.this, "find no devices", Toast.LENGTH_SHORT).show();
+	                    	Toast.makeText(MainActivity.this, R.string.prgsScanNoDev, Toast.LENGTH_SHORT).show();
 	                    }
 	                    else if(mLeDevices.size() == 1)
 	                    {

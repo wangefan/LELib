@@ -2,23 +2,39 @@ package com.UI.LEDevice;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Point;
+import android.view.Gravity;
+import android.view.WindowManager;
 
 public class UIUtility {
 	static private ProgressDialog mPDialog = null;
+	static private Point mPrgDlgSize = new Point();
 	
 	//member functions
-	static public void showProgressDlg(Context context, boolean bShow, String message)
+	static public void showProgressDlg(Context context, boolean bShow, int messageID)
     {
     	if(bShow)
     	{
     		if(mPDialog == null)
     		{
     			mPDialog = new ProgressDialog(context, R.style.MyProgressDlg);
-    			mPDialog.setCancelable(false);
-        		mPDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
+    			mPDialog.setCancelable(false);  
+    			
+    			mPrgDlgSize = new Point();
+    			Point wndSize = new Point();
+    			mPDialog.getWindow().getWindowManager().getDefaultDisplay().getSize(wndSize);
+        		mPrgDlgSize.x = 4 * wndSize.x / 5;
+        		mPrgDlgSize.y = wndSize.y / 4;
     		}
-    		mPDialog.setMessage(message);
+    		mPDialog.setMessage(context.getText(messageID));
     		mPDialog.show();
+    		
+    		WindowManager.LayoutParams lp = mPDialog.getWindow().getAttributes();     
+    		lp.alpha = 0.6f;    
+    		lp.dimAmount=0.0f;  
+    		lp.width = mPrgDlgSize.x;
+    		lp.height = mPrgDlgSize.y;
+    		mPDialog.getWindow().setAttributes(lp);   
     	}
     	else
     	{

@@ -22,4 +22,17 @@
 	<string name="dlgChooseIntegral">Select One"</string>
 	<string name="dlgCancel">Cancel</string>
 	<string name="menu_disconn">Disconnect</string>
+	<string name="prgsReadConfig">"Reading Config&#8230;"</string>
+	<string name="prgsReadConfigEnd">"Read Config End"</string>
+	<string name="prgsConnting">"Connecting&#8230;"</string>
+	<string name="prgsDisconn">"Disconnected"</string>
+	<string name="prgsConnted">"Connected"</string>
+	<string name="prgsSendingCmd">Sending Command&#8230;"</string>
+	<string name="prgsSedingCmdOK">"Send Command OK"</string>
+	<string name="prgsSedingCmdFail">"Send Command Failed"</string>
+	<string name="prgsSedingReadCmd">"Reading Status&#8230;"</string>
+	<string name="prgsSedingReadCmdOK">"Read Status OK"</string>
+	<string name="prgsReadCmdFail">Read Status Failed"</string>
+	<string name="prgsScanDev">"Finding Integral Devices&#8230;"</string>
+	<string name="prgsScanNoDev">"No Devices Found"</string>
 </resources>

@@ -15,20 +15,15 @@ public class UIUtility {
     {
     	if(bShow)
     	{
-    		if(mPDialog == null)
-    		{
-    			mPDialog = new ProgressDialog(context, R.style.MyProgressDlg);
-    			mPDialog.setCancelable(false);  
-    			
-    			mPrgDlgSize = new Point();
-    			Point wndSize = new Point();
-    			mPDialog.getWindow().getWindowManager().getDefaultDisplay().getSize(wndSize);
-        		mPrgDlgSize.x = 4 * wndSize.x / 5;
-        		mPrgDlgSize.y = wndSize.y / 4;
-    		}
+    		mPDialog = new ProgressDialog(context, R.style.MyProgressDlg);
+    		mPDialog.setCancelable(false); 
     		mPDialog.setMessage(context.getText(messageID));
     		mPDialog.show();
     		
+    		Point wndSize = new Point();
+			mPDialog.getWindow().getWindowManager().getDefaultDisplay().getSize(wndSize);
+    		mPrgDlgSize.x = 4 * wndSize.x / 5;
+    		mPrgDlgSize.y = wndSize.y / 4;
     		WindowManager.LayoutParams lp = mPDialog.getWindow().getAttributes();     
     		lp.alpha = 0.6f;    
     		lp.dimAmount=0.0f;  
@@ -39,7 +34,10 @@ public class UIUtility {
     	else
     	{
     		if(mPDialog != null)
-    			mPDialog.hide();
+    		{
+    			mPDialog.dismiss();
+    			mPDialog = null;
+    		}
     	}
     }
 }

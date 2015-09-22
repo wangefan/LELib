@@ -2,10 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/main_color_grey_50"
     android:orientation="horizontal"
     android:paddingLeft="10dp"
-    android:paddingRight="10dp" >
+    android:paddingRight="10dp"
+    android:descendantFocusability="blocksDescendants" >
 
     <com.UI.font.FontelloTextView
         style="@style/TextViewAppearance.Title1"
@@ -18,6 +18,15 @@
         android:text="@string/fontello_heart_full"
         android:textColor="@color/main_color_grey_700"
         android:textSize="20sp" />
+    
+    <CheckBox
+       	android:id="@+id/chkWt"
+        style="@style/CheckBoxStyle.Light" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       	android:gravity="center_vertical"
+        android:minHeight="48dp"
+        android:padding="8dp"/>
 
     <com.UI.font.RobotoTextView
         android:id="@+id/textTitle"

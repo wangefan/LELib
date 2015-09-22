@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Commands>
     <CmdGroup Title="Device Settings" Icon="&#xe91e;" CanRead="false">
-        <WriteCmd Title="RESET" Cmd="reset" CheckedIcon="&#xe8fd;" UnCheckedIcon="&#xe8fd;">
+        <WriteCmd Title="Reset" Cmd="reset" CheckedIcon="&#xe8fd;" UnCheckedIcon="&#xe8fd;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
 		<ReadAllCmd Title="Read Config" Cmd="" CheckedIcon="&#xe8fd;" UnCheckedIcon="&#xe8fd;">
 		</ReadAllCmd>
-		<ReadCmd Title="INFO" Cmd="man">
+		<ReadCmd Title="Info" Cmd="man">
 			<CmdRes Title="" refWmdID = "-1">man Integral</CmdRes>
 		</ReadCmd>
     </CmdGroup>
 	<CmdGroup Title="Channel Selection" Icon="&#xeaa0;" CanRead="true">
-        <WriteCmd Title="Channel/Input 1" Cmd="insel 1" CheckedIcon="&#xea32;" UnCheckedIcon="&#xea31;">
+        <WriteCmdChk Title="Channel/Input 1" Cmd="insel 1">
 			<CmdRes>ok</CmdRes>
-		</WriteCmd>
-		<WriteCmd Title="Channel/Input 2" Cmd="insel 2" CheckedIcon="&#xea35;" UnCheckedIcon="&#xea34;">
+		</WriteCmdChk>
+		<WriteCmdChk Title="Channel/Input 2" Cmd="insel 2">
 			<CmdRes>ok</CmdRes>
-		</WriteCmd>
+		</WriteCmdChk>
 		<ReadCmd Title="Read Channel" Cmd="insel">
 			<CmdRes Title="Input 1" refWmdID = "0">insel 1</CmdRes>
 			<CmdRes Title="Input 2" refWmdID = "1">insel 2</CmdRes>
 		</ReadCmd>
     </CmdGroup>
 	<CmdGroup Title="HDCP Settings" Icon="&#xeaff;" CanRead="true">
-	    <WriteCmd Title="HDCP 1.4 only" Cmd="hdcp 14" CheckedIcon="&#xea32;" UnCheckedIcon="&#xea31;">
+	    <WriteCmdChk Title="HDCP 1.4 only" Cmd="hdcp 14">
 			<CmdRes>ok</CmdRes>
-		</WriteCmd>
-        <WriteCmd Title="HDCP 2.2 + 1.4" Cmd="hdcp 22" CheckedIcon="&#xea35;" UnCheckedIcon="&#xea34;">
+		</WriteCmdChk>
+        <WriteCmdChk Title="HDCP 2.2 + 1.4" Cmd="hdcp 22">
 			<CmdRes>ok</CmdRes>
-		</WriteCmd>
+		</WriteCmdChk>
 		<ReadCmd Title="Read HDCP" Cmd="hdcp" Icon="&#xeaa0;">
 			<CmdRes Title="1.4 only" refWmdID = "0">hdcp 14</CmdRes>
 			<CmdRes Title="2.2 + 1.4" refWmdID = "1">hdcp 22</CmdRes>
@@ -36,12 +36,12 @@
 		</ReadCmd>
     </CmdGroup>	
     <CmdGroup Title="Sound Settings" Icon="&#xeb47;" CanRead="true">
-        <WriteCmd Title="External Audio" Cmd="audio jack" CheckedIcon="&#xea18;" UnCheckedIcon="&#xea16;">
+        <WriteCmdChk Title="External Audio" Cmd="audio jack">
 			<CmdRes>ok</CmdRes>
-		</WriteCmd>
-        <WriteCmd Title="From HDMI" Cmd="audio hdmi" CheckedIcon="&#xead7;" UnCheckedIcon="&#xead6;">
+		</WriteCmdChk>
+        <WriteCmdChk Title="From HDMI" Cmd="audio hdmi">
 			<CmdRes>ok</CmdRes>
-		</WriteCmd>
+		</WriteCmdChk>
 		<ReadCmd Title="Read Audio" Cmd="audio" Icon="&#xeaa0;">
 			<CmdRes Title="HDMI" refWmdID = "1">audio hdmi</CmdRes>
 			<CmdRes Title="External" refWmdID = "0">audio jack</CmdRes>
@@ -49,15 +49,15 @@
 		</ReadCmd>
     </CmdGroup>
 	<CmdGroup Title="EDID Settings" Icon="&#xeaa0;" CanRead="true">
-	    <WriteCmd Title="Auto Mix Mode" Cmd="edid automix" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+	    <WriteCmdChk Title="Auto Mix Mode" Cmd="edid automix">
 			<CmdRes>ok</CmdRes>
-		</WriteCmd>
-		<WriteCmd Title="Custom" Cmd="edid custom" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+		</WriteCmdChk>
+		<WriteCmdChk Title="Custom" Cmd="edid custom">
 			<CmdRes>ok</CmdRes>
-		</WriteCmd>
-        <WriteCmd Title="Fixed With L/R Stereo" Cmd="edid fixed" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+		</WriteCmdChk>
+        <WriteCmdChk Title="Fixed With L/R Stereo" Cmd="edid fixed">
 			<CmdRes>ok</CmdRes>
-		</WriteCmd>
+		</WriteCmdChk>
 		<ReadCmd Title="Read EDID" Cmd="edid">
 			<CmdRes Title="L/R stereo" refWmdID = "2">edid fixed</CmdRes>
 			<CmdRes Title="Custom" refWmdID = "1">edid custom</CmdRes>
@@ -89,12 +89,12 @@
 		</ReadCmd>
     </CmdGroup>
     <CmdGroup Title="Play with CEC " Icon="&#xe860;" CanRead="true">
-	    <WriteCmd Title="Turn Everything On" Cmd="cec on" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+	    <WriteCmdChk Title="Turn Everything On" Cmd="cec on">
 			<CmdRes>ok</CmdRes>
-		</WriteCmd>
-	    <WriteCmd Title="Turn Everything Off" Cmd="cec off" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+		</WriteCmdChk>
+	    <WriteCmdChk Title="Turn Everything Off" Cmd="cec off">
 			<CmdRes>ok</CmdRes>
-		</WriteCmd>
+		</WriteCmdChk>
 		<WriteCmd Title="Play CEC (CEC 0F:36)" Cmd="CEC 0F:36" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>

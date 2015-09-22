@@ -44,6 +44,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
@@ -129,9 +130,9 @@ public class MainActivity extends CustomTitleActivity
         		MyLog.d(mTAG, "Group item " + groupItem.mGroupTitle + " read OK.");
         		
             	//update ChildItem if needed
-            	ChildWrtItem childItem = null;
+            	ChildWrtChkItem childItem = null;
             	if(idArr[1] >= 0 ) 
-            		childItem = (ChildWrtItem) mAdapter.getChild(idArr[0], idArr[1]) ;
+            		childItem = (ChildWrtChkItem) mAdapter.getChild(idArr[0], idArr[1]) ;
             	if(childItem != null)
             	{
             		childItem.mBIsChecked = true;
@@ -173,13 +174,13 @@ public class MainActivity extends CustomTitleActivity
         		MyLog.d(mTAG, "Group item " + groupItem.mGroupTitle + " read OK.");
         		
             	//update ChildItem if needed
-            	ChildWrtItem childItem = null;
+        		ChildWrtChkItem childItem = null;
             	if(idArr[1] >= 0 ) 
-            		childItem = (ChildWrtItem) mAdapter.getChild(idArr[0], idArr[1]) ;
+            		childItem = (ChildWrtChkItem) mAdapter.getChild(idArr[0], idArr[1]) ;
             	if(childItem != null)
             	{
             		childItem.mBIsChecked = true;
-            		MyLog.d(mTAG, "ChildWrtItem " + childItem.mTitle + " update OK.");
+            		MyLog.d(mTAG, "ChildWrtChkItem" + childItem.mTitle + " update OK.");
             	}
             	
             	mAdapter.notifyDataSetChanged();
@@ -240,8 +241,8 @@ public class MainActivity extends CustomTitleActivity
 		public void unCheckAllWrtChild()
 		{
 			for(ChildItem childItem: items)
-				if(childItem instanceof ChildWrtItem)
-					((ChildWrtItem)childItem).mBIsChecked = false;
+				if(childItem instanceof ChildWrtChkItem)
+					((ChildWrtChkItem)childItem).mBIsChecked = false;
 		}
 	}
 	
@@ -310,7 +311,6 @@ public class MainActivity extends CustomTitleActivity
 		public int mID = -1;
 		public String mTitle;
 		public String mCommand;
-		public abstract String getIcon();
 		
 		protected void broadCastAction(String action)
 		{
@@ -325,21 +325,11 @@ public class MainActivity extends CustomTitleActivity
 	        MainActivity.this.sendBroadcast(brd);
 		}	
 	}
-
-	private class ChildWrtItem extends ChildItem  {
-		private String mTag = "ChildWrtItem";
+	
+	private class ChildWrtChkItem extends ChildItem  {
+		private String mTag = "ChildWrtChkItem";
 		public boolean mBIsChecked = false;
-		public String mCheckedIcon = "";
-		public String mUnCheckedIcon = "";
 		public String mCommandRes = "";
-		
-		@Override
-		public String getIcon() {
-			if(mBIsChecked)
-				return mCheckedIcon;
-			else
-				return mUnCheckedIcon;
-		}
 		
 		public void doWriteCmdAndReadRsp()
 		{
@@ -401,6 +391,19 @@ public class MainActivity extends CustomTitleActivity
 		}
 	}
 
+	private class ChildWrtItem extends ChildWrtChkItem  {
+		private String mTag = "ChildWrtItem";
+		public String mCheckedIcon = "";
+		public String mUnCheckedIcon = "";
+		
+		public String getIcon() {
+			if(mBIsChecked)
+				return mCheckedIcon;
+			else
+				return mUnCheckedIcon;
+		}
+	}
+
 	public class ReadCmdStructur {
 		public String mResponseString = "";
 		public String mResponseTitleString = "";
@@ -419,11 +422,6 @@ public class MainActivity extends CustomTitleActivity
 		
 		
 		public List<ReadCmdStructur> mCommandResColl = new ArrayList<ReadCmdStructur>();
-		
-		@Override
-		public String getIcon() {
-			return mIcon;
-		}
 		
 		public void doWriteCmdAndReadRsp(boolean bBroadCast)
 		{
@@ -486,12 +484,6 @@ public class MainActivity extends CustomTitleActivity
 	private class ChildReadAllItem extends ChildItem implements Serializable{
 		private static final long serialVersionUID = 5L;
 		private String mTag = "ChildReadAllItem";
-		public String mIcon = "";
-		
-		@Override
-		public String getIcon() {
-			return mIcon;
-		}
 		
 		public void doIt()
 		{
@@ -512,6 +504,7 @@ public class MainActivity extends CustomTitleActivity
 	private static class ChildHolder {
 		TextView mTitle;
 		FontelloTextView  mIcon;
+		CheckBox  mCheckBox;
 	}
 
 	private static class GroupHolder {
@@ -575,20 +568,32 @@ public class MainActivity extends CustomTitleActivity
 	            	break;
 	        }
 			
-			ChildHolder chdholder;
+			ChildHolder chdholder = new ChildHolder();
 			ChildItem item = getChild(groupPosition, childPosition);
 			if (convertView == null) {
-				chdholder = new ChildHolder();
 				convertView = inflater.inflate(R.layout.list_item, parent, false);
 				chdholder.mTitle = (TextView) convertView.findViewById(R.id.textTitle);
 				chdholder.mIcon = (FontelloTextView) convertView.findViewById(R.id.lstChildItemIcon);
+				chdholder.mCheckBox = (CheckBox) convertView.findViewById(R.id.chkWt);
+				chdholder.mCheckBox.setEnabled(false);
 				convertView.setTag(chdholder);
-			} else {
-				chdholder = (ChildHolder) convertView.getTag();
-			}
-
+			} 
+			
+			chdholder = (ChildHolder) convertView.getTag();
 			chdholder.mTitle.setText(item.mTitle);
-			chdholder.mIcon.setText(item.getIcon());
+			if(item instanceof ChildWrtItem)
+			{
+				chdholder.mIcon.setVisibility(View.VISIBLE);
+				chdholder.mIcon.setText(((ChildWrtItem)item).getIcon());
+				chdholder.mCheckBox.setVisibility(View.INVISIBLE);
+			}
+			else if(item instanceof ChildWrtChkItem)
+			{
+				chdholder.mIcon.setVisibility(View.INVISIBLE);
+				chdholder.mCheckBox.setChecked(((ChildWrtChkItem) item).mBIsChecked);
+				chdholder.mCheckBox.setVisibility(View.VISIBLE);
+			}
+				
 			return convertView;
 		}
 
@@ -738,7 +743,28 @@ public class MainActivity extends CustomTitleActivity
 		    		if(strNodeName == null)
 		    			continue;
 		    		ChildItem command = null;
-		    		if(strNodeName.compareTo("WriteCmd") == 0)
+		    		if(strNodeName.compareTo("WriteCmdChk") == 0)
+		    		{
+		    			command = new ChildWrtChkItem();
+		    			command.mParentItem = cmdgroup;
+		    			command.mID = nID++;
+		    			command.mTitle = cmdNode.getAttributes().getNamedItem("Title").getNodeValue();
+		    			command.mCommand = cmdNode.getAttributes().getNamedItem("Cmd").getNodeValue();
+		    			for(int idxCmdRes = 0; idxCmdRes < cmdNode.getChildNodes().getLength(); ++idxCmdRes) { 
+		    				Node cmdResNode = cmdNode.getChildNodes().item(idxCmdRes); 
+				    		String strResNodeName = cmdResNode.getLocalName();
+				    		if(strResNodeName == null)
+				    			continue;
+				    		if(strResNodeName.compareTo("CmdRes") == 0)
+				    		{
+				    			String strVal = cmdResNode.getFirstChild().getNodeValue();
+				    			((ChildWrtChkItem)command).mCommandRes = new String(strVal);
+				    			break;
+				    		}
+		    			}
+		    			cmdgroup.items.add(command);
+		    		}
+		    		else if(strNodeName.compareTo("WriteCmd") == 0)
 		    		{
 		    			command = new ChildWrtItem();
 		    			command.mParentItem = cmdgroup;
@@ -838,6 +864,10 @@ public class MainActivity extends CustomTitleActivity
 					if(true == (childItem instanceof ChildWrtItem))
 					{
 						((ChildWrtItem)childItem).doWriteCmdAndReadRsp();
+						return true;
+					}else if(true == (childItem instanceof ChildWrtChkItem))
+					{
+						((ChildWrtChkItem)childItem).doWriteCmdAndReadRsp();
 						return true;
 					}
 					else if(true == (childItem instanceof ChildReadItem))

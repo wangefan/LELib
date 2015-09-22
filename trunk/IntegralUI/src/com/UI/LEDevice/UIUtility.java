@@ -3,7 +3,6 @@ package com.UI.LEDevice;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Point;
-import android.view.Gravity;
 import android.view.WindowManager;
 
 public class UIUtility {

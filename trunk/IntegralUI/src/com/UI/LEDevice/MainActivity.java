@@ -69,7 +69,7 @@ public class MainActivity extends CustomTitleActivity
 	private ArrayList<BLEDevice> mLeDevices = new ArrayList<BLEDevice>();
 	private BLEDevice mPreDevice = null;
 	private ChildReadAllItem mReadAllCmd = null;
-	private boolean mBConnected = false;
+	private ChildItem    mPreCmdToExecute = null;
 	private Menu mMenu = null;
 	private int mGoalReadCount = 0;
 	private int mReadCount = 0; 
@@ -86,7 +86,7 @@ public class MainActivity extends CustomTitleActivity
             	UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsDisconn);
             	String message = intent.getStringExtra(BLEUtility.ACTION_CONNSTATE_DISCONNECTED_KEY);
 				Toast.makeText(MainActivity.this, "Disconnected, cause = " + message, Toast.LENGTH_SHORT).show();
-            	mBConnected = false;
+            	mPreCmdToExecute = null;
             	updateUIForConn();
                 return;
             }
@@ -99,10 +99,14 @@ public class MainActivity extends CustomTitleActivity
 				UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsConnted);
 				IntegralSetting.setDeviceName(mPreDevice.getDeviceName());
 				IntegralSetting.setDeviceMACAddr(mPreDevice.getAddress());
-				mBConnected = true;
 				updateUIForConn();
 				Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
-				if(mReadAllCmd != null)
+				if(mPreCmdToExecute != null)
+				{
+					executeCmd(mPreCmdToExecute);
+					mPreCmdToExecute = null;
+				}
+				else if(mReadAllCmd != null)
 					mReadAllCmd.doIt();
 			}
 			else if(BLEUtility.ACTION_GET_LEDEVICE.equals(action))
@@ -859,29 +863,19 @@ public class MainActivity extends CustomTitleActivity
 					int groupPosition, int childPosition, long id) {
 				
 				ChildItem childItem = mAdapter.getChild(groupPosition, childPosition);
-				if(childItem != null)
+				if(needRequestBT() == true)
 				{
-					if(true == (childItem instanceof ChildWrtItem))
-					{
-						((ChildWrtItem)childItem).doWriteCmdAndReadRsp();
-						return true;
-					}else if(true == (childItem instanceof ChildWrtChkItem))
-					{
-						((ChildWrtChkItem)childItem).doWriteCmdAndReadRsp();
-						return true;
-					}
-					else if(true == (childItem instanceof ChildReadItem))
-					{
-						((ChildReadItem)childItem).doWriteCmdAndReadRsp(true);
-						return true;
-					}
-					else if(true == (childItem instanceof ChildReadAllItem))
-					{
-						((ChildReadAllItem)childItem).doIt();
-						return true;
-					}
+					MainActivity.this.mPreCmdToExecute = childItem;
+					return false;
 				}
-				return false;
+				else if(BLEUtility.getInstance().isConnect() == false)
+				{
+					MainActivity.this.mPreCmdToExecute = childItem;
+					MainActivity.this.connectToIntegral();
+					return false;
+				}
+				
+				return executeCmd(childItem);
 			}
 			
 		});
@@ -924,30 +918,59 @@ public class MainActivity extends CustomTitleActivity
 	
 	private void updateUIForConn()
 	{
-		if(mBConnected)
+		if(BLEUtility.getInstance().isConnect())
 		{
-			mListView.setEnabled(true);
 			if(mMenu != null)
 				mMenu.findItem(R.id.menu_connect).setTitle(getResources().getString(R.string.menu_disconn));
 		}
 		else 
 		{
-			mListView.setEnabled(false);
 			if(mMenu != null)
 				mMenu.findItem(R.id.menu_connect).setTitle(getResources().getString(R.string.menu_conn));
 		}
 	}
 	
-	private void requestBTOrConn(){
-		if(BluetoothAdapter.getDefaultAdapter() == null || BluetoothAdapter.getDefaultAdapter().isEnabled() == false)
+	private boolean needRequestBT() {
+		if((BluetoothAdapter.getDefaultAdapter() == null || BluetoothAdapter.getDefaultAdapter().isEnabled() == false))
 		{
 			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 	        startActivityForResult(enableBtIntent, BTSettingActivity.REQUEST_ENABLE_BT);
+	        return true;
 		}	
-		else
+		return false;
+	}
+	
+	private void requestBTOrConn() {
+		if(needRequestBT() == true)
+			return;
+		connectToIntegral();
+	}
+	
+	private boolean executeCmd(ChildItem childItem){
+		if(childItem != null)
 		{
-			connectToIntegral();
+			if(true == (childItem instanceof ChildWrtItem))
+			{
+				((ChildWrtItem)childItem).doWriteCmdAndReadRsp();
+				return true;
+			}
+			else if(true == (childItem instanceof ChildWrtChkItem))
+			{
+				((ChildWrtChkItem)childItem).doWriteCmdAndReadRsp();
+				return true;
+			}
+			else if(true == (childItem instanceof ChildReadItem))
+			{
+				((ChildReadItem)childItem).doWriteCmdAndReadRsp(true);
+				return true;
+			}
+			else if(true == (childItem instanceof ChildReadAllItem))
+			{
+				((ChildReadAllItem)childItem).doIt();
+				return true;
+			}
 		}
+		return false;
 	}
 	
 	private void connectToIntegral(){
@@ -1046,6 +1069,10 @@ public class MainActivity extends CustomTitleActivity
         	{
        			connectToIntegral();
         	}
+       		else if(resultCode == Activity.RESULT_CANCELED)
+       		{
+       			mPreCmdToExecute = null;
+       		}
        	}
        	break;
        }

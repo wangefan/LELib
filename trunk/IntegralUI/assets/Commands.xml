@@ -4,7 +4,7 @@
         <WriteCmd Title="Reset" Cmd="reset" CheckedIcon="&#xe8fd;" UnCheckedIcon="&#xe8fd;">
 			<CmdRes>ok</CmdRes>
 		</WriteCmd>
-		<ReadAllCmd Title="Read Config" Cmd="" CheckedIcon="&#xe8fd;" UnCheckedIcon="&#xe8fd;">
+		<ReadAllCmd Title="Read Config" Cmd="" Icon="&#xe8d0;">
 		</ReadAllCmd>
 		<ReadCmd Title="Info" Cmd="man">
 			<CmdRes Title="" refWmdID = "-1">man Integral</CmdRes>

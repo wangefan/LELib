@@ -488,6 +488,7 @@ public class MainActivity extends CustomTitleActivity
 	private class ChildReadAllItem extends ChildItem implements Serializable{
 		private static final long serialVersionUID = 5L;
 		private String mTag = "ChildReadAllItem";
+		public String mIcon = "";
 		
 		public void doIt()
 		{
@@ -596,6 +597,12 @@ public class MainActivity extends CustomTitleActivity
 				chdholder.mIcon.setVisibility(View.INVISIBLE);
 				chdholder.mCheckBox.setChecked(((ChildWrtChkItem) item).mBIsChecked);
 				chdholder.mCheckBox.setVisibility(View.VISIBLE);
+			}
+			else if(item instanceof ChildReadAllItem)
+			{
+				chdholder.mIcon.setVisibility(View.VISIBLE);
+				chdholder.mIcon.setText(((ChildReadAllItem)item).mIcon);
+				chdholder.mCheckBox.setVisibility(View.INVISIBLE);
 			}
 				
 			return convertView;
@@ -821,6 +828,7 @@ public class MainActivity extends CustomTitleActivity
 		    			command.mID = nID++;
 		    			command.mTitle = cmdNode.getAttributes().getNamedItem("Title").getNodeValue();
 		    			command.mCommand = cmdNode.getAttributes().getNamedItem("Cmd").getNodeValue();
+		    			((ChildReadAllItem)command).mIcon = cmdNode.getAttributes().getNamedItem("Icon").getNodeValue();
 		    			cmdgroup.items.add(command);
 		    			mReadAllCmd = (ChildReadAllItem) command;
 		    		}

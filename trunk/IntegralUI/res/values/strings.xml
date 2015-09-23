@@ -35,4 +35,9 @@
 	<string name="prgsReadCmdFail">Read Status Failed"</string>
 	<string name="prgsScanDev">"Finding Integral Devices&#8230;"</string>
 	<string name="prgsScanNoDev">"No Devices Found"</string>
+	<string name="InputDlgOK">OK</string>
+	<string name="InputDlgCan">Cancel</string>
+	<string name="InputDlgTitle">Input CEC command</string>
+	<string name="InputDlgCECFormatTitle">CEC : [%s]</string>
+	<string name="InputDlgDefaultCEC">CEC 0F:36</string>
 </resources>

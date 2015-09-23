@@ -36,6 +36,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.text.InputType;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -45,6 +46,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
@@ -60,6 +62,7 @@ public class MainActivity extends CustomTitleActivity
 	private final static String ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY = "ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY";
 	private final static String ACTION_GROUP_READ_FAIL = "ACTION_GROUP_READ_FAIL";
 	private final static String ACTION_GROUP_READ_FAIL_KEY = "ACTION_GROUP_READ_FAIL_KEY";
+	private final static String ACTION_SEND_CMD_OK = "ACTION_SEND_CMD_OK";
 	private static final long SCAN_PERIOD = 5000; // Stops scanning after 8 seconds.
 	//data member
 	private AnimatedExpandableListView mListView;
@@ -123,6 +126,11 @@ public class MainActivity extends CustomTitleActivity
             {
             	UIUtility.showProgressDlg(MainActivity.this, true, R.string.prgsSendingCmd);
             }
+			else if(ACTION_SEND_CMD_OK.equals(action))
+			{
+				UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsSedingCmdOK);
+            	Toast.makeText(MainActivity.this, R.string.prgsSedingCmdOK, Toast.LENGTH_SHORT).show();
+			}
             else if(BLEUtility.ACTION_SENCMD_OK.equals(action)) 
             {
             	int [] idArr = intent.getIntArrayExtra(ACTION_GROUP_READ_OK_GETITEMID_KEY);
@@ -505,7 +513,85 @@ public class MainActivity extends CustomTitleActivity
 			}
 		}
 	}
+	
+	private class ChildWrtCECItem extends ChildItem {
+		private String mTag = "ChildWrtCECItem";
+		public String mIcon = "";
+		public String mCommandRes = "";
+		
+		public void doWriteCmdAndReadRsp()
+		{
+			MyLog.d(mTag, "doWriteCmdAndReadRsp begin");
+			broadCastAction(BLEUtility.ACTION_SENCMD_BEGIN);
+			
+			Thread workerThread = new Thread() {
+			    public void run() {
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd in thread" + Thread.currentThread().getId());
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write cmd = " + mCommand);
+			    	byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(mCommand, true));
+			    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
+			    	String strRspCal = "";
+			    	if(rspCal != null)
+			    		strRspCal = new String(rspCal);
+					if(strRspCal.equals(mCommandRes) == true)
+					{
+						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd match response");
+						
+						mUIHanlder.post(new Runnable() {
+							@Override
+							public void run() {
+								mParentItem.mBIsOutofDate= false; 
+								final Intent brd = new Intent(ACTION_SEND_CMD_OK);
+						        MainActivity.this.sendBroadcast(brd);
+							}
+						});
+					}
+					else
+					{
+						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd not match response");
+						mUIHanlder.post(new Runnable() {
+							@Override
+							public void run() {
+								broadCastAction(BLEUtility.ACTION_SENCMD_FAIL);
+							}
+						});
+					}
+			    }
+			};
+			workerThread.start();
+		}
+		
+		public void doIt()
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+			builder.setTitle(R.string.InputDlgTitle);
 
+			// Set up the input
+			final EditText input = new EditText(MainActivity.this);
+			input.setText(R.string.InputDlgDefaultCEC);
+			// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+			input.setInputType(InputType.TYPE_CLASS_TEXT);
+			builder.setView(input);
+
+			// Set up the buttons
+			builder.setPositiveButton(R.string.InputDlgOK, new DialogInterface.OnClickListener() { 
+			    @Override
+			    public void onClick(DialogInterface dialog, int which) {
+			    	mCommand = input.getText().toString();
+			    	mTitle = String.format(MainActivity.this.getResources().getString(R.string.InputDlgCECFormatTitle), mCommand);
+			    	doWriteCmdAndReadRsp();
+			    }
+			});
+			builder.setNegativeButton(R.string.InputDlgCan, new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(DialogInterface dialog, int which) {
+			        dialog.cancel();
+			    }
+			});
+
+			builder.show();
+		}
+	}
 	private static class ChildHolder {
 		TextView mTitle;
 		FontelloTextView  mIcon;
@@ -597,6 +683,12 @@ public class MainActivity extends CustomTitleActivity
 				chdholder.mIcon.setVisibility(View.INVISIBLE);
 				chdholder.mCheckBox.setChecked(((ChildWrtChkItem) item).mBIsChecked);
 				chdholder.mCheckBox.setVisibility(View.VISIBLE);
+			}
+			else if(item instanceof ChildWrtCECItem)
+			{
+				chdholder.mIcon.setVisibility(View.VISIBLE);
+				chdholder.mIcon.setText(((ChildWrtCECItem)item).mIcon);
+				chdholder.mCheckBox.setVisibility(View.INVISIBLE);
 			}
 			else if(item instanceof ChildReadAllItem)
 			{
@@ -798,6 +890,28 @@ public class MainActivity extends CustomTitleActivity
 		    			}
 		    			cmdgroup.items.add(command);
 		    		}
+		    		else if(strNodeName.compareTo("WriteCECCmd") == 0)
+		    		{
+		    			command = new ChildWrtCECItem();
+		    			command.mParentItem = cmdgroup;
+		    			command.mID = nID++;
+		    			command.mTitle = cmdNode.getAttributes().getNamedItem("Title").getNodeValue();
+		    			command.mCommand = cmdNode.getAttributes().getNamedItem("Cmd").getNodeValue();
+		    			((ChildWrtCECItem)command).mIcon = cmdNode.getAttributes().getNamedItem("Icon").getNodeValue();
+		    			for(int idxCmdRes = 0; idxCmdRes < cmdNode.getChildNodes().getLength(); ++idxCmdRes) { 
+		    				Node cmdResNode = cmdNode.getChildNodes().item(idxCmdRes); 
+				    		String strResNodeName = cmdResNode.getLocalName();
+				    		if(strResNodeName == null)
+				    			continue;
+				    		if(strResNodeName.compareTo("CmdRes") == 0)
+				    		{
+				    			String strVal = cmdResNode.getFirstChild().getNodeValue();
+				    			((ChildWrtCECItem)command).mCommandRes = new String(strVal);
+				    			break;
+				    		}
+		    			}
+		    			cmdgroup.items.add(command);
+		    		}
 		    		else if(strNodeName.compareTo("ReadCmd") == 0)
 		    		{
 		    			command = new ChildReadItem();
@@ -910,6 +1024,7 @@ public class MainActivity extends CustomTitleActivity
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_BEGIN);
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_OK);
+        intentFilter.addAction(ACTION_SEND_CMD_OK);
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_FAIL);
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ);
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_CONTENT);
@@ -975,6 +1090,11 @@ public class MainActivity extends CustomTitleActivity
 			else if(true == (childItem instanceof ChildReadAllItem))
 			{
 				((ChildReadAllItem)childItem).doIt();
+				return true;
+			}
+			else if(true == (childItem instanceof ChildWrtCECItem))
+			{
+				((ChildWrtCECItem)childItem).doIt();
 				return true;
 			}
 		}

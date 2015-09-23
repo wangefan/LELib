@@ -95,9 +95,9 @@
 	    <WriteCmdChk Title="Turn Everything Off" Cmd="cec off">
 			<CmdRes>ok</CmdRes>
 		</WriteCmdChk>
-		<WriteCmd Title="Play CEC (CEC 0F:36)" Cmd="CEC 0F:36" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">
+		<WriteCECCmd Title="Play CEC Command" Cmd="CEC 0F:36" Icon="&#xea9d;">
 			<CmdRes>ok</CmdRes>
-		</WriteCmd>
+		</WriteCECCmd>
 		<ReadCmd Title="Read CEC status" Cmd="cec">
 			<CmdRes Title="On" refWmdID = "0">cec on</CmdRes>
 			<CmdRes Title="Off" refWmdID = "1">cec off</CmdRes>

@@ -261,6 +261,7 @@ public class MainActivity extends CustomTitleActivity
 	private class CanReadGroup extends GroupItem {
 		private String mTag = "CanReadGroup";
 		private int mNExeSequence = -1;
+		private final int mNTry = 3;
 	
 		public void doReadRsp()
 		{
@@ -283,36 +284,48 @@ public class MainActivity extends CustomTitleActivity
 								e.printStackTrace();
 							}
 			    		}
-				    	MyLog.d(mTag, "doReadRsp, sequ = " + mNExeSequence + ", begin in synchronized(mLockSequence), in thread = " + Thread.currentThread().getId());
-				    	byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(chdReadItemTemp.mCommand, false));
-				    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
-				    	String strRspCal = "";
-				    	if(rspCal != null)
-				    		strRspCal = new String(rspCal);
-				    	MyLog.d(mTag, "doReadRsp, read content = " + strRspCal + ", in thread = " + Thread.currentThread().getId());
-				    	++mReadCount;
-				    	for(final ReadCmdStructur rdCmdStr: resCollTemp)
-				    	{
-				    		String itrRsp = rdCmdStr.mResponseString;
-				    		MyLog.d(mTag, "doReadRsp, compare from = " + itrRsp+ ", in thread = " + Thread.currentThread().getId());
-				    		if(strRspCal.equals(itrRsp) == true)
-							{
-				    			mBIsOutofDate= false; 
-								MyLog.d(mTag, "doReadRsp, read ok, post ACTION_GROUP_READ_OK to UI, in thread = " + Thread.currentThread().getId());
-								mUIHanlder.post(new Runnable() {
-									@Override
-									public void run() {
-										final Intent brd = new Intent(ACTION_GROUP_READ_OK);
-										brd.putExtra(ACTION_GROUP_READ_OK_GETITEMID_KEY, new int[] {mID, Integer.parseInt(rdCmdStr.mRefWrtCmdID)});
-										brd.putExtra(ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY, rdCmdStr.mResponseTitleString);
-								        MainActivity.this.sendBroadcast(brd);
-									}
-								});
-								mLockSequence.notifyAll();
-								return;
+			    		for(int idxNTry = 0; idxNTry < mNTry; ++ idxNTry)
+			    		{
+			    			MyLog.d(mTag, "doReadRsp, sequ = " + mNExeSequence + ", try "+( idxNTry+1) +"times, begin in synchronized(mLockSequence), in thread = " + Thread.currentThread().getId());
+					    	byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(chdReadItemTemp.mCommand, false));
+					    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
+					    	String strRspCal = "";
+					    	if(rspCal != null)
+					    		strRspCal = new String(rspCal);
+					    	MyLog.d(mTag, "doReadRsp, read content = " + strRspCal + ", in thread = " + Thread.currentThread().getId());
+					    	
+					    	for(final ReadCmdStructur rdCmdStr: resCollTemp)
+					    	{
+					    		String itrRsp = rdCmdStr.mResponseString;
+					    		MyLog.d(mTag, "doReadRsp, compare from = " + itrRsp+ ", in thread = " + Thread.currentThread().getId());
+					    		if(strRspCal.equals(itrRsp) == true)
+								{
+					    			++mReadCount;
+					    			mBIsOutofDate= false; 
+									MyLog.d(mTag, "doReadRsp, read ok, post ACTION_GROUP_READ_OK to UI, in thread = " + Thread.currentThread().getId());
+									mUIHanlder.post(new Runnable() {
+										@Override
+										public void run() {
+											final Intent brd = new Intent(ACTION_GROUP_READ_OK);
+											brd.putExtra(ACTION_GROUP_READ_OK_GETITEMID_KEY, new int[] {mID, Integer.parseInt(rdCmdStr.mRefWrtCmdID)});
+											brd.putExtra(ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY, rdCmdStr.mResponseTitleString);
+									        MainActivity.this.sendBroadcast(brd);
+										}
+									});
+									mLockSequence.notifyAll();
+									return;
+								}
+					    	}
+					    	try {
+								Thread.sleep(500);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
-				    	}
-				    	mBIsOutofDate= true; 
+			    		}
+			    		
+			    		++mReadCount;
+			    		mBIsOutofDate= true; 
 				    	MyLog.d(mTag, "doReadRsp, read fail, post ACTION_GROUP_READ_FAIL to UI, in thread = " + Thread.currentThread().getId());
 						mUIHanlder.post(new Runnable() {
 							@Override
@@ -322,7 +335,7 @@ public class MainActivity extends CustomTitleActivity
 								MainActivity.this.sendBroadcast(brd);
 							}
 						});
-						mLockSequence.notifyAll();
+						mLockSequence.notifyAll();	
 			    	}
 				    }
 				};

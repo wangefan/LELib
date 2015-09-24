@@ -22,22 +22,29 @@
         android:id="@+id/textTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart ="16dp"
-        android:gravity="center_vertical"
-        android:minHeight="64dp"
-        android:padding="8dp"
-        android:textColor="@color/main_color_grey_700"
-        android:textSize="18sp" />
-    
-    <com.UI.font.RobotoTextView
-        android:id="@+id/textRespStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart ="1dp"
         android:gravity="center_vertical"
         android:minHeight="64dp"
         android:padding="8dp"
         android:textColor="@color/main_color_grey_700"
         android:textSize="18sp" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="25dp"
+        android:orientation="vertical" >
+
+	    <com.UI.font.RobotoTextView
+	        android:id="@+id/textRespStatus"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="end"
+	        android:gravity="center_vertical"
+	        android:minHeight="64dp"
+	        android:padding="8dp"
+	        android:textColor="@color/main_color_grey_700"
+	        android:textSize="18sp" />
+
+	</LinearLayout>
 </LinearLayout>

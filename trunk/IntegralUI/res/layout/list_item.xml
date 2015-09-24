@@ -39,7 +39,7 @@
         android:id="@+id/textTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="1dp"
         android:gravity="center_vertical"
         android:minHeight="48dp"
         android:padding="8dp"

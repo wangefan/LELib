@@ -762,7 +762,7 @@ public class MainActivity extends CustomTitleActivity
 			}
 			else
 			{
-				holder.mGroupRespStatus.setTextColor(getResources().getColor(R.color.main_color_grey_700));
+				holder.mGroupRespStatus.setTextColor(getResources().getColor(R.color.custom_green_color));
 				holder.mGroupRespStatus.setText(item.mGroupResponse);
 			}
 			holder.mGroupIcon.setText(item.mGroupIcon);

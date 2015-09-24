@@ -196,7 +196,6 @@ public class MainActivity extends CustomTitleActivity
             	}
             	
             	mAdapter.notifyDataSetChanged();
-            	++mReadCount;
             	if(mReadCount >= mGoalReadCount)
             	{
             		UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsReadConfigEnd);
@@ -213,7 +212,6 @@ public class MainActivity extends CustomTitleActivity
             		//Todo: log read fail cmd
             	}
             	mAdapter.notifyDataSetChanged();
-            	++mReadCount;
             	if(mReadCount >= mGoalReadCount)
             	{
             		UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsReadConfigEnd);
@@ -258,8 +256,11 @@ public class MainActivity extends CustomTitleActivity
 		}
 	}
 	
+	private static Object mLockSequence = new Object();
+	private static int mCurrentSeqn = -1;
 	private class CanReadGroup extends GroupItem {
 		private String mTag = "CanReadGroup";
+		private int mNExeSequence = -1;
 	
 		public void doReadRsp()
 		{
@@ -272,13 +273,24 @@ public class MainActivity extends CustomTitleActivity
 				Thread workerThread = new Thread() 
 				{
 				    public void run() {
-				    	MyLog.d(mTag, "doReadRsp begin, in thread = " + Thread.currentThread().getId());
+			    	synchronized(mLockSequence) {
+			    		while(mNExeSequence != mReadCount)
+			    		{
+			    			try {
+								mLockSequence.wait();
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+			    		}
+				    	MyLog.d(mTag, "doReadRsp, sequ = " + mNExeSequence + ", begin in synchronized(mLockSequence), in thread = " + Thread.currentThread().getId());
 				    	byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(chdReadItemTemp.mCommand, false));
 				    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
 				    	String strRspCal = "";
 				    	if(rspCal != null)
 				    		strRspCal = new String(rspCal);
 				    	MyLog.d(mTag, "doReadRsp, read content = " + strRspCal + ", in thread = " + Thread.currentThread().getId());
+				    	++mReadCount;
 				    	for(final ReadCmdStructur rdCmdStr: resCollTemp)
 				    	{
 				    		String itrRsp = rdCmdStr.mResponseString;
@@ -296,6 +308,7 @@ public class MainActivity extends CustomTitleActivity
 								        MainActivity.this.sendBroadcast(brd);
 									}
 								});
+								mLockSequence.notifyAll();
 								return;
 							}
 				    	}
@@ -306,9 +319,11 @@ public class MainActivity extends CustomTitleActivity
 							public void run() {
 								final Intent brd = new Intent(ACTION_GROUP_READ_FAIL);
 								brd.putExtra(ACTION_GROUP_READ_FAIL_KEY, new int[] {mID, -1});
-						        MainActivity.this.sendBroadcast(brd);
+								MainActivity.this.sendBroadcast(brd);
 							}
 						});
+						mLockSequence.notifyAll();
+			    	}
 				    }
 				};
 				workerThread.start();
@@ -830,6 +845,7 @@ public class MainActivity extends CustomTitleActivity
 		    else
 		    {
 		    	cmdgroup = new CanReadGroup();
+		    	((CanReadGroup)cmdgroup).mNExeSequence = Integer.parseInt(attributes.getNamedItem("Sequence").getNodeValue());
 		    	++mGoalReadCount;
 		    }
 		    cmdgroup.mID = idxCmdGroup;

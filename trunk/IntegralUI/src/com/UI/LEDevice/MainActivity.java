@@ -140,7 +140,7 @@ public class MainActivity extends CustomTitleActivity
             	String groupStatus = intent.getStringExtra(ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY);
             	//update GroupItem first
             	GroupItem groupItem = mAdapter.getGroup(idArr[0]);
-            	groupItem.mGroupResponse = groupStatus;
+            	groupItem.mGroupResponse = (groupStatus == null) ? "" : groupStatus;
             	groupItem.unCheckAllWrtChild();
         		MyLog.d(mTAG, "Group item " + groupItem.mGroupTitle + " read OK.");
         		
@@ -304,7 +304,7 @@ public class MainActivity extends CustomTitleActivity
 					    		if(strRspCal.equals(itrRsp) == true)
 								{
 					    			++mReadCount;
-					    			mBIsOutofDate= false; 
+					    			mBIsOutofDate = false; 
 									MyLog.d(mTag, "doReadRsp, read ok, post ACTION_GROUP_READ_OK to UI, in thread = " + Thread.currentThread().getId());
 									mUIHanlder.post(new Runnable() {
 										@Override
@@ -534,6 +534,16 @@ public class MainActivity extends CustomTitleActivity
 			MyLog.d(mTag, "Read config begin");
 			UIUtility.showProgressDlg(MainActivity.this, true, R.string.prgsReadConfig);
 			mReadCount = 0;
+			for(int idxGroup = 0; idxGroup < mAdapter.getGroupCount(); ++idxGroup)
+			{
+				GroupItem groupItem = mAdapter.getGroup(idxGroup);
+				if(groupItem instanceof CanReadGroup)
+				{
+					((CanReadGroup)groupItem).mGroupResponse = "";
+					((CanReadGroup)groupItem).mBIsOutofDate = false; 
+				}
+			}
+			mAdapter.notifyDataSetChanged();
 			for(int idxGroup = 0; idxGroup < mAdapter.getGroupCount(); ++idxGroup)
 			{
 				GroupItem groupItem = mAdapter.getGroup(idxGroup);

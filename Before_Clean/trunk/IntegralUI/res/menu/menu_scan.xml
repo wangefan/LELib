@@ -1,0 +1,26 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app1="http://schemas.android.com/apk/res/com.UI.LEDevice">
+
+    <item android:id="@+id/menu_refresh"
+          android:title=""
+          android:checkable="false"
+          android:orderInCategory="1"
+          android:showAsAction="ifRoom"
+          android:textColor="@+color/white"
+          app1:typeface="robotoCondensed"/>
+    <item android:id="@+id/menu_scan"
+          android:title="@+string/scan"
+          android:orderInCategory="100"
+          android:showAsAction="ifRoom|withText"
+          android:textColor="@+color/white"
+          app1:typeface="robotoCondensed"/>
+    
+    <item android:id="@+id/menu_stop"
+          android:title="@+string/stop"
+          android:orderInCategory="101"
+          android:showAsAction="ifRoom|withText"
+          android:textColor="@+color/white"
+          app1:typeface="robotoCondensed"/>
+
+</menu>

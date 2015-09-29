@@ -3,7 +3,9 @@ package com.UI.LEDevice;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -76,6 +78,7 @@ public class MainActivity extends CustomTitleActivity
 	private Menu mMenu = null;
 	private int mGoalReadCount = 0;
 	private int mReadCount = 0; 
+	private final String mInFileName = "InternalCommands.xml";
 	
 	//Inner classes
 	BroadcastReceiver mBtnReceiver = new BroadcastReceiver() {
@@ -809,24 +812,85 @@ public class MainActivity extends CustomTitleActivity
 			IntegralSetting.setDeviceName(devName);
 			IntegralSetting.setDeviceMACAddr(devAddr);
 		}
-
-		//parsing XML
-		List<GroupItem> groupItems = new ArrayList<GroupItem>();
-		mGoalReadCount = 0;
-		XPath xpath = XPathFactory.newInstance().newXPath();  
-		String expression = "//CmdGroup";  
 		
 		File path = Environment.getExternalStoragePublicDirectory(
 	            Environment.DIRECTORY_DOWNLOADS);
 				
-	    File file = new File(path, "Commands.xml");
-		InputSource inputSource = null;
+	    final File file = new File(path, "Commands.xml");
+	    
 		if(file.exists())
 		{
+			AlertDialog.Builder builderSingle = new AlertDialog.Builder(MainActivity.this);
+            builderSingle.setIcon(R.drawable.ic_icon);
+            builderSingle.setTitle(R.string.dlgXMLIntegral);
+            builderSingle.setMessage(R.string.dlgXMLIntegralMsg);
+            builderSingle.setPositiveButton(R.string.dlgOK,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    	try {
+            				InputStream is = new FileInputStream(file);
+            				FileOutputStream writer = openFileOutput(mInFileName, Context.MODE_PRIVATE);
+            				byte[] buff = new byte[500];
+            				int len;
+            				while((len = is.read(buff)) > 0 )
+            					writer.write(buff,0,len);
+            				is.close();
+            				writer.close();
+            				InitPage();
+            			} 
+                    	catch (FileNotFoundException e1)
+            			{
+            				e1.printStackTrace();
+            			}
+            			catch (IOException e) { 
+            				e.printStackTrace();
+            			}
+                    }
+                });
+            builderSingle.setNegativeButton(R.string.dlgCancel,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            InitPage();
+                        }
+                    });
+           
+            builderSingle.show();
+		}
+		else {
+			InitPage();
+		}
+	}
+	
+	private static IntentFilter makeServiceActionsIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_BEGIN);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_OK);
+        intentFilter.addAction(ACTION_SEND_CMD_OK);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_FAIL);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_CONTENT);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_FAIL);
+        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_CONNECTING);
+        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_CONNECTED);
+        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_DISCONNECTED);
+        intentFilter.addAction(BLEUtility.ACTION_GET_LEDEVICE);
+        intentFilter.addAction(ACTION_GROUP_READ_OK);
+        intentFilter.addAction(ACTION_GROUP_READ_FAIL);
+        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        return intentFilter;
+    }
+	
+	private void InitPage() {
+	    boolean bIsInFileExist = getBaseContext().getFileStreamPath(mInFileName).exists();
+		InputSource inputSource = null;
+		if(bIsInFileExist)
+		{
 			try {
-				inputSource = new InputSource(new FileInputStream(file));
+				inputSource = new InputSource(this.openFileInput(mInFileName));
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -835,11 +899,15 @@ public class MainActivity extends CustomTitleActivity
 			try {
 				inputSource = new InputSource(getAssets().open("Commands.xml"));
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}  
 		}
 		
+		//parsing XML
+		List<GroupItem> groupItems = new ArrayList<GroupItem>();
+		mGoalReadCount = 0;
+		XPath xpath = XPathFactory.newInstance().newXPath();  
+		String expression = "//CmdGroup";  
 		NodeList nodes = null;
 		try {
 			nodes = (NodeList) xpath.evaluate(expression, inputSource, XPathConstants.NODESET);
@@ -1048,25 +1116,6 @@ public class MainActivity extends CustomTitleActivity
 		
 		requestBTOrConn();
 	}
-	
-	private static IntentFilter makeServiceActionsIntentFilter() {
-        final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BLEUtility.ACTION_SENCMD_BEGIN);
-        intentFilter.addAction(BLEUtility.ACTION_SENCMD_OK);
-        intentFilter.addAction(ACTION_SEND_CMD_OK);
-        intentFilter.addAction(BLEUtility.ACTION_SENCMD_FAIL);
-        intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ);
-        intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_CONTENT);
-        intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_FAIL);
-        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_CONNECTING);
-        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_CONNECTED);
-        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_DISCONNECTED);
-        intentFilter.addAction(BLEUtility.ACTION_GET_LEDEVICE);
-        intentFilter.addAction(ACTION_GROUP_READ_OK);
-        intentFilter.addAction(ACTION_GROUP_READ_FAIL);
-        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        return intentFilter;
-    }
 	
 	private void updateUIForConn()
 	{

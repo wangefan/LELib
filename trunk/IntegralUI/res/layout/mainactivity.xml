@@ -13,8 +13,7 @@
              android:id="@+id/integralback"
              android:layout_width="fill_parent"
              android:layout_height="match_parent"
-             android:layout_centerInParent="true"
-             android:src="@drawable/integral_back" />
+             android:layout_centerInParent="true" />
          
 	    <com.BLE.Buttons.BLEOneWrtCmdButton
 	           android:id="@+id/btnReset"

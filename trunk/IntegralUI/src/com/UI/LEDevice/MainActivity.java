@@ -59,6 +59,7 @@ public class MainActivity extends CustomTitleActivity
 {
 	//constant 
 	private final String mTAG = "MainActivity";
+	private final static int REQUEST_ENABLE_BT = 5;
 	private final static String ACTION_GROUP_READ_OK = "ACTION_GROUP_READ_OK";
 	private final static String ACTION_GROUP_READ_OK_GETITEMID_KEY = "ACTION_GROUP_READ_OK_GETITEMID_KEY";
 	private final static String ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY = "ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY";
@@ -1146,7 +1147,7 @@ public class MainActivity extends CustomTitleActivity
 		if((BluetoothAdapter.getDefaultAdapter() == null || BluetoothAdapter.getDefaultAdapter().isEnabled() == false))
 		{
 			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-	        startActivityForResult(enableBtIntent, BTSettingActivity.REQUEST_ENABLE_BT);
+	        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 	        return true;
 		}	
 		return false;
@@ -1280,7 +1281,7 @@ public class MainActivity extends CustomTitleActivity
 	@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-       	case BTSettingActivity.REQUEST_ENABLE_BT:
+       	case REQUEST_ENABLE_BT:
        	{
        		if(resultCode == Activity.RESULT_OK ) 
         	{

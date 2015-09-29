@@ -264,7 +264,7 @@ public class MainActivity extends CustomTitleActivity
 	private class CanReadGroup extends GroupItem {
 		private String mTag = "CanReadGroup";
 		private int mNExeSequence = -1;
-		private final int mNTry = 3;
+		private int mNTry = 1;
 	
 		public void doReadRsp()
 		{
@@ -927,6 +927,7 @@ public class MainActivity extends CustomTitleActivity
 		    {
 		    	cmdgroup = new CanReadGroup();
 		    	((CanReadGroup)cmdgroup).mNExeSequence = Integer.parseInt(attributes.getNamedItem("Sequence").getNodeValue());
+		    	((CanReadGroup)cmdgroup).mNTry = Integer.parseInt(attributes.getNamedItem("Try").getNodeValue());
 		    	++mGoalReadCount;
 		    }
 		    cmdgroup.mID = idxCmdGroup;

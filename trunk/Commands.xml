@@ -64,6 +64,30 @@
 			<CmdRes Title="Mix" refWmdID = "0">edid automix</CmdRes>
 		</ReadCmd>
     </CmdGroup>
+    <CmdGroup Title="4:2:0 Downsampling Mode" Icon="&#xe860;" CanRead="true" Sequence="5" Try="1">
+	    <WriteCmd Title="Enable 4:4:4 -> 4:2:0" Cmd="420 on" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+			<CmdRes>ok</CmdRes>
+		</WriteCmd>
+	    <WriteCmd Title="Disable 4:4:4 -> 4:2:0" Cmd="420 off" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+			<CmdRes>ok</CmdRes>
+		</WriteCmd>
+		<ReadCmd Title="Read Current 4:2:0 Selection Status" Cmd="420">
+			<CmdRes Title="Enable 4:4:4 -> 4:2:0" refWmdID = "0">420 on</CmdRes>
+			<CmdRes Title="Disable 4:4:4 -> 4:2:0" refWmdID = "1">420 off</CmdRes>
+		</ReadCmd>
+    </CmdGroup>
+    <CmdGroup Title="Power" Icon="&#xe860;" CanRead="true" Sequence="6" Try="1">
+	    <WriteCmd Title="Power On" Cmd="pwr on" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+			<CmdRes>ok</CmdRes>
+		</WriteCmd>
+	    <WriteCmd Title="Power Off" Cmd="pwr off" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
+			<CmdRes>ok</CmdRes>
+		</WriteCmd>
+		<ReadCmd Title="Read Power Status" Cmd="power">
+			<CmdRes Title="on" refWmdID = "0">power on</CmdRes>
+			<CmdRes Title="off" refWmdID = "1">power off</CmdRes>
+		</ReadCmd>
+    </CmdGroup>
     <CmdGroup Title="Play with CEC " Icon="&#xe860;" CanRead="true" Sequence="3" Try="1">
 	    <WriteCmdChk Title="Turn Everything On" Cmd="cec on">
 			<CmdRes>ok</CmdRes>

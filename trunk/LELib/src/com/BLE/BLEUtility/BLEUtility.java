@@ -488,7 +488,7 @@ public class BLEUtility
 			mResData = null;
 			write(command);
 			mBWaitData = true;
-			Thread.sleep(100);
+			Thread.sleep(400);
 			read();
 			final int nWaitMilliSecs = 2000;
 			final int nWaitStep = 100;

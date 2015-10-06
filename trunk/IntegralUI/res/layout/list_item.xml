@@ -37,7 +37,7 @@
 	</RelativeLayout>
 	 <com.UI.font.RobotoTextView
         android:id="@+id/textTitle"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="1dp"
         android:gravity="center_vertical"
@@ -45,4 +45,15 @@
         android:padding="8dp"
         android:textColor="@color/main_color_grey_700"
         android:textSize="17sp" />
+
+	 <com.UI.font.RobotoTextView
+	     android:id="@+id/textRespStatus"
+	     android:layout_width="wrap_content"
+	     android:layout_height="wrap_content"
+	     android:gravity="center_vertical"
+	     android:minHeight="48dp"
+	     android:padding="8dp"
+	     android:textColor="@color/main_color_grey_700"
+	     android:textSize="18sp" />
+
 </LinearLayout>

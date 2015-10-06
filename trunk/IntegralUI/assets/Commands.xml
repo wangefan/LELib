@@ -6,6 +6,18 @@
 		</WriteCmd>
 		<ReadAllCmd Title="Read Config" Cmd="" Icon="&#xe8d0;">
 		</ReadAllCmd>
+		<WrtReadCmd Title="CEC Broadcast" Cmd1="cec on" Cmd2="cec off" CmdRes="ok" ReadCmd = "cec" Sequence = "5">
+			<ReadRes Title="CEC On">cec on</ReadRes>
+			<ReadRes Title="CEC Off">cec off</ReadRes>
+		</WrtReadCmd>
+		<WrtReadCmd Title="Power" Cmd1="pwr on" Cmd2="pwr off" CmdRes="ok" ReadCmd = "power" Sequence = "6">
+			<ReadRes Title="Power On">power on</ReadRes>
+			<ReadRes Title="Power Off">power off</ReadRes>
+		</WrtReadCmd>
+		<WrtReadCmd Title="Auto Switch" Cmd1="autosw on" Cmd2="autosw off" CmdRes="ok" ReadCmd = "autosw" Sequence = "7">
+			<ReadRes Title="Auto Switch On">autosw on</ReadRes>
+			<ReadRes Title="Auto Switch Off">autosw off</ReadRes>
+		</WrtReadCmd>
 		<ReadCmd Title="Info" Cmd="man">
 			<CmdRes Title="" refWmdID = "-1">man Integral</CmdRes>
 		</ReadCmd>
@@ -42,6 +54,10 @@
         <WriteCmdChk Title="From HDMI" Cmd="audio hdmi">
 			<CmdRes>ok</CmdRes>
 		</WriteCmdChk>
+		<WrtReadCmd Title="Mute All Sound" Cmd1="mute on" Cmd2="mute off" CmdRes="ok" ReadCmd = "mute" Sequence = "8">
+			<ReadRes Title="Mute On">mute on</ReadRes>
+			<ReadRes Title="Mute Off">mute off</ReadRes>
+		</WrtReadCmd>
 		<ReadCmd Title="Read Audio" Cmd="audio" Icon="&#xeaa0;">
 			<CmdRes Title="HDMI" refWmdID = "1">audio hdmi</CmdRes>
 			<CmdRes Title="External" refWmdID = "0">audio jack</CmdRes>

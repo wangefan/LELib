@@ -66,6 +66,11 @@ public class MainActivity extends CustomTitleActivity
 	private final static String ACTION_GROUP_READ_FAIL = "ACTION_GROUP_READ_FAIL";
 	private final static String ACTION_GROUP_READ_FAIL_KEY = "ACTION_GROUP_READ_FAIL_KEY";
 	private final static String ACTION_SEND_CMD_OK = "ACTION_SEND_CMD_OK";
+	private final static String ACTION_WRTREAD_READ_UPDATE = "ACTION_WRTREAD_READ_UPDATE";
+	private final static String ACTION_WRTREAD_READ_FAIL = "ACTION_WRTREAD_READ_FAIL";
+	private final static String ACTION_WRTREAD_WRT_BEG = "ACTION_WRTREAD_WRT_BEG";
+	private final static String ACTION_WRTREAD_WRT_UPDATE = "ACTION_WRTREAD_WRT_UPDATE";
+	private final static String ACTION_WRTREAD_WRT_FAIL = "ACTION_WRTREAD_WRT_FAIL";
 	private static final long SCAN_PERIOD = 5000; // Stops scanning after 8 seconds.
 	//data member
 	private AnimatedExpandableListView mListView;
@@ -73,6 +78,7 @@ public class MainActivity extends CustomTitleActivity
 	private static Handler mUIHanlder = new Handler();
 	private Handler mScanPeriodHandler = new Handler();
 	private ArrayList<BLEDevice> mLeDevices = new ArrayList<BLEDevice>();
+	private ArrayList<ChildWrtReadItem> mListWrtReadCmds = new ArrayList<ChildWrtReadItem>();
 	private BLEDevice mPreDevice = null;
 	private ChildReadAllItem mReadAllCmd = null;
 	private ChildItem    mPreCmdToExecute = null;
@@ -168,6 +174,10 @@ public class MainActivity extends CustomTitleActivity
             {
             	UIUtility.showProgressDlg(MainActivity.this, true, R.string.prgsSedingReadCmd);
             }
+            else if (ACTION_WRTREAD_WRT_BEG.equals(action)) 
+            {
+            	UIUtility.showProgressDlg(MainActivity.this, true, R.string.prgsSendingCmd);
+            }
             else if(BLEUtility.ACTION_SENCMD_READ_CONTENT.equals(action))
             {
             	UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsSedingReadCmdOK);
@@ -221,6 +231,32 @@ public class MainActivity extends CustomTitleActivity
             		UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsReadConfigEnd);
             		Toast.makeText(MainActivity.this, R.string.prgsReadConfigEnd, Toast.LENGTH_SHORT).show();
             	}
+            }
+            else if(ACTION_WRTREAD_READ_UPDATE.equals(action)) {
+            	mAdapter.notifyDataSetChanged();
+            	if(mReadCount >= mGoalReadCount)
+            	{
+            		UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsReadConfigEnd);
+            		Toast.makeText(MainActivity.this, R.string.prgsReadConfigEnd, Toast.LENGTH_SHORT).show();
+            	}
+            }
+            else if(ACTION_WRTREAD_READ_UPDATE.equals(action)) {
+            	mAdapter.notifyDataSetChanged();
+            	if(mReadCount >= mGoalReadCount)
+            	{
+            		UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsReadConfigEnd);
+            		Toast.makeText(MainActivity.this, R.string.prgsReadConfigEnd, Toast.LENGTH_SHORT).show();
+            	}
+            }
+            else if(ACTION_WRTREAD_WRT_UPDATE.equals(action)) {
+            	UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsSendingCmd);
+            	mAdapter.notifyDataSetChanged();
+            	Toast.makeText(MainActivity.this, R.string.prgsSedingCmdOK, Toast.LENGTH_SHORT).show();
+            }
+            else if(ACTION_WRTREAD_WRT_FAIL.equals(action)) {
+            	UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsSendingCmd);
+            	mAdapter.notifyDataSetChanged();
+            	Toast.makeText(MainActivity.this, R.string.prgsSedingCmdFail, Toast.LENGTH_SHORT).show();
             }
             else if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
                 int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
@@ -354,7 +390,7 @@ public class MainActivity extends CustomTitleActivity
 		public GroupItem mParentItem =  null;
 		public int mID = -1;
 		public String mTitle;
-		public String mCommand;
+		public String mCommand = "";
 		
 		protected void broadCastAction(String action)
 		{
@@ -525,6 +561,171 @@ public class MainActivity extends CustomTitleActivity
 		}
 	}
 	
+	public class ChildWrtReadItem extends ChildItem {
+		private String mTag = "ChildWrtReadItem";
+		public String mIcon = "";
+		public String mCommand1 = "";
+		public String mCommand2 = "";
+		public String mResponseTitle = "";
+		public boolean mBIsOutofDate = false; 
+		public boolean mBIsStatus1 = true; //true: status1, false:status2 
+		public String mCommandRes = "";
+		public int mNExeSequence = -1;
+		
+		public List<ReadCmdStructur> mCommandResColl = new ArrayList<ReadCmdStructur>();
+		
+		public ChildWrtReadItem() {
+			updateStatus(true);
+		}
+		
+		public String getStatusTitle() {
+			return mResponseTitle;
+		}
+		
+		private void updateStatus(boolean bIsStatus1) {
+			mBIsStatus1 = bIsStatus1;
+			if(mCommandResColl.size() > 0 ) {
+				if(mBIsStatus1)
+					mResponseTitle = mCommandResColl.get(0).mResponseTitleString;
+				else
+					mResponseTitle = mCommandResColl.get(1).mResponseTitleString;	
+			}
+		}
+		
+		public void doWriteCmdAndReadRsp() {
+			MyLog.d(mTag, "doWriteCmdAndReadRsp begin");
+			broadCastAction(ACTION_WRTREAD_WRT_BEG);
+			Thread workerThread = new Thread() {
+			    public void run() {
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd in thread" + Thread.currentThread().getId());
+			    	byte [] rsp = null;
+			    	if(mBIsStatus1)
+			    	{
+			    		MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write cmd = " + mCommand2);
+			    		rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(mCommand2, false));
+			    	}
+			    	else
+			    	{
+			    		MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write cmd = " + mCommand1);
+			    		rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(mCommand1, false));
+			    	}
+			    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
+			    	String strRsp = "", strRspHex = "", strRspCal = "", strRspCalHex = "";
+			    	if(rsp != null)
+			    	{
+			    		strRsp = new String(rsp);
+			    		strRspHex = String.format("%x", new BigInteger(1, rsp));
+			    	}
+			    	if(rspCal != null)
+			    	{
+			    		strRspCal = new String(rspCal);
+			    		strRspCalHex = String.format("%x", new BigInteger(1, rspCal));
+			    	}
+			    	
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, read from integral = " + strRsp);
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, read from integral hex = " + strRspHex);
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, read after CRC = " + strRspCal);
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, read after CRC hex = " + strRspCalHex);
+			    	if(strRspCal.equals(mCommandRes) == true)
+					{
+						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd match response");
+						updateStatus(!mBIsStatus1);
+						mUIHanlder.post(new Runnable() {
+							@Override
+							public void run() {
+								broadCastAction(ACTION_WRTREAD_WRT_UPDATE);
+							}
+						});
+					}
+					else
+					{
+						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd not match response");
+						mUIHanlder.post(new Runnable() {
+							@Override
+							public void run() {
+								broadCastAction(ACTION_WRTREAD_WRT_FAIL);
+							}
+						});
+					}
+			    }
+			};
+			workerThread.start();
+		}
+		
+		public void doReadRsp()
+		{
+			MyLog.d(mTag, "doReadRsp begin");
+			Thread workerThread = new Thread() {
+			    public void run() {
+		    	synchronized(mLockSequence) {
+		    		while(mNExeSequence != mReadCount)
+		    		{
+		    			try {
+							mLockSequence.wait();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+		    		}
+		    		MyLog.d(mTag, "doReadRsp, sequ = " + mNExeSequence + ", begin in synchronized(mLockSequence), in thread = " + Thread.currentThread().getId());
+			    	MyLog.d(mTag, "doReadRsp, write cmd = " + mCommand);
+			    	byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(mCommand, false));
+			    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
+			    	String strRsp = "", strRspHex = "", strRspCal = "", strRspCalHex = "";
+			    	if(rsp != null)
+			    	{
+			    		strRsp = new String(rsp);
+			    		strRspHex = String.format("%x", new BigInteger(1, rsp));
+			    	}
+			    	if(rspCal != null)
+			    	{
+			    		strRspCal = new String(rspCal);
+			    		strRspCalHex = String.format("%x", new BigInteger(1, rspCal));
+			    	}
+			    	++mReadCount;
+			    	updateStatus(false);
+			    	MyLog.d(mTag, "doReadRsp, read from integral = " + strRsp);
+			    	MyLog.d(mTag, "doReadRsp, read from integral hex = " + strRspHex);
+			    	MyLog.d(mTag, "doReadRsp, read after CRC = " + strRspCal);
+			    	MyLog.d(mTag, "doReadRsp, read after CRC hex = " + strRspCalHex);
+			    	for(int idxRsp = 0; idxRsp < mCommandResColl.size(); ++idxRsp)
+			    	{
+			    		//0: status1, 1: status2
+			    		ReadCmdStructur itrRsp = mCommandResColl.get(idxRsp); 
+			    		MyLog.d(mTag, "doReadRsp, compare from = " + itrRsp);
+			    		
+			    		if(strRspCal.equals(itrRsp.mResponseString) == true)
+						{
+							MyLog.d(mTag, "doReadRsp, read ok, update status now");
+							mBIsStatus1 = (idxRsp == 0) ? true : false;
+							updateStatus(!mBIsStatus1);
+							mBIsOutofDate = false;
+							mUIHanlder.post(new Runnable() {
+								@Override
+								public void run() {
+									broadCastAction(ACTION_WRTREAD_READ_UPDATE);
+								}
+							});
+							mLockSequence.notifyAll();
+							return;
+						}
+			    	}
+			    	MyLog.d(mTag, "doReadRsp, read fail");
+			    	mBIsOutofDate = true;
+					mUIHanlder.post(new Runnable() {
+						@Override
+						public void run() {
+							broadCastAction(ACTION_WRTREAD_READ_FAIL);
+						}
+					});
+					mLockSequence.notifyAll();
+			    }
+			    }
+			};
+			workerThread.start();
+		}
+	}
+	
 	private class ChildReadAllItem extends ChildItem implements Serializable{
 		private static final long serialVersionUID = 5L;
 		private String mTag = "ChildReadAllItem";
@@ -544,6 +745,16 @@ public class MainActivity extends CustomTitleActivity
 					((CanReadGroup)groupItem).mBIsOutofDate = false; 
 				}
 			}
+			for(int idxWrCmd = 0; idxWrCmd < mListWrtReadCmds.size(); ++idxWrCmd)
+			{
+				ChildWrtReadItem chdWrtReadItem = mListWrtReadCmds.get(idxWrCmd);
+				if(chdWrtReadItem != null)
+				{
+					chdWrtReadItem.mResponseTitle = "";
+					chdWrtReadItem.mBIsOutofDate = false; 
+				}
+			}
+			
 			mAdapter.notifyDataSetChanged();
 			for(int idxGroup = 0; idxGroup < mAdapter.getGroupCount(); ++idxGroup)
 			{
@@ -552,6 +763,12 @@ public class MainActivity extends CustomTitleActivity
 				{
 					((CanReadGroup)groupItem).doReadRsp();
 				}
+			}
+			for(int idxWrCmd = 0; idxWrCmd < mListWrtReadCmds.size(); ++idxWrCmd)
+			{
+				ChildWrtReadItem chdWrtReadItem = mListWrtReadCmds.get(idxWrCmd);
+				if(chdWrtReadItem != null)
+					chdWrtReadItem.doReadRsp();
 			}
 		}
 	}
@@ -636,6 +853,7 @@ public class MainActivity extends CustomTitleActivity
 	}
 	private static class ChildHolder {
 		TextView mTitle;
+		TextView mRespTitle;
 		FontelloTextView  mIcon;
 		CheckBox  mCheckBox;
 	}
@@ -706,6 +924,7 @@ public class MainActivity extends CustomTitleActivity
 			if (convertView == null) {
 				convertView = inflater.inflate(R.layout.list_item, parent, false);
 				chdholder.mTitle = (TextView) convertView.findViewById(R.id.textTitle);
+				chdholder.mRespTitle = (TextView) convertView.findViewById(R.id.textRespStatus);
 				chdholder.mIcon = (FontelloTextView) convertView.findViewById(R.id.lstChildItemIcon);
 				chdholder.mCheckBox = (CheckBox) convertView.findViewById(R.id.chkWt);
 				chdholder.mCheckBox.setEnabled(false);
@@ -716,27 +935,47 @@ public class MainActivity extends CustomTitleActivity
 			chdholder.mTitle.setText(item.mTitle);
 			if(item instanceof ChildWrtItem)
 			{
+				chdholder.mRespTitle.setVisibility(View.INVISIBLE);
 				chdholder.mIcon.setVisibility(View.VISIBLE);
 				chdholder.mIcon.setText(((ChildWrtItem)item).getIcon());
 				chdholder.mCheckBox.setVisibility(View.INVISIBLE);
 			}
 			else if(item instanceof ChildWrtChkItem)
 			{
+				chdholder.mRespTitle.setVisibility(View.INVISIBLE);
 				chdholder.mIcon.setVisibility(View.INVISIBLE);
 				chdholder.mCheckBox.setChecked(((ChildWrtChkItem) item).mBIsChecked);
 				chdholder.mCheckBox.setVisibility(View.VISIBLE);
 			}
 			else if(item instanceof ChildWrtCECItem)
 			{
+				chdholder.mRespTitle.setVisibility(View.INVISIBLE);
 				chdholder.mIcon.setVisibility(View.VISIBLE);
 				chdholder.mIcon.setText(((ChildWrtCECItem)item).mIcon);
 				chdholder.mCheckBox.setVisibility(View.INVISIBLE);
 			}
 			else if(item instanceof ChildReadAllItem)
 			{
+				chdholder.mRespTitle.setVisibility(View.INVISIBLE);
 				chdholder.mIcon.setVisibility(View.VISIBLE);
 				chdholder.mIcon.setText(((ChildReadAllItem)item).mIcon);
 				chdholder.mCheckBox.setVisibility(View.INVISIBLE);
+			}
+			else if(item instanceof ChildWrtReadItem) {
+				if(((ChildWrtReadItem)item).mBIsOutofDate)
+				{
+					chdholder.mRespTitle.setTextColor(getResources().getColor(R.color.material_red_200));
+					chdholder.mRespTitle.setText(getResources().getString(R.string.groupOutofDate));
+				}
+				else
+				{
+					chdholder.mRespTitle.setTextColor(getResources().getColor(R.color.custom_green_color));
+					chdholder.mRespTitle.setText(((ChildWrtReadItem)item).getStatusTitle());
+				}
+				chdholder.mRespTitle.setVisibility(View.VISIBLE);
+				chdholder.mIcon.setVisibility(View.INVISIBLE);
+				chdholder.mCheckBox.setChecked(((ChildWrtReadItem) item).mBIsStatus1);
+				chdholder.mCheckBox.setVisibility(View.VISIBLE);
 			}
 				
 			return convertView;
@@ -891,6 +1130,11 @@ public class MainActivity extends CustomTitleActivity
         intentFilter.addAction(ACTION_GROUP_READ_OK);
         intentFilter.addAction(ACTION_GROUP_READ_FAIL);
         intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        intentFilter.addAction(ACTION_WRTREAD_READ_UPDATE);
+        intentFilter.addAction(ACTION_WRTREAD_READ_FAIL);
+        intentFilter.addAction(ACTION_WRTREAD_WRT_BEG);
+        intentFilter.addAction(ACTION_WRTREAD_WRT_UPDATE);
+        intentFilter.addAction(ACTION_WRTREAD_WRT_FAIL);
         return intentFilter;
     }
 	
@@ -1055,6 +1299,34 @@ public class MainActivity extends CustomTitleActivity
 		    			cmdgroup.items.add(command);
 		    			mReadAllCmd = (ChildReadAllItem) command;
 		    		}
+	    			else if(strNodeName.compareTo("WrtReadCmd") == 0)
+		    		{
+	    				command = new ChildWrtReadItem();
+		    			command.mParentItem = cmdgroup;
+		    			command.mID = nID++;
+		    			command.mTitle = cmdNode.getAttributes().getNamedItem("Title").getNodeValue();
+		    			command.mCommand = cmdNode.getAttributes().getNamedItem("ReadCmd").getNodeValue();
+		    			((ChildWrtReadItem)command).mCommand1 = cmdNode.getAttributes().getNamedItem("Cmd1").getNodeValue();
+		    			((ChildWrtReadItem)command).mCommand2 = cmdNode.getAttributes().getNamedItem("Cmd2").getNodeValue();
+		    			((ChildWrtReadItem)command).mCommandRes = cmdNode.getAttributes().getNamedItem("CmdRes").getNodeValue();
+		    			((ChildWrtReadItem)command).mNExeSequence = Integer.parseInt(cmdNode.getAttributes().getNamedItem("Sequence").getNodeValue());
+		    			for(int idxCmdRes = 0; idxCmdRes < cmdNode.getChildNodes().getLength(); ++idxCmdRes) { 
+				    		Node cmdResNode = cmdNode.getChildNodes().item(idxCmdRes); 
+				    		String strResNodeName = cmdResNode.getLocalName();
+				    		if(strResNodeName == null)
+				    			continue;
+				    		if(strResNodeName.compareTo("ReadRes") == 0)
+				    		{
+				    			String strVal = cmdResNode.getFirstChild().getNodeValue();
+				    			String reRespTitle = cmdResNode.getAttributes().getNamedItem("Title").getNodeValue();
+				    			ReadCmdStructur rs = new ReadCmdStructur(strVal, reRespTitle, "none");
+				    			((ChildWrtReadItem)command).mCommandResColl.add(rs);
+				    		}
+		    			}
+		    			cmdgroup.items.add(command);
+		    			mListWrtReadCmds.add((ChildWrtReadItem) command);
+		    			++mGoalReadCount;
+		    		}
 		    	}
 		    }
 		    
@@ -1170,6 +1442,10 @@ public class MainActivity extends CustomTitleActivity
 			else if(true == (childItem instanceof ChildWrtChkItem))
 			{
 				((ChildWrtChkItem)childItem).doWriteCmdAndReadRsp();
+				return true;
+			}
+			else if(true == (childItem instanceof ChildWrtReadItem)) {
+				((ChildWrtReadItem)childItem).doWriteCmdAndReadRsp();
 				return true;
 			}
 			else if(true == (childItem instanceof ChildReadItem))

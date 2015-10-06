@@ -7,7 +7,7 @@
     android:paddingRight="10dp"
     android:descendantFocusability="blocksDescendants" >
 
-    <RelativeLayout
+    <RelativeLayout android:id="@+id/lstChildRelativeLayout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent" >
         
@@ -33,27 +33,31 @@
 	       	android:gravity="center_vertical"
 	        android:minHeight="48dp"
 	        android:padding="8dp"/>
-	    
+		
+		<com.UI.font.RobotoTextView
+		    android:id="@+id/textTitle"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_centerVertical="true"
+		    android:layout_marginStart="55dp"
+		    android:gravity="center_vertical"
+		    android:minHeight="48dp"
+		    android:padding="8dp"
+		    android:textColor="@color/main_color_grey_700"
+		    android:textSize="17sp" />
+
+		 <com.UI.font.RobotoTextView
+		     android:id="@+id/textRespStatus"
+		     android:layout_width="wrap_content"
+		     android:layout_height="wrap_content"
+		     android:layout_alignParentRight="true"
+		     android:layout_marginRight="25dp"
+		     android:layout_centerVertical="true"
+		     android:gravity="center_vertical"
+		     android:minHeight="48dp"
+		     android:padding="8dp"
+		     android:textColor="@color/main_color_grey_700"
+		     android:textSize="18sp" />
+
 	</RelativeLayout>
-	 <com.UI.font.RobotoTextView
-        android:id="@+id/textTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="1dp"
-        android:gravity="center_vertical"
-        android:minHeight="48dp"
-        android:padding="8dp"
-        android:textColor="@color/main_color_grey_700"
-        android:textSize="17sp" />
-
-	 <com.UI.font.RobotoTextView
-	     android:id="@+id/textRespStatus"
-	     android:layout_width="wrap_content"
-	     android:layout_height="wrap_content"
-	     android:gravity="center_vertical"
-	     android:minHeight="48dp"
-	     android:padding="8dp"
-	     android:textColor="@color/main_color_grey_700"
-	     android:textSize="18sp" />
-
 </LinearLayout>

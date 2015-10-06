@@ -86,6 +86,7 @@ public class MainActivity extends CustomTitleActivity
 	private int mGoalReadCount = 0;
 	private int mReadCount = 0; 
 	private final String mInFileName = "InternalCommands.xml";
+	private static Object mLockPollRead = new Object();
 	
 	//Inner classes
 	BroadcastReceiver mBtnReceiver = new BroadcastReceiver() {
@@ -101,6 +102,7 @@ public class MainActivity extends CustomTitleActivity
 				Toast.makeText(MainActivity.this, "Disconnected, cause = " + message, Toast.LENGTH_SHORT).show();
             	mPreCmdToExecute = null;
             	updateUIForConn();
+            	setPullBKTask(false);
                 return;
             }
 			else if(BLEUtility.ACTION_CONNSTATE_CONNECTING.equals(action))
@@ -121,6 +123,7 @@ public class MainActivity extends CustomTitleActivity
 				}
 				else if(mReadAllCmd != null)
 					mReadAllCmd.doIt();
+				setPullBKTask(true);
 			}
 			else if(BLEUtility.ACTION_GET_LEDEVICE.equals(action))
 			{
@@ -280,6 +283,7 @@ public class MainActivity extends CustomTitleActivity
 				if (state == BluetoothAdapter.STATE_OFF) 
 				{
 					BLEUtility.getInstance().disconnect();
+					setPullBKTask(false);
 				}
 			}
 		}
@@ -310,6 +314,11 @@ public class MainActivity extends CustomTitleActivity
 				if(childItem instanceof ChildWrtChkItem)
 					((ChildWrtChkItem)childItem).mBIsChecked = false;
 		}
+	}
+	
+	private class CECGroup extends GroupItem {
+		private String mTag = "CECGroup";
+		
 	}
 	
 	private static Object mLockSequence = new Object();
@@ -886,6 +895,8 @@ public class MainActivity extends CustomTitleActivity
 	}
 
 	private static class GroupHolder {
+		View  mGroupNormal;
+		View  mGroupCEC;
 		TextView mGroupTitle;
 		TextView mGroupRespStatus;
 		FontelloTextView  mGroupIcon;
@@ -1039,12 +1050,23 @@ public class MainActivity extends CustomTitleActivity
 			if (convertView == null) {
 				holder = new GroupHolder();
 				convertView = inflater.inflate(R.layout.group_item, parent, false);
+				holder.mGroupCEC = (View)convertView.findViewById(R.id.lstCECLayout);
+				holder.mGroupNormal = (View)convertView.findViewById(R.id.lstNormalGroupLayout);
 				holder.mGroupTitle = (TextView) convertView.findViewById(R.id.textTitle);
 				holder.mGroupRespStatus = (TextView) convertView.findViewById(R.id.textRespStatus);
 				holder.mGroupIcon = (FontelloTextView) convertView.findViewById(R.id.lstGroupItemIcon);
 				convertView.setTag(holder);
 			} else {
 				holder = (GroupHolder) convertView.getTag();
+			}
+			
+			if(item instanceof CECGroup) {
+				holder.mGroupCEC.setVisibility(View.VISIBLE);
+				holder.mGroupNormal.setVisibility(View.INVISIBLE);
+			}
+			else {
+				holder.mGroupCEC.setVisibility(View.INVISIBLE);
+				holder.mGroupNormal.setVisibility(View.VISIBLE);
 			}
 
 			holder.mGroupTitle.setText(item.mGroupTitle);
@@ -1202,9 +1224,15 @@ public class MainActivity extends CustomTitleActivity
 		for(int idxCmdGroup = 0; idxCmdGroup<nodes.getLength(); ++idxCmdGroup) {  
 		    Node cmdGroupNode = nodes.item(idxCmdGroup);  
 		    NamedNodeMap attributes = cmdGroupNode.getAttributes();  
-		    String isCanReadGroup = attributes.getNamedItem("CanRead").getNodeValue();
+		    String isCanReadGroup = "";
+		    if(attributes.getNamedItem("CanRead") != null)
+		    	isCanReadGroup = attributes.getNamedItem("CanRead").getNodeValue();
+		    Node attrCEC = attributes.getNamedItem("IsCEC");
+		    
 		    GroupItem cmdgroup = null;
-		    if(isCanReadGroup.equals("false"))
+		    if(attrCEC != null && attrCEC.getNodeValue().equals("true"))
+		    	cmdgroup = new CECGroup();
+		    else if(isCanReadGroup.equals("false"))
 		    	cmdgroup = new GroupItem();
 		    else
 		    {
@@ -1214,8 +1242,12 @@ public class MainActivity extends CustomTitleActivity
 		    	++mGoalReadCount;
 		    }
 		    cmdgroup.mID = idxCmdGroup;
-		    cmdgroup.mGroupTitle = attributes.getNamedItem("Title").getNodeValue();
-		    cmdgroup.mGroupIcon = attributes.getNamedItem("Icon").getNodeValue();
+		    cmdgroup.mGroupTitle = "";
+		    cmdgroup.mGroupIcon = "";
+		    if(attributes.getNamedItem("Title") != null)
+		    	cmdgroup.mGroupTitle = attributes.getNamedItem("Title").getNodeValue();
+		    if(attributes.getNamedItem("Icon") != null)
+		    	cmdgroup.mGroupIcon = attributes.getNamedItem("Icon").getNodeValue();
 		    groupItems.add(cmdgroup);
 		    NodeList cmdsList = cmdGroupNode.getChildNodes();
 		    if(cmdsList != null)
@@ -1497,6 +1529,15 @@ public class MainActivity extends CustomTitleActivity
 			}
 		}
 		return false;
+	}
+	
+	private void setPullBKTask(boolean bSet) {
+		if(bSet) {
+			
+		}
+		else {
+			
+		}
 	}
 	
 	private void connectToIntegral(){

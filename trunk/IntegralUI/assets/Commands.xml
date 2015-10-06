@@ -114,4 +114,6 @@
 			<CmdRes Title="Off" refWmdID = "1">cec off</CmdRes>
 		</ReadCmd>
     </CmdGroup>
+    <CmdGroup Image="&#xe91e;" IsCEC="true"/>
+    <CmdGroup Image="&#xe91e;" IsCEC="true"/>
 </Commands>

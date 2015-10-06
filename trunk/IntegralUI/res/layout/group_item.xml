@@ -1,50 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp" >
-
-    <com.UI.font.FontelloTextView
-        style="@style/TextViewAppearance.Title1"
-        android:id="@+id/lstGroupItemIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:minHeight="64dp"
-        android:padding="8dp"
-        android:text="@string/fontello_heart_empty"
-        android:textColor="@color/main_color_grey_700"
-        android:textSize="22sp" />
+    android:orientation="horizontal" >
+	
+	<LinearLayout android:id="@+id/lstCECLayout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal">
+	    <ImageButton
+	        android:id="@+id/cecBtn1"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:src="@android:drawable/btn_star" />
+	
+	    <ImageButton
+	        android:id="@+id/cecBtn2"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:src="@android:drawable/btn_star" />
+	    <ImageButton
+	        android:id="@+id/cecBtn3"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:src="@android:drawable/btn_star" />
+	    <ImageButton
+	        android:id="@+id/cecBtn4"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:src="@android:drawable/btn_star" />
+    </LinearLayout>
     
-    <com.UI.font.RobotoTextView
-        android:id="@+id/textTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart ="1dp"
-        android:gravity="center_vertical"
-        android:minHeight="64dp"
-        android:padding="8dp"
-        android:textColor="@color/main_color_grey_700"
-        android:textSize="18sp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="25dp"
-        android:orientation="vertical" >
-
-	    <com.UI.font.RobotoTextView
-	        android:id="@+id/textRespStatus"
+	<RelativeLayout android:id="@+id/lstNormalGroupLayout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:paddingLeft="10dp"
+	    android:paddingRight="10dp" >
+	
+	    <com.UI.font.FontelloTextView
+	        style="@style/TextViewAppearance.Title1"
+	        android:id="@+id/lstGroupItemIcon"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_gravity="end"
+	        android:gravity="center_vertical"
+	        android:minHeight="64dp"
+	        android:padding="8dp"
+	        android:text="@string/fontello_heart_empty"
+	        android:textColor="@color/main_color_grey_700"
+	        android:textSize="22sp" />
+	    
+	    <com.UI.font.RobotoTextView
+	        android:id="@+id/textTitle"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginStart ="30dp"
 	        android:gravity="center_vertical"
 	        android:minHeight="64dp"
 	        android:padding="8dp"
 	        android:textColor="@color/main_color_grey_700"
 	        android:textSize="18sp" />
-
-	</LinearLayout>
-</LinearLayout>
+	
+	     <com.UI.font.RobotoTextView
+	         android:id="@+id/textRespStatus"
+	         android:layout_width="wrap_content"
+	         android:layout_height="wrap_content"
+	         android:layout_alignParentRight="true"
+	         android:layout_centerVertical="true"
+	         android:layout_marginEnd="25dp"
+	         android:gravity="end"
+	         android:minHeight="64dp"
+	         android:padding="8dp"
+	         android:textColor="@color/main_color_grey_700"
+	         android:textSize="18sp" />
+	</RelativeLayout>
+</RelativeLayout>

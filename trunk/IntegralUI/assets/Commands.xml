@@ -2,7 +2,7 @@
 <Commands>
     <CmdGroup Title="Device Settings" Icon="&#xe91e;" CanRead="false">
         <WriteCmd Title="Reset" Cmd="reset" CheckedIcon="&#xe8fd;" UnCheckedIcon="&#xe8fd;">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
 		</WriteCmd>
 		<ReadAllCmd Title="Read Config" Cmd="" Icon="&#xe8d0;">
 		</ReadAllCmd>
@@ -24,10 +24,10 @@
     </CmdGroup>
 	<CmdGroup Title="Channel Selection" Icon="&#xeaa0;" CanRead="true" Sequence="0" Try="2">
         <WriteCmdChk Title="Channel/Input 1" Cmd="insel 1">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
 		</WriteCmdChk>
 		<WriteCmdChk Title="Channel/Input 2" Cmd="insel 2">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
 		</WriteCmdChk>
 		<ReadCmd Title="Read Channel" Cmd="insel">
 			<CmdRes Title="Input 1" refWmdID = "0">insel 1</CmdRes>
@@ -36,10 +36,12 @@
     </CmdGroup>
 	<CmdGroup Title="HDCP Settings" Icon="&#xeaff;" CanRead="true" Sequence="1" Try="2">
 	    <WriteCmdChk Title="HDCP 1.4 only" Cmd="hdcp 14">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
+			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
         <WriteCmdChk Title="HDCP 2.2 + 1.4" Cmd="hdcp 22">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
+			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
 		<ReadCmd Title="Read HDCP" Cmd="hdcp" Icon="&#xeaa0;">
 			<CmdRes Title="1.4 only" refWmdID = "0">hdcp 14</CmdRes>
@@ -49,10 +51,12 @@
     </CmdGroup>	
     <CmdGroup Title="Sound Settings" Icon="&#xeb47;" CanRead="true" Sequence="2" Try="2">
         <WriteCmdChk Title="External Audio" Cmd="audio jack">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
+			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
         <WriteCmdChk Title="From HDMI" Cmd="audio hdmi">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
+			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
 		<WrtReadCmd Title="Mute All Sound" Cmd1="mute on" Cmd2="mute off" CmdRes="ok" ReadCmd = "mute" Sequence = "9">
 			<ReadRes Title="Mute On">mute on</ReadRes>
@@ -66,13 +70,16 @@
     </CmdGroup>
 	<CmdGroup Title="EDID Settings" Icon="&#xe8c7;" CanRead="true" Sequence="3" Try="1">
 	    <WriteCmdChk Title="Auto Mix Mode" Cmd="edid automix">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
+			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
 		<WriteCmdChk Title="Custom" Cmd="edid custom">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
+			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
         <WriteCmdChk Title="Fixed With L/R Stereo" Cmd="edid fixed">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
+			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
 		<ReadCmd Title="Read EDID" Cmd="edid">
 			<CmdRes Title="L/R stereo" refWmdID = "2">edid fixed</CmdRes>
@@ -82,10 +89,10 @@
     </CmdGroup>
     <CmdGroup Title="4K60 options" Icon="&#xea90;" CanRead="true" Sequence="4" Try="1">
 	    <WriteCmd Title="Enable 4:4:4 -> 4:2:0" Cmd="420 on" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
 		</WriteCmd>
 	    <WriteCmd Title="Disable 4:4:4 -> 4:2:0" Cmd="420 off" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
 		</WriteCmd>
 		<ReadCmd Title="Read Current 4:2:0 Selection Status" Cmd="420">
 			<CmdRes Title="Enable 4:4:4 -> 4:2:0" refWmdID = "0">420 on</CmdRes>

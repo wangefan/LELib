@@ -38,6 +38,8 @@
 	<string name="prgsReadCmdFail">Read Status Failed</string>
 	<string name="prgsScanDev">Finding Integral Devices&#8230;</string>
 	<string name="prgsScanNoDev">No Devices Found</string>
+	<string name="AlertDlgMsgTitle">Warning</string>
+	<string name="AlertDlgMsg">Command sending failed, switch must be moved to middle position.</string>
 	<string name="InputDlgOK">OK</string>
 	<string name="InputDlgCan">Cancel</string>
 	<string name="InputDlgTitle">Input CEC command</string>

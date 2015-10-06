@@ -170,6 +170,22 @@ public class MainActivity extends CustomTitleActivity
             	UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsSedingCmdFail);
             	Toast.makeText(MainActivity.this, R.string.prgsSedingCmdFail, Toast.LENGTH_SHORT).show();
             }
+            else if(BLEUtility.ACTION_SENCMD_SWFORCE.equals(action)) 
+            {
+            	UIUtility.showProgressDlg(MainActivity.this, false, R.string.prgsSedingCmdFail);
+            	AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+    			builder.setTitle(R.string.AlertDlgMsgTitle);
+    			builder.setMessage(R.string.AlertDlgMsg);
+    			// Set up the buttons
+    			builder.setPositiveButton(R.string.InputDlgOK, new DialogInterface.OnClickListener() { 
+    			    @Override
+    			    public void onClick(DialogInterface dialog, int which) {
+    			    	dialog.cancel();
+    			    }
+    			});
+
+    			builder.show();
+            }
             else if (BLEUtility.ACTION_SENCMD_READ.equals(action)) 
             {
             	UIUtility.showProgressDlg(MainActivity.this, true, R.string.prgsSedingReadCmd);
@@ -409,7 +425,8 @@ public class MainActivity extends CustomTitleActivity
 	private class ChildWrtChkItem extends ChildItem  {
 		private String mTag = "ChildWrtChkItem";
 		public boolean mBIsChecked = false;
-		public String mCommandRes = "";
+		public String mCommandResOK = "";
+		public String mCommandResSWForce = "";
 		
 		public void doWriteCmdAndReadRsp()
 		{
@@ -425,7 +442,7 @@ public class MainActivity extends CustomTitleActivity
 			    	String strRspCal = "";
 			    	if(rspCal != null)
 			    		strRspCal = new String(rspCal);
-					if(strRspCal.equals(mCommandRes) == true)
+					if(strRspCal.equals(mCommandResOK) == true)
 					{
 						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd match response");
 						ChildReadItem readItem = mParentItem.getReadItem();
@@ -452,6 +469,16 @@ public class MainActivity extends CustomTitleActivity
 								if(readcmdStrTemp != null)
 									brd.putExtra(ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY, readcmdStrTemp.mResponseTitleString);
 						        MainActivity.this.sendBroadcast(brd);
+							}
+						});
+					}
+					else if(strRspCal.equals(mCommandResSWForce) == true)
+					{
+						MyLog.d(mTag, "doWriteCmdAndReadRsp, SWForce, should show UI to warn user");
+						mUIHanlder.post(new Runnable() {
+							@Override
+							public void run() {
+								broadCastAction(BLEUtility.ACTION_SENCMD_SWFORCE);
 							}
 						});
 					}
@@ -1120,6 +1147,7 @@ public class MainActivity extends CustomTitleActivity
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_OK);
         intentFilter.addAction(ACTION_SEND_CMD_OK);
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_FAIL);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_SWFORCE);
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ);
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_CONTENT);
         intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_FAIL);
@@ -1211,11 +1239,15 @@ public class MainActivity extends CustomTitleActivity
 				    		String strResNodeName = cmdResNode.getLocalName();
 				    		if(strResNodeName == null)
 				    			continue;
-				    		if(strResNodeName.compareTo("CmdRes") == 0)
+				    		if(strResNodeName.compareTo("CmdResOK") == 0)
 				    		{
 				    			String strVal = cmdResNode.getFirstChild().getNodeValue();
-				    			((ChildWrtChkItem)command).mCommandRes = new String(strVal);
-				    			break;
+				    			((ChildWrtChkItem)command).mCommandResOK = new String(strVal);
+				    		}
+				    		else if(strResNodeName.compareTo("CmdResSWForce") == 0)
+				    		{
+				    			String strVal = cmdResNode.getFirstChild().getNodeValue();
+				    			((ChildWrtChkItem)command).mCommandResSWForce = new String(strVal);
 				    		}
 		    			}
 		    			cmdgroup.items.add(command);
@@ -1234,10 +1266,10 @@ public class MainActivity extends CustomTitleActivity
 				    		String strResNodeName = cmdResNode.getLocalName();
 				    		if(strResNodeName == null)
 				    			continue;
-				    		if(strResNodeName.compareTo("CmdRes") == 0)
+				    		if(strResNodeName.compareTo("CmdResOK") == 0)
 				    		{
 				    			String strVal = cmdResNode.getFirstChild().getNodeValue();
-				    			((ChildWrtItem)command).mCommandRes = new String(strVal);
+				    			((ChildWrtItem)command).mCommandResOK = new String(strVal);
 				    			break;
 				    		}
 		    			}

@@ -39,6 +39,7 @@ public class BLEUtility
 	public static final String ACTION_SENCMD_BEGIN = "com.BLE.BLEUtility.ACTION_SENCMD_BEGIN";
     public static final String ACTION_SENCMD_OK = "com.BLE.BLEUtility.ACTION_SENCMD_OK";
     public static final String ACTION_SENCMD_FAIL = "com.BLE.BLEUtility.ACTION_SENCMD_FAIL";
+    public static final String ACTION_SENCMD_SWFORCE = "com.BLE.BLEUtility.ACTION_SENCMD_SWFORCE";
     public static final String ACTION_SENCMD_READ = "com.BLE.BLEUtility.ACTION_SENCMD_READ";
     public final static String ACTION_SENCMD_READ_CONTENT_KEY = "com.BLE.BLEUtility.ACTION_SENCMD_READ_CONTENT_KEY";
     public static final String ACTION_SENCMD_READ_CONTENT = "com.BLE.BLEUtility.ACTION_SENCMD_READ_CONTENT";

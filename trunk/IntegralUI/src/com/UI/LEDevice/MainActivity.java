@@ -1211,7 +1211,6 @@ public class MainActivity extends CustomTitleActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getActionBar().setTitle("Low Energy Devices");
 		 
 		registerReceiver(mBtnReceiver, makeServiceActionsIntentFilter());	
 		setContentView(R.layout.activity_expandable_list_view);

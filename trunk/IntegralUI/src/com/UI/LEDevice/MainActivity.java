@@ -34,7 +34,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -52,6 +56,7 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -318,11 +323,34 @@ public class MainActivity extends CustomTitleActivity
 	
 	private class CECGroup extends GroupItem {
 		private String mTag = "CECGroup";
+		public  String mCEC1NormalFile = "";
+		public  String mCEC2NormalFile = "";
+		public  String mCEC3NormalFile = "";
+		public  String mCEC4NormalFile = "";
+		public  String mCEC1PressFile = "";
+		public  String mCEC2PressFile = "";
+		public  String mCEC3PressFile = "";
+		public  String mCEC4PressFile = "";
+		private void gen(String file) {
+			File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+			final File fileFull = new File(path, file);
+			if(fileFull.exists())
+				copyToInternal(file, fileFull);
+		}
 		
+		public void copyFileIfExist() {
+			gen(mCEC1NormalFile);
+			gen(mCEC2NormalFile);
+			gen(mCEC3NormalFile);
+			gen(mCEC4NormalFile);
+			gen(mCEC1PressFile);
+			gen(mCEC2PressFile);
+			gen(mCEC3PressFile);
+			gen(mCEC4PressFile);
+		}
 	}
 	
 	private static Object mLockSequence = new Object();
-	private static int mCurrentSeqn = -1;
 	private class CanReadGroup extends GroupItem {
 		private String mTag = "CanReadGroup";
 		private int mNExeSequence = -1;
@@ -900,6 +928,10 @@ public class MainActivity extends CustomTitleActivity
 		TextView mGroupTitle;
 		TextView mGroupRespStatus;
 		FontelloTextView  mGroupIcon;
+		ImageButton mbtnCEC1;
+		ImageButton mbtnCEC2;
+		ImageButton mbtnCEC3;
+		ImageButton mbtnCEC4;
 	}
 
 	/**
@@ -1051,6 +1083,10 @@ public class MainActivity extends CustomTitleActivity
 				holder = new GroupHolder();
 				convertView = inflater.inflate(R.layout.group_item, parent, false);
 				holder.mGroupCEC = (View)convertView.findViewById(R.id.lstCECLayout);
+				holder.mbtnCEC1 = (ImageButton) convertView.findViewById(R.id.cecBtn1);
+				holder.mbtnCEC2 = (ImageButton) convertView.findViewById(R.id.cecBtn2);
+				holder.mbtnCEC3 = (ImageButton) convertView.findViewById(R.id.cecBtn3);
+				holder.mbtnCEC4 = (ImageButton) convertView.findViewById(R.id.cecBtn4);
 				holder.mGroupNormal = (View)convertView.findViewById(R.id.lstNormalGroupLayout);
 				holder.mGroupTitle = (TextView) convertView.findViewById(R.id.textTitle);
 				holder.mGroupRespStatus = (TextView) convertView.findViewById(R.id.textRespStatus);
@@ -1063,6 +1099,20 @@ public class MainActivity extends CustomTitleActivity
 			if(item instanceof CECGroup) {
 				holder.mGroupCEC.setVisibility(View.VISIBLE);
 				holder.mGroupNormal.setVisibility(View.INVISIBLE);
+				holder.mbtnCEC1.setBackgroundResource(android.R.drawable.btn_default);
+				if(((CECGroup)item).mCEC1NormalFile.length() > 0 && getFileStreamPath(((CECGroup)item).mCEC1NormalFile).exists())
+				{
+					BitmapDrawable bitmapDrawableNor = new BitmapDrawable(getFileStreamPath(((CECGroup)item).mCEC1NormalFile).getAbsolutePath());
+			    	BitmapDrawable bitmapDrawablePre = new BitmapDrawable(getFileStreamPath(((CECGroup)item).mCEC1PressFile).getAbsolutePath());
+			    	
+			    	StateListDrawable states = new StateListDrawable();
+			    	states.addState(new int[] {android.R.attr.state_pressed},
+			    			bitmapDrawablePre);
+			    	states.addState(new int[] { },
+			    			bitmapDrawableNor);
+			    	//holder.mbtnCEC4.setImageDrawable(states);
+			    	holder.mbtnCEC1.setBackgroundDrawable(states);	
+				}
 			}
 			else {
 				holder.mGroupCEC.setVisibility(View.INVISIBLE);
@@ -1127,24 +1177,8 @@ public class MainActivity extends CustomTitleActivity
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                    	try {
-            				InputStream is = new FileInputStream(file);
-            				FileOutputStream writer = openFileOutput(mInFileName, Context.MODE_PRIVATE);
-            				byte[] buff = new byte[500];
-            				int len;
-            				while((len = is.read(buff)) > 0 )
-            					writer.write(buff,0,len);
-            				is.close();
-            				writer.close();
-            				InitPage();
-            			} 
-                    	catch (FileNotFoundException e1)
-            			{
-            				e1.printStackTrace();
-            			}
-            			catch (IOException e) { 
-            				e.printStackTrace();
-            			}
+                		copyToInternal(mInFileName, file);
+        				InitPage();
                     }
                 });
             builderSingle.setNegativeButton(R.string.dlgCancel,
@@ -1189,7 +1223,7 @@ public class MainActivity extends CustomTitleActivity
     }
 	
 	private void InitPage() {
-	    boolean bIsInFileExist = getBaseContext().getFileStreamPath(mInFileName).exists();
+	    boolean bIsInFileExist = getFileStreamPath(mInFileName).exists();
 		InputSource inputSource = null;
 		if(bIsInFileExist)
 		{
@@ -1230,8 +1264,19 @@ public class MainActivity extends CustomTitleActivity
 		    Node attrCEC = attributes.getNamedItem("IsCEC");
 		    
 		    GroupItem cmdgroup = null;
-		    if(attrCEC != null && attrCEC.getNodeValue().equals("true"))
+		    if(attrCEC != null && attrCEC.getNodeValue().equals("true")) {
 		    	cmdgroup = new CECGroup();
+		    	
+		    	((CECGroup)cmdgroup).mCEC1NormalFile = attributes.getNamedItem("NormalImage1").getNodeValue();
+		    	((CECGroup)cmdgroup).mCEC2NormalFile = attributes.getNamedItem("NormalImage2").getNodeValue();
+		    	((CECGroup)cmdgroup).mCEC3NormalFile = attributes.getNamedItem("NormalImage3").getNodeValue();
+		    	((CECGroup)cmdgroup).mCEC4NormalFile = attributes.getNamedItem("NormalImage4").getNodeValue();
+		    	((CECGroup)cmdgroup).mCEC1PressFile = attributes.getNamedItem("PressedImage1").getNodeValue();
+		    	((CECGroup)cmdgroup).mCEC2PressFile = attributes.getNamedItem("PressedImage2").getNodeValue();
+		    	((CECGroup)cmdgroup).mCEC3PressFile = attributes.getNamedItem("PressedImage3").getNodeValue();
+		    	((CECGroup)cmdgroup).mCEC4PressFile = attributes.getNamedItem("PressedImage4").getNodeValue();
+		    	((CECGroup)cmdgroup).copyFileIfExist();
+		    }
 		    else if(isCanReadGroup.equals("false"))
 		    	cmdgroup = new GroupItem();
 		    else
@@ -1402,6 +1447,7 @@ public class MainActivity extends CustomTitleActivity
 
 		mListView = (AnimatedExpandableListView) findViewById(R.id.list_view);
 		mListView.setAdapter(mAdapter);
+		mListView.setGroupIndicator(null);
 
 		// In order to show animations, we need to use a custom click handler
 		// for our ExpandableListView.
@@ -1537,6 +1583,26 @@ public class MainActivity extends CustomTitleActivity
 		}
 		else {
 			
+		}
+	}
+	
+	private void copyToInternal(String pathTo, File fileSrc) {
+		try {
+			InputStream is = new FileInputStream(fileSrc);
+			FileOutputStream writer = openFileOutput(pathTo, Context.MODE_PRIVATE);
+			byte[] buff = new byte[500];
+			int len;
+			while((len = is.read(buff)) > 0 )
+				writer.write(buff,0,len);
+			is.close();
+			writer.close();
+		}
+		catch (FileNotFoundException e1)
+		{
+			e1.printStackTrace();
+		}
+		catch (IOException e) { 
+			e.printStackTrace();
 		}
 	}
 	

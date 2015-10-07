@@ -16,32 +16,28 @@
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent"
 	        android:layout_gravity="center_horizontal"
-	        android:layout_weight="1"
-	        android:src="@android:drawable/btn_star" />
+	        android:layout_weight="1" />
 	
 	    <ImageButton
 	        android:id="@+id/cecBtn2"
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent"
 	        android:layout_gravity="center_horizontal"
-	        android:layout_weight="1"
-	        android:src="@android:drawable/btn_star" />
+	        android:layout_weight="1" />
 
 	    <ImageButton
 	        android:id="@+id/cecBtn3"
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent"
 	        android:layout_gravity="center_horizontal"
-	        android:layout_weight="1"
-	        android:src="@android:drawable/btn_star" />
+	        android:layout_weight="1" />
 
 	    <ImageButton
 	        android:id="@+id/cecBtn4"
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent"
 	        android:layout_gravity="center_horizontal"
-	        android:layout_weight="1"
-	        android:src="@android:drawable/btn_star" />
+	        android:layout_weight="1" />
 
     </LinearLayout>
     

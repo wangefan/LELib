@@ -114,14 +114,14 @@
 			<CmdRes Title="Off" refWmdID = "1">cec off</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-    <CmdGroup NormalImage1 ="cec1Nor.png" PressedImage1 = "cec1Pre.png" Cmd1 = "CEC 0F:36" 
-              NormalImage2 ="cec2Nor.png" PressedImage2 = "cec2Pre.png" Cmd2 = "CEC 0F:36" 
-              NormalImage3 ="cec3Nor.png" PressedImage3 = "cec3Pre.png" Cmd3 = "CEC 0F:36" 
-              NormalImage4 ="cec4Nor.png" PressedImage4 = "cec4Pre.png" Cmd4 = "CEC 0F:36" 
+    <CmdGroup NormalImage1 ="cec1_nor.png" PressedImage1 = "cec1_press.png" Cmd1 = "CEC 0F:36" 
+              NormalImage2 ="cec2_nor.png" PressedImage2 = "cec2_press.png" Cmd2 = "CEC 0F:36" 
+              NormalImage3 ="cec3_nor.png" PressedImage3 = "cec3_press.png" Cmd3 = "CEC 0F:36" 
+              NormalImage4 ="cec4_nor.png" PressedImage4 = "cec4_press.png" Cmd4 = "CEC 0F:36" 
               IsCEC="true"/>
-    <CmdGroup NormalImage1 ="cec4Nor_.png" PressedImage1 = "cec4Pre_.png" Cmd1 = "CEC 0F:36" 
-              NormalImage2 ="cec3Nor_.png" PressedImage2 = "cec3Pre_.png" Cmd2 = "CEC 0F:36" 
-              NormalImage3 ="cec2Nor_.png" PressedImage3 = "cec2Pre_.png" Cmd3 = "CEC 0F:36" 
-              NormalImage4 ="cec1Nor_.png" PressedImage4 = "cec1Pre_.png" Cmd4 = "CEC 0F:36" 
+    <CmdGroup NormalImage1 ="cec4_nor_.png" PressedImage1 = "cec4_press_.png" Cmd1 = "CEC 0F:36" 
+              NormalImage2 ="cec3_nor_.png" PressedImage2 = "cec3_press_.png" Cmd2 = "CEC 0F:36" 
+              NormalImage3 ="cec2_nor_.png" PressedImage3 = "cec2_press_.png" Cmd3 = "CEC 0F:36" 
+              NormalImage4 ="cec1_nor_.png" PressedImage4 = "cec1_press_.png" Cmd4 = "CEC 0F:36" 
               IsCEC="true"/>
 </Commands>

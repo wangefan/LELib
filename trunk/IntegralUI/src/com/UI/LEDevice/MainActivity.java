@@ -49,6 +49,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -323,6 +324,10 @@ public class MainActivity extends CustomTitleActivity
 	
 	private class CECGroup extends GroupItem {
 		private String mTag = "CECGroup";
+		public  String mCEC1Cmd = "";
+		public  String mCEC2Cmd = "";
+		public  String mCEC3Cmd = "";
+		public  String mCEC4Cmd = "";
 		public  String mCEC1NormalFile = "";
 		public  String mCEC2NormalFile = "";
 		public  String mCEC3NormalFile = "";
@@ -347,6 +352,82 @@ public class MainActivity extends CustomTitleActivity
 			gen(mCEC2PressFile);
 			gen(mCEC3PressFile);
 			gen(mCEC4PressFile);
+		}
+		
+		private void doWriteCmdAndReadRsp(final String cmd) {
+			MyLog.d(mTag, "doWriteCmdAndReadRsp begin");
+			broadCastAction(BLEUtility.ACTION_SENCMD_BEGIN);
+			
+			Thread workerThread = new Thread() {
+			    public void run() {
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd in thread" + Thread.currentThread().getId());
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write CEC cmd = " + cmd);
+			    	byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(cmd, true));
+			    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
+			    	String strRspCal = "";
+			    	if(rspCal != null)
+			    		strRspCal = new String(rspCal);
+					if(strRspCal.equals("ok") == true)
+					{
+						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd match response");
+						
+						mUIHanlder.post(new Runnable() {
+							@Override
+							public void run() {
+								final Intent brd = new Intent(ACTION_SEND_CMD_OK);
+						        MainActivity.this.sendBroadcast(brd);
+							}
+						});
+					}
+					else
+					{
+						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd not match response");
+						mUIHanlder.post(new Runnable() {
+							@Override
+							public void run() {
+								broadCastAction(BLEUtility.ACTION_SENCMD_FAIL);
+							}
+						});
+					}
+			    }
+			};
+			workerThread.start();
+		}
+		
+		public void setCEC(ImageButton ibCEC, String pathNormal, String pathPress, final String cmd) {
+			if(pathNormal.length() > 0 && getFileStreamPath(pathNormal).exists() && 
+			   pathPress.length() > 0 && getFileStreamPath(pathPress).exists())
+			{
+				BitmapDrawable bitmapDrawableNor = new BitmapDrawable(getFileStreamPath(pathNormal).getAbsolutePath());
+		    	BitmapDrawable bitmapDrawablePre = new BitmapDrawable(getFileStreamPath(pathPress).getAbsolutePath());
+		    	
+		    	StateListDrawable states = new StateListDrawable();
+		    	states.addState(new int[] {android.R.attr.state_pressed}, bitmapDrawablePre);
+		    	states.addState(new int[] { }, bitmapDrawableNor);
+		    	ibCEC.setBackgroundDrawable(states);	
+		    	ibCEC.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						doWriteCmdAndReadRsp(cmd);
+					}
+		    	});
+			}
+		}
+		
+		public void setCEC1(ImageButton ibCEC1) {
+			setCEC(ibCEC1, mCEC1NormalFile, mCEC1PressFile, mCEC1Cmd);
+		}
+		
+		public void setCEC2(ImageButton ibCEC2) {
+			setCEC(ibCEC2, mCEC2NormalFile, mCEC2PressFile, mCEC2Cmd);
+		}
+		
+		public void setCEC3(ImageButton ibCEC3) {
+			setCEC(ibCEC3, mCEC3NormalFile, mCEC3PressFile, mCEC3Cmd);
+		}
+		
+		public void setCEC4(ImageButton ibCEC4) {
+			setCEC(ibCEC4, mCEC4NormalFile, mCEC4PressFile, mCEC4Cmd);
 		}
 	}
 	
@@ -444,19 +525,6 @@ public class MainActivity extends CustomTitleActivity
 		public int mID = -1;
 		public String mTitle;
 		public String mCommand = "";
-		
-		protected void broadCastAction(String action)
-		{
-			final Intent brd = new Intent(action);
-	        MainActivity.this.sendBroadcast(brd);
-		}
-		
-		protected void broadCastActionMsg(String action, String key, String message)
-		{
-			final Intent brd = new Intent(action);
-			brd.putExtra(key, message);
-	        MainActivity.this.sendBroadcast(brd);
-		}	
 	}
 	
 	private class ChildWrtChkItem extends ChildItem  {
@@ -1100,19 +1168,13 @@ public class MainActivity extends CustomTitleActivity
 				holder.mGroupCEC.setVisibility(View.VISIBLE);
 				holder.mGroupNormal.setVisibility(View.INVISIBLE);
 				holder.mbtnCEC1.setBackgroundResource(android.R.drawable.btn_default);
-				if(((CECGroup)item).mCEC1NormalFile.length() > 0 && getFileStreamPath(((CECGroup)item).mCEC1NormalFile).exists())
-				{
-					BitmapDrawable bitmapDrawableNor = new BitmapDrawable(getFileStreamPath(((CECGroup)item).mCEC1NormalFile).getAbsolutePath());
-			    	BitmapDrawable bitmapDrawablePre = new BitmapDrawable(getFileStreamPath(((CECGroup)item).mCEC1PressFile).getAbsolutePath());
-			    	
-			    	StateListDrawable states = new StateListDrawable();
-			    	states.addState(new int[] {android.R.attr.state_pressed},
-			    			bitmapDrawablePre);
-			    	states.addState(new int[] { },
-			    			bitmapDrawableNor);
-			    	//holder.mbtnCEC4.setImageDrawable(states);
-			    	holder.mbtnCEC1.setBackgroundDrawable(states);	
-				}
+				holder.mbtnCEC2.setBackgroundResource(android.R.drawable.btn_default);
+				holder.mbtnCEC3.setBackgroundResource(android.R.drawable.btn_default);
+				holder.mbtnCEC4.setBackgroundResource(android.R.drawable.btn_default);
+				((CECGroup)item).setCEC1(holder.mbtnCEC1);
+				((CECGroup)item).setCEC2(holder.mbtnCEC2);
+				((CECGroup)item).setCEC3(holder.mbtnCEC3);
+				((CECGroup)item).setCEC4(holder.mbtnCEC4);
 			}
 			else {
 				holder.mGroupCEC.setVisibility(View.INVISIBLE);
@@ -1266,6 +1328,10 @@ public class MainActivity extends CustomTitleActivity
 		    GroupItem cmdgroup = null;
 		    if(attrCEC != null && attrCEC.getNodeValue().equals("true")) {
 		    	cmdgroup = new CECGroup();
+		    	((CECGroup)cmdgroup).mCEC1Cmd = attributes.getNamedItem("Cmd1").getNodeValue();
+		    	((CECGroup)cmdgroup).mCEC2Cmd = attributes.getNamedItem("Cmd2").getNodeValue();
+		    	((CECGroup)cmdgroup).mCEC3Cmd = attributes.getNamedItem("Cmd3").getNodeValue();
+		    	((CECGroup)cmdgroup).mCEC4Cmd = attributes.getNamedItem("Cmd4").getNodeValue();
 		    	
 		    	((CECGroup)cmdgroup).mCEC1NormalFile = attributes.getNamedItem("NormalImage1").getNodeValue();
 		    	((CECGroup)cmdgroup).mCEC2NormalFile = attributes.getNamedItem("NormalImage2").getNodeValue();
@@ -1674,6 +1740,20 @@ public class MainActivity extends CustomTitleActivity
 			}
 		}	
 	}
+	
+
+	public void broadCastAction(String action)
+	{
+		final Intent brd = new Intent(action);
+        MainActivity.this.sendBroadcast(brd);
+	}
+	
+	public void broadCastActionMsg(String action, String key, String message)
+	{
+		final Intent brd = new Intent(action);
+		brd.putExtra(key, message);
+        MainActivity.this.sendBroadcast(brd);
+	}	
 	
 	@Override
     protected void onResume() {

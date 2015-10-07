@@ -2,32 +2,46 @@
 <Commands>
     <CmdGroup Title="Device Settings" Icon="&#xe91e;" CanRead="false">
         <WriteCmd Title="Reset" Cmd="reset" CheckedIcon="&#xe8fd;" UnCheckedIcon="&#xe8fd;">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
 		</WriteCmd>
 		<ReadAllCmd Title="Read Config" Cmd="" Icon="&#xe8d0;">
 		</ReadAllCmd>
+		<WrtReadCmd Title="CEC Broadcast" Cmd1="cec on" Cmd2="cec off" CmdRes="ok" ReadCmd = "cec" Sequence = "6">
+			<ReadRes Title="CEC On">cec on</ReadRes>
+			<ReadRes Title="CEC Off">cec off</ReadRes>
+		</WrtReadCmd>
+		<WrtReadCmd Title="Power" Cmd1="pwr on" Cmd2="pwr off" CmdRes="ok" ReadCmd = "power" Sequence = "7">
+			<ReadRes Title="Power On">power on</ReadRes>
+			<ReadRes Title="Power Off">power off</ReadRes>
+		</WrtReadCmd>
+		<WrtReadCmd Title="Auto Switch" Cmd1="autosw on" Cmd2="autosw off" CmdRes="ok" ReadCmd = "autosw" Sequence = "8">
+			<ReadRes Title="Auto Switch On">autosw on</ReadRes>
+			<ReadRes Title="Auto Switch Off">autosw off</ReadRes>
+		</WrtReadCmd>
 		<ReadCmd Title="Info" Cmd="man">
 			<CmdRes Title="" refWmdID = "-1">man Integral</CmdRes>
 		</ReadCmd>
     </CmdGroup>
 	<CmdGroup Title="Channel Selection" Icon="&#xeaa0;" CanRead="true" Sequence="0" Try="2">
         <WriteCmdChk Title="Channel/Input 1" Cmd="insel 1">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
 		</WriteCmdChk>
 		<WriteCmdChk Title="Channel/Input 2" Cmd="insel 2">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
 		</WriteCmdChk>
 		<ReadCmd Title="Read Channel" Cmd="insel">
 			<CmdRes Title="Input 1" refWmdID = "0">insel 1</CmdRes>
 			<CmdRes Title="Input 2" refWmdID = "1">insel 2</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-	<CmdGroup Title="HDCP Settings" Icon="&#xeaff;" CanRead="true" Sequence="2" Try="2">
+	<CmdGroup Title="HDCP Settings" Icon="&#xeaff;" CanRead="true" Sequence="1" Try="2">
 	    <WriteCmdChk Title="HDCP 1.4 only" Cmd="hdcp 14">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
+			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
         <WriteCmdChk Title="HDCP 2.2 + 1.4" Cmd="hdcp 22">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
+			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
 		<ReadCmd Title="Read HDCP" Cmd="hdcp" Icon="&#xeaa0;">
 			<CmdRes Title="1.4 only" refWmdID = "0">hdcp 14</CmdRes>
@@ -35,28 +49,37 @@
 			<CmdRes Title="Auto" refWmdID = "-1">hdcp auto</CmdRes>
 		</ReadCmd>
     </CmdGroup>	
-    <CmdGroup Title="Sound Settings" Icon="&#xeb47;" CanRead="true" Sequence="1" Try="2">
+    <CmdGroup Title="Sound Settings" Icon="&#xeb47;" CanRead="true" Sequence="2" Try="2">
         <WriteCmdChk Title="External Audio" Cmd="audio jack">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
+			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
         <WriteCmdChk Title="From HDMI" Cmd="audio hdmi">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
+			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
+		<WrtReadCmd Title="Mute All Sound" Cmd1="mute on" Cmd2="mute off" CmdRes="ok" ReadCmd = "mute" Sequence = "9">
+			<ReadRes Title="Mute On">mute on</ReadRes>
+			<ReadRes Title="Mute Off">mute off</ReadRes>
+		</WrtReadCmd>
 		<ReadCmd Title="Read Audio" Cmd="audio" Icon="&#xeaa0;">
 			<CmdRes Title="HDMI" refWmdID = "1">audio hdmi</CmdRes>
 			<CmdRes Title="External" refWmdID = "0">audio jack</CmdRes>
 			<CmdRes Title="Auto" refWmdID = "-1">audio auto</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-	<CmdGroup Title="EDID Settings" Icon="&#xe8c7;" CanRead="true" Sequence="4" Try="1">
+	<CmdGroup Title="EDID Settings" Icon="&#xe8c7;" CanRead="true" Sequence="3" Try="1">
 	    <WriteCmdChk Title="Auto Mix Mode" Cmd="edid automix">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
+			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
 		<WriteCmdChk Title="Custom" Cmd="edid custom">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
+			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
         <WriteCmdChk Title="Fixed With L/R Stereo" Cmd="edid fixed">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
+			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
 		<ReadCmd Title="Read EDID" Cmd="edid">
 			<CmdRes Title="L/R stereo" refWmdID = "2">edid fixed</CmdRes>
@@ -64,31 +87,19 @@
 			<CmdRes Title="Mix" refWmdID = "0">edid automix</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-    <CmdGroup Title="4:2:0 Downsampling Mode" Icon="&#xea90;" CanRead="true" Sequence="5" Try="1">
+    <CmdGroup Title="4K60 options" Icon="&#xea90;" CanRead="true" Sequence="4" Try="1">
 	    <WriteCmd Title="Enable 4:4:4 -> 4:2:0" Cmd="420 on" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
 		</WriteCmd>
 	    <WriteCmd Title="Disable 4:4:4 -> 4:2:0" Cmd="420 off" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
 		</WriteCmd>
 		<ReadCmd Title="Read Current 4:2:0 Selection Status" Cmd="420">
 			<CmdRes Title="Enable 4:4:4 -> 4:2:0" refWmdID = "0">420 on</CmdRes>
 			<CmdRes Title="Disable 4:4:4 -> 4:2:0" refWmdID = "1">420 off</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-    <CmdGroup Title="Power" Icon="&#xea8a;" CanRead="true" Sequence="6" Try="1">
-	    <WriteCmd Title="Power On" Cmd="pwr on" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
-			<CmdRes>ok</CmdRes>
-		</WriteCmd>
-	    <WriteCmd Title="Power Off" Cmd="pwr off" CheckedIcon="&#xeb10;" UnCheckedIcon="&#xeb0f;">
-			<CmdRes>ok</CmdRes>
-		</WriteCmd>
-		<ReadCmd Title="Read Power Status" Cmd="power">
-			<CmdRes Title="on" refWmdID = "0">power on</CmdRes>
-			<CmdRes Title="off" refWmdID = "1">power off</CmdRes>
-		</ReadCmd>
-    </CmdGroup>
-    <CmdGroup Title="Play with CEC " Icon="&#xe860;" CanRead="true" Sequence="3" Try="1">
+    <CmdGroup Title="Play with CEC" Icon="&#xe860;" CanRead="true" Sequence="5" Try="1">
 	    <WriteCmdChk Title="Turn Everything On" Cmd="cec on">
 			<CmdRes>ok</CmdRes>
 		</WriteCmdChk>
@@ -103,4 +114,14 @@
 			<CmdRes Title="Off" refWmdID = "1">cec off</CmdRes>
 		</ReadCmd>
     </CmdGroup>
+    <CmdGroup NormalImage1 ="cec1_nor.png" PressedImage1 = "cec1_press.png" Cmd1 = "CEC 0F:1" 
+              NormalImage2 ="cec2_nor.png" PressedImage2 = "cec2_press.png" Cmd2 = "CEC 0F:2" 
+              NormalImage3 ="cec3_nor.png" PressedImage3 = "cec3_press.png" Cmd3 = "CEC 0F:3" 
+              NormalImage4 ="cec4_nor.png" PressedImage4 = "cec4_press.png" Cmd4 = "CEC 0F:4" 
+              IsCEC="true"/>
+    <CmdGroup NormalImage1 ="cec4_nor_.png" PressedImage1 = "cec4_press_.png" Cmd1 = "CEC 0F:5" 
+              NormalImage2 ="cec3_nor_.png" PressedImage2 = "cec3_press_.png" Cmd2 = "CEC 0F:6" 
+              NormalImage3 ="cec2_nor_.png" PressedImage3 = "cec2_press_.png" Cmd3 = "CEC 0F:7" 
+              NormalImage4 ="cec1_nor_.png" PressedImage4 = "cec1_press_.png" Cmd4 = "CEC 0F:8" 
+              IsCEC="true"/>
 </Commands>

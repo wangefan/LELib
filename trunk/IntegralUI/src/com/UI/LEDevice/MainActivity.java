@@ -329,31 +329,10 @@ public class MainActivity extends CustomTitleActivity
 		public  String mCEC2Cmd = "";
 		public  String mCEC3Cmd = "";
 		public  String mCEC4Cmd = "";
-		public  String mCEC1NormalFile = "";
-		public  String mCEC2NormalFile = "";
-		public  String mCEC3NormalFile = "";
-		public  String mCEC4NormalFile = "";
-		public  String mCEC1PressFile = "";
-		public  String mCEC2PressFile = "";
-		public  String mCEC3PressFile = "";
-		public  String mCEC4PressFile = "";
-		private void gen(String file) {
-			File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-			final File fileFull = new File(path, file);
-			if(fileFull.exists())
-				copyToInternal(file, fileFull);
-		}
-		
-		public void copyFileIfExist() {
-			gen(mCEC1NormalFile);
-			gen(mCEC2NormalFile);
-			gen(mCEC3NormalFile);
-			gen(mCEC4NormalFile);
-			gen(mCEC1PressFile);
-			gen(mCEC2PressFile);
-			gen(mCEC3PressFile);
-			gen(mCEC4PressFile);
-		}
+		public  String mCEC1Icon = "";
+		public  String mCEC2Icon = "";
+		public  String mCEC3Icon = "";
+		public  String mCEC4Icon = "";
 		
 		private void doWriteCmdAndReadRsp(final String cmd) {
 			MyLog.d(mTag, "doWriteCmdAndReadRsp begin");
@@ -395,40 +374,30 @@ public class MainActivity extends CustomTitleActivity
 			workerThread.start();
 		}
 		
-		public void setCEC(ImageButton ibCEC, String pathNormal, String pathPress, final String cmd) {
-			if(pathNormal.length() > 0 && getFileStreamPath(pathNormal).exists() && 
-			   pathPress.length() > 0 && getFileStreamPath(pathPress).exists())
-			{
-				BitmapDrawable bitmapDrawableNor = new BitmapDrawable(getFileStreamPath(pathNormal).getAbsolutePath());
-		    	BitmapDrawable bitmapDrawablePre = new BitmapDrawable(getFileStreamPath(pathPress).getAbsolutePath());
-		    	
-		    	StateListDrawable states = new StateListDrawable();
-		    	states.addState(new int[] {android.R.attr.state_pressed}, bitmapDrawablePre);
-		    	states.addState(new int[] { }, bitmapDrawableNor);
-		    	ibCEC.setBackgroundDrawable(states);	
-		    	ibCEC.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View arg0) {
-						doWriteCmdAndReadRsp(cmd);
-					}
-		    	});
-			}
+		public void setCEC(FontelloTextView ibCEC, String icon, final String cmd) {
+			ibCEC.setText(icon);
+	    	ibCEC.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					doWriteCmdAndReadRsp(cmd);
+				}
+	    	});
 		}
 		
-		public void setCEC1(ImageButton ibCEC1) {
-			setCEC(ibCEC1, mCEC1NormalFile, mCEC1PressFile, mCEC1Cmd);
+		public void setCEC1(FontelloTextView ibCEC1) {
+			setCEC(ibCEC1, mCEC1Icon, mCEC1Cmd);
 		}
 		
-		public void setCEC2(ImageButton ibCEC2) {
-			setCEC(ibCEC2, mCEC2NormalFile, mCEC2PressFile, mCEC2Cmd);
+		public void setCEC2(FontelloTextView ibCEC2) {
+			setCEC(ibCEC2, mCEC2Icon, mCEC2Cmd);
 		}
 		
-		public void setCEC3(ImageButton ibCEC3) {
-			setCEC(ibCEC3, mCEC3NormalFile, mCEC3PressFile, mCEC3Cmd);
+		public void setCEC3(FontelloTextView ibCEC3) {
+			setCEC(ibCEC3, mCEC3Icon, mCEC3Cmd);
 		}
 		
-		public void setCEC4(ImageButton ibCEC4) {
-			setCEC(ibCEC4, mCEC4NormalFile, mCEC4PressFile, mCEC4Cmd);
+		public void setCEC4(FontelloTextView ibCEC4) {
+			setCEC(ibCEC4, mCEC4Icon, mCEC4Cmd);
 		}
 	}
 	
@@ -997,10 +966,10 @@ public class MainActivity extends CustomTitleActivity
 		TextView mGroupTitle;
 		TextView mGroupRespStatus;
 		FontelloTextView  mGroupIcon;
-		ImageButton mbtnCEC1;
-		ImageButton mbtnCEC2;
-		ImageButton mbtnCEC3;
-		ImageButton mbtnCEC4;
+		FontelloTextView mbtnCEC1;
+		FontelloTextView mbtnCEC2;
+		FontelloTextView mbtnCEC3;
+		FontelloTextView mbtnCEC4;
 	}
 
 	/**
@@ -1152,10 +1121,10 @@ public class MainActivity extends CustomTitleActivity
 				holder = new GroupHolder();
 				convertView = inflater.inflate(R.layout.group_item, parent, false);
 				holder.mGroupCEC = (View)convertView.findViewById(R.id.lstCECLayout);
-				holder.mbtnCEC1 = (ImageButton) convertView.findViewById(R.id.cecBtn1);
-				holder.mbtnCEC2 = (ImageButton) convertView.findViewById(R.id.cecBtn2);
-				holder.mbtnCEC3 = (ImageButton) convertView.findViewById(R.id.cecBtn3);
-				holder.mbtnCEC4 = (ImageButton) convertView.findViewById(R.id.cecBtn4);
+				holder.mbtnCEC1 = (FontelloTextView) convertView.findViewById(R.id.cecBtn1);
+				holder.mbtnCEC2 = (FontelloTextView) convertView.findViewById(R.id.cecBtn2);
+				holder.mbtnCEC3 = (FontelloTextView) convertView.findViewById(R.id.cecBtn3);
+				holder.mbtnCEC4 = (FontelloTextView) convertView.findViewById(R.id.cecBtn4);
 				holder.mGroupNormal = (View)convertView.findViewById(R.id.lstNormalGroupLayout);
 				holder.mGroupTitle = (TextView) convertView.findViewById(R.id.textTitle);
 				holder.mGroupRespStatus = (TextView) convertView.findViewById(R.id.textRespStatus);
@@ -1168,10 +1137,6 @@ public class MainActivity extends CustomTitleActivity
 			if(item instanceof CECGroup) {
 				holder.mGroupCEC.setVisibility(View.VISIBLE);
 				holder.mGroupNormal.setVisibility(View.INVISIBLE);
-				holder.mbtnCEC1.setBackgroundResource(android.R.drawable.btn_default);
-				holder.mbtnCEC2.setBackgroundResource(android.R.drawable.btn_default);
-				holder.mbtnCEC3.setBackgroundResource(android.R.drawable.btn_default);
-				holder.mbtnCEC4.setBackgroundResource(android.R.drawable.btn_default);
 				((CECGroup)item).setCEC1(holder.mbtnCEC1);
 				((CECGroup)item).setCEC2(holder.mbtnCEC2);
 				((CECGroup)item).setCEC3(holder.mbtnCEC3);
@@ -1333,15 +1298,10 @@ public class MainActivity extends CustomTitleActivity
 		    	((CECGroup)cmdgroup).mCEC3Cmd = attributes.getNamedItem("Cmd3").getNodeValue();
 		    	((CECGroup)cmdgroup).mCEC4Cmd = attributes.getNamedItem("Cmd4").getNodeValue();
 		    	
-		    	((CECGroup)cmdgroup).mCEC1NormalFile = attributes.getNamedItem("NormalImage1").getNodeValue();
-		    	((CECGroup)cmdgroup).mCEC2NormalFile = attributes.getNamedItem("NormalImage2").getNodeValue();
-		    	((CECGroup)cmdgroup).mCEC3NormalFile = attributes.getNamedItem("NormalImage3").getNodeValue();
-		    	((CECGroup)cmdgroup).mCEC4NormalFile = attributes.getNamedItem("NormalImage4").getNodeValue();
-		    	((CECGroup)cmdgroup).mCEC1PressFile = attributes.getNamedItem("PressedImage1").getNodeValue();
-		    	((CECGroup)cmdgroup).mCEC2PressFile = attributes.getNamedItem("PressedImage2").getNodeValue();
-		    	((CECGroup)cmdgroup).mCEC3PressFile = attributes.getNamedItem("PressedImage3").getNodeValue();
-		    	((CECGroup)cmdgroup).mCEC4PressFile = attributes.getNamedItem("PressedImage4").getNodeValue();
-		    	((CECGroup)cmdgroup).copyFileIfExist();
+		    	((CECGroup)cmdgroup).mCEC1Icon = attributes.getNamedItem("Icon1").getNodeValue();
+		    	((CECGroup)cmdgroup).mCEC2Icon = attributes.getNamedItem("Icon2").getNodeValue();
+		    	((CECGroup)cmdgroup).mCEC3Icon = attributes.getNamedItem("Icon3").getNodeValue();
+		    	((CECGroup)cmdgroup).mCEC4Icon = attributes.getNamedItem("Icon4").getNodeValue();
 		    }
 		    else if(isCanReadGroup.equals("false"))
 		    	cmdgroup = new GroupItem();

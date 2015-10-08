@@ -266,7 +266,7 @@ public class MainActivity extends CustomTitleActivity
             		Toast.makeText(MainActivity.this, R.string.prgsReadConfigEnd, Toast.LENGTH_SHORT).show();
             	}
             }
-            else if(ACTION_WRTREAD_READ_UPDATE.equals(action)) {
+            else if(ACTION_WRTREAD_READ_FAIL.equals(action)) {
             	mAdapter.notifyDataSetChanged();
             	if(mReadCount >= mGoalReadCount)
             	{

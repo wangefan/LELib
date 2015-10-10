@@ -43,9 +43,6 @@ import android.text.InputType;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -55,7 +52,6 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -88,7 +84,6 @@ public class ExpandaListActivity extends Fragment
 	private BLEDevice mPreDevice = null;
 	private ChildReadAllItem mReadAllCmd = null;
 	private ChildItem    mPreCmdToExecute = null;
-	private Menu mMenu = null;
 	private int mGoalReadCount = 0;
 	private int mReadCount = 0; 
 	private final String mInFileName = "InternalCommands.xml";
@@ -107,7 +102,7 @@ public class ExpandaListActivity extends Fragment
             	String message = intent.getStringExtra(BLEUtility.ACTION_CONNSTATE_DISCONNECTED_KEY);
 				Toast.makeText(mFaActivity, "Disconnected, cause = " + message, Toast.LENGTH_SHORT).show();
             	mPreCmdToExecute = null;
-            	updateUIForConn();
+            	mFaActivity.updateUIForConn();
             	setPullBKTask(false);
                 return;
             }
@@ -120,7 +115,7 @@ public class ExpandaListActivity extends Fragment
 				UIUtility.showProgressDlg(mFaActivity, false, R.string.prgsConnted);
 				IntegralSetting.setDeviceName(mPreDevice.getDeviceName());
 				IntegralSetting.setDeviceMACAddr(mPreDevice.getAddress());
-				updateUIForConn();
+				mFaActivity.updateUIForConn();
 				Toast.makeText(mFaActivity, "Connected", Toast.LENGTH_SHORT).show();
 				if(mPreCmdToExecute != null)
 				{
@@ -1547,20 +1542,6 @@ public class ExpandaListActivity extends Fragment
 		requestBTOrConn();
 	}
 	
-	private void updateUIForConn()
-	{
-		if(BLEUtility.getInstance().isConnect())
-		{
-			if(mMenu != null)
-				mMenu.findItem(R.id.menu_connect).setTitle(getResources().getString(R.string.menu_disconn));
-		}
-		else 
-		{
-			if(mMenu != null)
-				mMenu.findItem(R.id.menu_connect).setTitle(getResources().getString(R.string.menu_conn));
-		}
-	}
-	
 	private boolean needRequestBT() {
 		if((BluetoothAdapter.getDefaultAdapter() == null || BluetoothAdapter.getDefaultAdapter().isEnabled() == false))
 		{
@@ -1571,7 +1552,7 @@ public class ExpandaListActivity extends Fragment
 		return false;
 	}
 	
-	private void requestBTOrConn() {
+	public void requestBTOrConn() {
 		if(needRequestBT() == true)
 			return;
 		connectToIntegral();
@@ -1726,20 +1707,8 @@ public class ExpandaListActivity extends Fragment
 	}	
 	
 	@Override
-	public void onResume() {
-		updateUIForConn();
-		super.onResume();
-	}
-	
-	@Override
-	public void onPause() {
-        super.onPause();
-    }
-	
-	@Override
 	public void onDestroy() {
 		mFaActivity.unregisterReceiver(mBtnReceiver);
-		BLEUtility.getInstance().disconnect();
 		super.onDestroy();
 	}
 	
@@ -1761,41 +1730,4 @@ public class ExpandaListActivity extends Fragment
        }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		inflater.inflate(R.menu.main, menu);
-		menu.findItem(R.id.menu_connect).setVisible(true);
-		mMenu = menu;
-		super.onCreateOptionsMenu(menu, inflater);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		switch (item.getItemId()) {
-        
-        case android.R.id.home:
-        	BLEUtility.getInstance().disconnect();
-        	break;
-        case R.id.menu_connect:
-        {
-        	String tle = (String) item.getTitle(); 
-        	if(tle.compareTo(getResources().getString(R.string.menu_disconn)) == 0)
-        		BLEUtility.getInstance().disconnect();
-        	else if(tle.compareTo(getResources().getString(R.string.menu_conn)) == 0)
-        		requestBTOrConn();
-        }
-        break;
-        case R.id.menu_clearConn:
-        {
-        	IntegralSetting.setDeviceMACAddr("");
-        	Toast.makeText(mFaActivity, R.string.msgResetConn, Toast.LENGTH_SHORT).show();
-        }
-        break;
-        default:	
-		}	
-		return super.onOptionsItemSelected(item);
-	}
 }

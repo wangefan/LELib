@@ -3,6 +3,7 @@ package com.UI.LEDevice;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.BLE.BLEUtility.BLEUtility;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import android.content.res.Configuration;
@@ -29,6 +30,7 @@ public class MainActivity extends ActionBarActivity {
 	private List<DrawerItem> mDrawerItems;
 	private DrawerLayout mDrawerLayout;
 	private ActionBarDrawerToggle mDrawerToggle;
+	private Menu mMenu = null;
 
 	private CharSequence mDrawerTitle;
 	private CharSequence mTitle;
@@ -36,6 +38,20 @@ public class MainActivity extends ActionBarActivity {
 	private Handler mHandler;
 
 	private boolean mShouldFinish = false;
+	
+	public void updateUIForConn()
+	{
+		if(BLEUtility.getInstance().isConnect())
+		{
+			if(mMenu != null)
+				mMenu.findItem(R.id.menu_connect).setTitle(R.string.menu_disconn);
+		}
+		else 
+		{
+			if(mMenu != null)
+				mMenu.findItem(R.id.menu_connect).setTitle(R.string.menu_conn);
+		}
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +95,19 @@ public class MainActivity extends ActionBarActivity {
 		if (savedInstanceState == null) {
 			int position = 0;
 			selectItem(position, mDrawerItems.get(position).getTag());
-			mDrawerLayout.openDrawer(mDrawerList);
 		}
+	}
+	
+	@Override
+	public void onResume() {
+		updateUIForConn();
+		super.onResume();
+	}
+	
+	@Override
+	public void onDestroy() {
+		BLEUtility.getInstance().disconnect();
+		super.onDestroy();
 	}
 
 	@Override
@@ -120,6 +147,8 @@ public class MainActivity extends ActionBarActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main, menu);
+		menu.findItem(R.id.menu_connect).setVisible(true);
+		mMenu = menu;
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -129,10 +158,37 @@ public class MainActivity extends ActionBarActivity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
 		if (mDrawerToggle.onOptionsItemSelected(item)) {
 			return true;
 		}
+		switch (item.getItemId()) {
+        
+        case android.R.id.home:
+        	BLEUtility.getInstance().disconnect();
+        	break;
+        case R.id.menu_connect:
+        {
+        	String tle = (String) item.getTitle(); 
+        	if(tle.compareTo(getResources().getString(R.string.menu_disconn)) == 0)
+        		BLEUtility.getInstance().disconnect();
+        	else if(tle.compareTo(getResources().getString(R.string.menu_conn)) == 0) {
+        		Fragment integral = selectItem(0, mDrawerItems.get(0).getTag());
+        		if(((ExpandaListActivity)integral) != null)
+        			((ExpandaListActivity)integral).requestBTOrConn();
+        	}
+        		
+        }
+        break;
+        case R.id.menu_clearConn:
+        {
+        	IntegralSetting.setDeviceMACAddr("");
+        	Toast.makeText(this, R.string.msgResetConn, Toast.LENGTH_SHORT).show();
+        }
+        break;
+        default:	
+		}	
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -145,13 +201,14 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 
-	private void selectItem(int position, int drawerTag) {
+	private Fragment selectItem(int position, int drawerTag) {
 		Fragment fragment = getFragmentByDrawerTag(drawerTag);
 		commitFragment(fragment);
 
 		mDrawerList.setItemChecked(position, true);
 		setTitle(mDrawerItems.get(position).getTitle());
 		mDrawerLayout.closeDrawer(mDrawerList);
+		return fragment;
 	}
 
 	private Fragment getFragmentByDrawerTag(int drawerTag) {

@@ -32,7 +32,7 @@
         
         <!-- Main activity -->
         <activity
-            android:name=".MainActivity"
+            android:name=".ExpandaListActivity"
             android:screenOrientation="portrait" >
         </activity>
     </application>

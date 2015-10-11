@@ -29,6 +29,12 @@
 		<WriteCmdChk Title="Channel/Input 2" Cmd="insel 2">
 			<CmdResOK>ok</CmdResOK>
 		</WriteCmdChk>
+		<WriteCmdChk Title="Channel/Input 3" Cmd="insel 3">
+			<CmdResOK>ok</CmdResOK>
+		</WriteCmdChk>		
+		<WriteCmdChk Title="Channel/Input 4" Cmd="insel 4">
+			<CmdResOK>ok</CmdResOK>
+		</WriteCmdChk>		
 		<ReadCmd Title="Read Channel" Cmd="insel">
 			<CmdRes Title="Input 1" refWmdID = "0">insel 1</CmdRes>
 			<CmdRes Title="Input 2" refWmdID = "1">insel 2</CmdRes>

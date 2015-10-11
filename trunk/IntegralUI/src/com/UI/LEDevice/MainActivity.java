@@ -26,6 +26,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,6 +34,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
@@ -167,6 +169,7 @@ public class MainActivity extends ActionBarActivity {
 	private ListView mDrawerList;
 	private List<DrawerItem> mDrawerItems;
 	private DrawerLayout mDrawerLayout;
+	private RelativeLayout mDrawerRelativeLayout;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private Menu mMenu = null;
 	private CharSequence mTitle;
@@ -327,6 +330,8 @@ public class MainActivity extends ActionBarActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		mDrawerRelativeLayout = (RelativeLayout) findViewById(R.id.left_drawer);
+		mDrawerList = (ListView) findViewById(R.id.list_view_drawer);
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
 				R.string.drawer_open, R.string.drawer_close) {
 			public void onDrawerClosed(View view) {
@@ -342,8 +347,8 @@ public class MainActivity extends ActionBarActivity {
 		mDrawerToggle.setDrawerIndicatorEnabled(true);
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 		mTitle = getTitle();
-		mDrawerList = (ListView) findViewById(R.id.list_view);
-
+	
+		mDrawerList = (ListView) findViewById(R.id.list_view_drawer);
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
 				GravityCompat.START);
 		prepareNavigationDrawerItems();
@@ -378,13 +383,13 @@ public class MainActivity extends ActionBarActivity {
 
 	@Override
 	public void onBackPressed() {
-		if (!mShouldFinish && !mDrawerLayout.isDrawerOpen(mDrawerList)) {
+		if (!mShouldFinish && !mDrawerLayout.isDrawerOpen(mDrawerRelativeLayout)) {
 			Toast.makeText(getApplicationContext(), R.string.confirm_exit,
 					Toast.LENGTH_SHORT).show();
 			mShouldFinish = true;
-			mDrawerLayout.openDrawer(mDrawerList);
-		} else if (!mShouldFinish && mDrawerLayout.isDrawerOpen(mDrawerList)) {
-			mDrawerLayout.closeDrawer(mDrawerList);
+			mDrawerLayout.openDrawer(mDrawerRelativeLayout);
+		} else if (!mShouldFinish && mDrawerLayout.isDrawerOpen(mDrawerRelativeLayout)) {
+			mDrawerLayout.closeDrawer(mDrawerRelativeLayout);
 		} else {
 			super.onBackPressed();
 		}
@@ -474,7 +479,7 @@ public class MainActivity extends ActionBarActivity {
 
 		mDrawerList.setItemChecked(position, true);
 		setTitle(mDrawerItems.get(position).getTitle());
-		mDrawerLayout.closeDrawer(mDrawerList);
+		mDrawerLayout.closeDrawer(mDrawerRelativeLayout);
 		return fragment;
 	}
 

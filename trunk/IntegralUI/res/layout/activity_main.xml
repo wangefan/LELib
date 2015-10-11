@@ -16,11 +16,28 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <include
-            android:layout_width="@dimen/drawer_width"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            layout="@layout/list_view" />
-    </android.support.v4.widget.DrawerLayout>
+        <!-- Menu -->
+ 
+	    <RelativeLayout
+	        android:id="@+id/left_drawer"
+	        android:layout_width="240dp"
+	        android:layout_height="match_parent"
+	        android:layout_gravity="start"
+	        android:orientation="vertical">
+	 
+	        <ImageButton
+	            android:id="@+id/image_integral"
+	            android:layout_width="match_parent"
+	            android:layout_height="200dp" 
+	            android:background="@drawable/ic_icon"/>
+	 
+	         <ListView
+	            android:id="@+id/list_view_drawer"
+	            android:layout_width="@dimen/drawer_width"
+	            android:layout_height="match_parent"
+	            android:layout_below="@id/image_integral" 
+	            style="@style/ListViewStyle" />
 
+	    </RelativeLayout>
+    </android.support.v4.widget.DrawerLayout>
 </LinearLayout>

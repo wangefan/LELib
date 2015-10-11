@@ -44,7 +44,12 @@ public class BLEUtility
     public final static String ACTION_SENCMD_READ_CONTENT_KEY = "com.BLE.BLEUtility.ACTION_SENCMD_READ_CONTENT_KEY";
     public static final String ACTION_SENCMD_READ_CONTENT = "com.BLE.BLEUtility.ACTION_SENCMD_READ_CONTENT";
     public static final String ACTION_SENCMD_READ_FAIL = "com.BLE.BLEUtility.ACTION_SENCMD_READ_FAIL";
-    
+    public final static String ACTION_ITEM_READ_UPDATE = "com.BLE.BLEUtility.ACTION_ITEM_READ_UPDATE";
+    public final static String ACTION_ITEM_READ_END = "com.BLE.BLEUtility.ACTION_ITEM_READ_END";
+	public final static String ACTION_WRTREAD_WRT_BEG = "ACTION_WRTREAD_WRT_BEG";
+	public final static String ACTION_WRTREAD_WRT_UPDATE = "ACTION_WRTREAD_WRT_UPDATE";
+	public final static String ACTION_WRTREAD_WRT_FAIL = "ACTION_WRTREAD_WRT_FAIL";
+	
     //Messages
     public static final String DISCONNECTED_CAUSE_NORSP = "Connect no response";
     public static final String DISCONNECTED_CAUSE_DIS = "disconnted";

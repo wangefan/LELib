@@ -3,13 +3,19 @@ package com.UI.LEDevice;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.BLE.BLEUtility.BLEDevice;
 import com.BLE.BLEUtility.BLEUtility;
+import com.BLE.BLEUtility.MyLog;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,13 +31,139 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 	//constant 
 	private final static int REQUEST_ENABLE_BT = 5;
+	private final String mTAG = "MainActivity";
+	private static final long SCAN_PERIOD = 5000; // Stops scanning after 8 seconds.
+	
+	//Inner classes
+	BroadcastReceiver mBdReceiver = new BroadcastReceiver() {
 
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final String action = intent.getAction();
+            
+			if(BLEUtility.ACTION_CONNSTATE_DISCONNECTED.equals(action))
+            {
+            	UIUtility.showProgressDlg(false, R.string.prgsDisconn);
+            	String message = intent.getStringExtra(BLEUtility.ACTION_CONNSTATE_DISCONNECTED_KEY);
+				Toast.makeText(MainActivity.this, "Disconnected, cause = " + message, Toast.LENGTH_SHORT).show();
+            	updateUIForConn();
+            	//setPullBKTask(false);
+                return;
+            }
+			else if(BLEUtility.ACTION_CONNSTATE_CONNECTING.equals(action))
+			{
+				UIUtility.showProgressDlg(true, R.string.prgsConnting);
+			}
+			else if(BLEUtility.ACTION_CONNSTATE_CONNECTED.equals(action))
+			{
+				UIUtility.showProgressDlg(false, R.string.prgsConnted);
+				IntegralSetting.setDeviceName(mPreDevice.getDeviceName());
+				IntegralSetting.setDeviceMACAddr(mPreDevice.getAddress());
+				updateUIForConn();
+				Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+				ExpandaListActivity integral = (ExpandaListActivity)selectItem(0, mDrawerItems.get(0).getTag());
+        		if(integral != null)
+        			integral.doThingsAfterConnted();
+			}
+			else if(BLEUtility.ACTION_GET_LEDEVICE.equals(action))
+			{
+				BLEDevice integralDevice = (BLEDevice) intent.getSerializableExtra(BLEUtility.ACTION_GET_LEDEVICE_KEY);
+				if(integralDevice != null)
+				{
+					mLeDevices.add(integralDevice);
+					MyLog.d(mTAG, "Get le device , "+mLeDevices.size()+"=>[" + integralDevice.getAddress()+"]");
+				}
+			}
+			//Blew are commands relaive 
+			else if (BLEUtility.ACTION_SENCMD_BEGIN.equals(action)) 
+            {
+            	UIUtility.showProgressDlg(true, R.string.prgsSendingCmd);
+            }
+            else if(BLEUtility.ACTION_SENCMD_OK.equals(action)) 
+            {
+            	updateExpView();
+            	UIUtility.showProgressDlg(false, R.string.prgsSedingCmdOK);
+            	Toast.makeText(MainActivity.this, R.string.prgsSedingCmdOK, Toast.LENGTH_SHORT).show();
+            }
+            else if(BLEUtility.ACTION_SENCMD_FAIL.equals(action)) 
+            {
+            	updateExpView();
+            	UIUtility.showProgressDlg(false, R.string.prgsSedingCmdFail);
+            	Toast.makeText(MainActivity.this, R.string.prgsSedingCmdFail, Toast.LENGTH_SHORT).show();
+            }
+            else if(BLEUtility.ACTION_SENCMD_SWFORCE.equals(action)) 
+            {
+            	UIUtility.showProgressDlg(false, R.string.prgsSedingCmdFail);
+            	AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+    			builder.setTitle(R.string.AlertDlgMsgTitle);
+    			builder.setMessage(R.string.AlertDlgMsg);
+    			// Set up the buttons
+    			builder.setPositiveButton(R.string.InputDlgOK, new DialogInterface.OnClickListener() { 
+    			    @Override
+    			    public void onClick(DialogInterface dialog, int which) {
+    			    	dialog.cancel();
+    			    }
+    			});
+
+    			builder.show();
+            }
+            else if (BLEUtility.ACTION_SENCMD_READ.equals(action)) 
+            {
+            	UIUtility.showProgressDlg(true, R.string.prgsSedingReadCmd);
+            }
+            else if (BLEUtility.ACTION_WRTREAD_WRT_BEG.equals(action)) 
+            {
+            	UIUtility.showProgressDlg(true, R.string.prgsSendingCmd);
+            }
+            else if(BLEUtility.ACTION_SENCMD_READ_CONTENT.equals(action))
+            {
+            	UIUtility.showProgressDlg(false, R.string.prgsSedingReadCmdOK);
+            	String message = intent.getStringExtra(BLEUtility.ACTION_SENCMD_READ_CONTENT_KEY);
+            	Toast.makeText(MainActivity.this, "read cmd ok, response = " + message, Toast.LENGTH_SHORT).show();
+            }
+            else if(BLEUtility.ACTION_SENCMD_READ_FAIL.equals(action))
+            {
+            	UIUtility.showProgressDlg(false, R.string.prgsReadCmdFail);
+            	Toast.makeText(MainActivity.this, R.string.prgsReadCmdFail, Toast.LENGTH_SHORT).show();
+            }
+            else if(BLEUtility.ACTION_ITEM_READ_UPDATE.equals(action))
+            {	
+            	updateExpView();
+            }
+            else if(BLEUtility.ACTION_ITEM_READ_END.equals(action))
+            {
+            	UIUtility.showProgressDlg(false, R.string.prgsReadConfigEnd);
+            	Toast.makeText(MainActivity.this, R.string.prgsReadConfigEnd, Toast.LENGTH_SHORT).show();
+            }
+            else if(BLEUtility.ACTION_WRTREAD_WRT_UPDATE.equals(action)) {
+            	updateExpView();
+            	UIUtility.showProgressDlg(false, R.string.prgsSendingCmd);
+            	Toast.makeText(MainActivity.this, R.string.prgsSedingCmdOK, Toast.LENGTH_SHORT).show();
+            }
+            else if(BLEUtility.ACTION_WRTREAD_WRT_FAIL.equals(action)) {
+            	updateExpView();
+            	UIUtility.showProgressDlg(false, R.string.prgsSendingCmd);
+            	Toast.makeText(MainActivity.this, R.string.prgsSedingCmdFail, Toast.LENGTH_SHORT).show();
+            }
+            else if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
+                        BluetoothAdapter.ERROR);
+				if (state == BluetoothAdapter.STATE_OFF) 
+				{
+					BLEUtility.getInstance().disconnect();
+					//setPullBKTask(false);
+				}
+			}
+		}
+	};
+		
 	//data members
 	private ListView mDrawerList;
 	private List<DrawerItem> mDrawerItems;
@@ -42,6 +174,9 @@ public class MainActivity extends ActionBarActivity {
 	private CharSequence mTitle;
 	private Handler mHandler;
 	private boolean mShouldFinish = false;
+	private Handler mScanPeriodHandler = new Handler();
+	private BLEDevice mPreDevice = null;
+	private ArrayList<BLEDevice> mLeDevices = new ArrayList<BLEDevice>();
 	
 	//Member functions
 	public void updateUIForConn()
@@ -58,6 +193,97 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 	
+	private static IntentFilter makeActionsIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_BEGIN);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_OK);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_FAIL);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_SWFORCE);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_CONTENT);
+        intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_FAIL);
+        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_CONNECTING);
+        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_CONNECTED);
+        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_DISCONNECTED);
+        intentFilter.addAction(BLEUtility.ACTION_GET_LEDEVICE);
+        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        intentFilter.addAction(BLEUtility.ACTION_ITEM_READ_UPDATE);
+        intentFilter.addAction(BLEUtility.ACTION_ITEM_READ_END);
+        intentFilter.addAction(BLEUtility.ACTION_WRTREAD_WRT_BEG);
+        intentFilter.addAction(BLEUtility.ACTION_WRTREAD_WRT_UPDATE);
+        intentFilter.addAction(BLEUtility.ACTION_WRTREAD_WRT_FAIL);
+        return intentFilter;
+    }
+	
+	public void connectToIntegral(){
+		if(BluetoothAdapter.getDefaultAdapter() != null && BluetoothAdapter.getDefaultAdapter().isEnabled() == true)
+		{
+			if(IntegralSetting.getDeviceMACAddr().length() <= 0)
+			{
+				UIUtility.showProgressDlg(true, R.string.prgsScanDev);
+				mLeDevices.clear();
+				BLEUtility.getInstance().startScanLEDevices();
+				mScanPeriodHandler.postDelayed(new Runnable() {
+	                @Override
+	                public void run() {
+	                    BLEUtility.getInstance().stopScanLEDevices();
+	                    UIUtility.showProgressDlg(false, R.string.prgsScanNoDev);
+	                    if(mLeDevices.size() == 0)
+	                    {
+	                    	Toast.makeText(MainActivity.this, R.string.prgsScanNoDev, Toast.LENGTH_SHORT).show();
+	                    }
+	                    else if(mLeDevices.size() == 1)
+	                    {
+	                    	BLEDevice device = mLeDevices.get(0);
+	                    	if(device != null)
+	                    	{
+	                    		mPreDevice = device;
+	                    		BLEUtility.getInstance().connect(device.getAddress());
+	                    	}
+	                    }
+	                    else //mLeDevices.size() > 1
+	                    {
+	                    	AlertDialog.Builder builderSingle = new AlertDialog.Builder(
+	                    			MainActivity.this);
+	                        builderSingle.setIcon(R.drawable.ic_icon);
+	                        builderSingle.setTitle(getResources().getString(R.string.dlgChooseIntegral));
+	                        builderSingle.setNegativeButton(getResources().getString(R.string.dlgCancel),
+	                                new DialogInterface.OnClickListener() {
+
+	                                    @Override
+	                                    public void onClick(DialogInterface dialog, int which) {
+	                                        dialog.dismiss();
+	                                    }
+	                                });
+	                        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+	                        		MainActivity.this,
+	                                android.R.layout.select_dialog_singlechoice);
+	                        for(BLEDevice leDevice: mLeDevices)
+	                        	arrayAdapter.add(leDevice.getDeviceName() + " [" + leDevice.getAddress() + "]");
+
+	                        builderSingle.setAdapter(arrayAdapter,
+	                                new DialogInterface.OnClickListener() {
+
+	                                    @Override
+	                                    public void onClick(DialogInterface dialog, int which) {
+	                                        BLEDevice device = mLeDevices.get(which);
+	                                        mPreDevice = device;
+	                                        BLEUtility.getInstance().connect(device.getAddress());
+	                                    }
+	                                });
+	                        builderSingle.show();
+	                    }
+	                }
+	            }, SCAN_PERIOD);
+			}
+			else
+			{
+				mPreDevice = new BLEDevice(IntegralSetting.getDeviceName(), IntegralSetting.getDeviceMACAddr());
+				BLEUtility.getInstance().connect(IntegralSetting.getDeviceMACAddr());
+			}
+		}	
+	}
+	
 	public boolean needRequestBT() {
 		if((BluetoothAdapter.getDefaultAdapter() == null || BluetoothAdapter.getDefaultAdapter().isEnabled() == false))
 		{
@@ -68,6 +294,11 @@ public class MainActivity extends ActionBarActivity {
 		return false;
 	}
 	
+	private void updateExpView() {
+		final Intent brd = new Intent(ExpandaListActivity.ACTION_UPDATELIST);
+	    sendBroadcast(brd);
+	}
+	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
@@ -75,9 +306,7 @@ public class MainActivity extends ActionBarActivity {
        	{
        		if(resultCode == Activity.RESULT_OK ) 
         	{
-       			ExpandaListActivity integral = (ExpandaListActivity)selectItem(0, mDrawerItems.get(0).getTag());
-        		if(integral != null)
-        			integral.connectToIntegral();
+       			connectToIntegral();
         	}
        	}
        	break;
@@ -125,12 +354,12 @@ public class MainActivity extends ActionBarActivity {
 
 		mHandler = new Handler();
 		UIUtility.init(this);
+		registerReceiver(mBdReceiver, makeActionsIntentFilter());	
 
 		if (savedInstanceState == null) {
-			ExpandaListActivity integral = (ExpandaListActivity)selectItem(0, mDrawerItems.get(0).getTag());
+			selectItem(0, mDrawerItems.get(0).getTag());
 			if(needRequestBT() == false) {
-	    		if(integral != null)
-	    			integral.connectToIntegral();	
+	    		connectToIntegral();	
 			}
 		}
 	}
@@ -143,6 +372,7 @@ public class MainActivity extends ActionBarActivity {
 	
 	@Override
 	public void onDestroy() {
+		unregisterReceiver(mBdReceiver);
 		BLEUtility.getInstance().disconnect();
 		super.onDestroy();
 	}
@@ -212,10 +442,9 @@ public class MainActivity extends ActionBarActivity {
         	if(tle.compareTo(getResources().getString(R.string.menu_disconn)) == 0)
         		BLEUtility.getInstance().disconnect();
         	else if(tle.compareTo(getResources().getString(R.string.menu_conn)) == 0) {
-        		ExpandaListActivity integral = (ExpandaListActivity) selectItem(0, mDrawerItems.get(0).getTag());
+        		selectItem(0, mDrawerItems.get(0).getTag());
         		if(needRequestBT() == false) {
-            		if(integral != null)
-            			integral.connectToIntegral();
+            		connectToIntegral();
         		}
         	}
         }

@@ -18,17 +18,13 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-
-import com.BLE.BLEUtility.BLEDevice;
 import com.BLE.BLEUtility.BLEUtility;
 import com.BLE.BLEUtility.MyLog;
 import com.UI.LEDevice.AnimatedExpandableListView.AnimatedExpandableListAdapter;
 import com.UI.font.FontelloTextView;
 import com.utility.CmdProcObj;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.support.v4.app.Fragment;
-import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -46,41 +42,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ExpandaListActivity extends Fragment 
 {
 	//constant 
 	private final String mTAG = "ExpandaListActivity";
-	private final static String ACTION_GROUP_READ_OK = "ACTION_GROUP_READ_OK";
-	private final static String ACTION_GROUP_READ_OK_GETITEMID_KEY = "ACTION_GROUP_READ_OK_GETITEMID_KEY";
-	private final static String ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY = "ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY";
-	private final static String ACTION_GROUP_READ_FAIL = "ACTION_GROUP_READ_FAIL";
-	private final static String ACTION_GROUP_READ_FAIL_KEY = "ACTION_GROUP_READ_FAIL_KEY";
-	private final static String ACTION_SEND_CMD_OK = "ACTION_SEND_CMD_OK";
-	private final static String ACTION_WRTREAD_READ_UPDATE = "ACTION_WRTREAD_READ_UPDATE";
-	private final static String ACTION_WRTREAD_READ_FAIL = "ACTION_WRTREAD_READ_FAIL";
-	private final static String ACTION_WRTREAD_WRT_BEG = "ACTION_WRTREAD_WRT_BEG";
-	private final static String ACTION_WRTREAD_WRT_UPDATE = "ACTION_WRTREAD_WRT_UPDATE";
-	private final static String ACTION_WRTREAD_WRT_FAIL = "ACTION_WRTREAD_WRT_FAIL";
-	private static final long SCAN_PERIOD = 5000; // Stops scanning after 8 seconds.
+	public final static String ACTION_UPDATELIST = "com.UI.LEDevice.UPDATELIST";
+	
 	//data member
 	private MainActivity  mFaActivity = null;
 	private View  mIntegralView = null;
 	private AnimatedExpandableListView mListView;
 	private ExampleAdapter mAdapter;
-	private static Handler mUIHanlder = new Handler();
-	private Handler mScanPeriodHandler = new Handler();
-	private ArrayList<BLEDevice> mLeDevices = new ArrayList<BLEDevice>();
+	private static Handler mUIHanlder = new Handler();	
 	private ArrayList<ChildWrtReadItem> mListWrtReadCmds = new ArrayList<ChildWrtReadItem>();
-	private BLEDevice mPreDevice = null;
 	private ChildReadAllItem mReadAllCmd = null;
 	public  ChildItem    mPreCmdToExecute = null;
 	private int mGoalReadCount = 0;
@@ -88,207 +70,25 @@ public class ExpandaListActivity extends Fragment
 	private final String mInFileName = "InternalCommands.xml";
 	private static Object mLockPollRead = new Object();
 	
+	private static IntentFilter makeMsgIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_UPDATELIST);
+        return intentFilter;
+    }
+	
 	//Inner classes
-	BroadcastReceiver mBtnReceiver = new BroadcastReceiver() {
-
+	BroadcastReceiver mMsgeceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			final String action = intent.getAction();
-            
-			if(BLEUtility.ACTION_CONNSTATE_DISCONNECTED.equals(action))
+			if(ACTION_UPDATELIST.equals(action))
             {
-            	UIUtility.showProgressDlg(false, R.string.prgsDisconn);
-            	String message = intent.getStringExtra(BLEUtility.ACTION_CONNSTATE_DISCONNECTED_KEY);
-				Toast.makeText(mFaActivity, "Disconnected, cause = " + message, Toast.LENGTH_SHORT).show();
-            	mPreCmdToExecute = null;
-            	mFaActivity.updateUIForConn();
-            	setPullBKTask(false);
-                return;
+				if(mAdapter != null)
+					mAdapter.notifyDataSetChanged();
             }
-			else if(BLEUtility.ACTION_CONNSTATE_CONNECTING.equals(action))
-			{
-				UIUtility.showProgressDlg(true, R.string.prgsConnting);
-			}
-			else if(BLEUtility.ACTION_CONNSTATE_CONNECTED.equals(action))
-			{
-				UIUtility.showProgressDlg(false, R.string.prgsConnted);
-				IntegralSetting.setDeviceName(mPreDevice.getDeviceName());
-				IntegralSetting.setDeviceMACAddr(mPreDevice.getAddress());
-				mFaActivity.updateUIForConn();
-				Toast.makeText(mFaActivity, "Connected", Toast.LENGTH_SHORT).show();
-				if(mPreCmdToExecute != null)
-				{
-					executeCmd(mPreCmdToExecute);
-					mPreCmdToExecute = null;
-				}
-				else if(mReadAllCmd != null)
-					mReadAllCmd.doIt();
-				setPullBKTask(true);
-			}
-			else if(BLEUtility.ACTION_GET_LEDEVICE.equals(action))
-			{
-				BLEDevice integralDevice = (BLEDevice) intent.getSerializableExtra(BLEUtility.ACTION_GET_LEDEVICE_KEY);
-				if(integralDevice != null)
-				{
-					mLeDevices.add(integralDevice);
-					MyLog.d(mTAG, "Get le device , "+mLeDevices.size()+"=>[" + integralDevice.getAddress()+"]");
-				}
-			}
-			//Blew are commands relaive 
-			else if (BLEUtility.ACTION_SENCMD_BEGIN.equals(action)) 
-            {
-            	UIUtility.showProgressDlg(true, R.string.prgsSendingCmd);
-            }
-			else if(ACTION_SEND_CMD_OK.equals(action))
-			{
-				UIUtility.showProgressDlg(false, R.string.prgsSedingCmdOK);
-            	Toast.makeText(mFaActivity, R.string.prgsSedingCmdOK, Toast.LENGTH_SHORT).show();
-			}
-            else if(BLEUtility.ACTION_SENCMD_OK.equals(action)) 
-            {
-            	int [] idArr = intent.getIntArrayExtra(ACTION_GROUP_READ_OK_GETITEMID_KEY);
-            	String groupStatus = intent.getStringExtra(ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY);
-            	//update GroupItem first
-            	GroupItem groupItem = mAdapter.getGroup(idArr[0]);
-            	groupItem.mGroupResponse = (groupStatus == null) ? "" : groupStatus;
-            	groupItem.unCheckAllWrtChild();
-        		MyLog.d(mTAG, "Group item " + groupItem.mGroupTitle + " read OK.");
-        		
-            	//update ChildItem if needed
-            	ChildWrtChkItem childItem = null;
-            	if(idArr[1] >= 0 ) 
-            		childItem = (ChildWrtChkItem) mAdapter.getChild(idArr[0], idArr[1]) ;
-            	if(childItem != null)
-            	{
-            		childItem.mBIsChecked = true;
-            		MyLog.d(mTAG, "ChildWrtItem " + childItem.mTitle + " update OK.");
-            	}
-            	
-            	mAdapter.notifyDataSetChanged();
-            	UIUtility.showProgressDlg(false, R.string.prgsSedingCmdOK);
-            	Toast.makeText(mFaActivity, R.string.prgsSedingCmdOK, Toast.LENGTH_SHORT).show();
-            }
-            else if(BLEUtility.ACTION_SENCMD_FAIL.equals(action)) 
-            {
-            	UIUtility.showProgressDlg(false, R.string.prgsSedingCmdFail);
-            	Toast.makeText(mFaActivity, R.string.prgsSedingCmdFail, Toast.LENGTH_SHORT).show();
-            }
-            else if(BLEUtility.ACTION_SENCMD_SWFORCE.equals(action)) 
-            {
-            	UIUtility.showProgressDlg(false, R.string.prgsSedingCmdFail);
-            	AlertDialog.Builder builder = new AlertDialog.Builder(mFaActivity);
-    			builder.setTitle(R.string.AlertDlgMsgTitle);
-    			builder.setMessage(R.string.AlertDlgMsg);
-    			// Set up the buttons
-    			builder.setPositiveButton(R.string.InputDlgOK, new DialogInterface.OnClickListener() { 
-    			    @Override
-    			    public void onClick(DialogInterface dialog, int which) {
-    			    	dialog.cancel();
-    			    }
-    			});
-
-    			builder.show();
-            }
-            else if (BLEUtility.ACTION_SENCMD_READ.equals(action)) 
-            {
-            	UIUtility.showProgressDlg(true, R.string.prgsSedingReadCmd);
-            }
-            else if (ACTION_WRTREAD_WRT_BEG.equals(action)) 
-            {
-            	UIUtility.showProgressDlg(true, R.string.prgsSendingCmd);
-            }
-            else if(BLEUtility.ACTION_SENCMD_READ_CONTENT.equals(action))
-            {
-            	UIUtility.showProgressDlg(false, R.string.prgsSedingReadCmdOK);
-            	String message = intent.getStringExtra(BLEUtility.ACTION_SENCMD_READ_CONTENT_KEY);
-            	Toast.makeText(mFaActivity, "read cmd ok, response = " + message, Toast.LENGTH_SHORT).show();
-            }
-            else if(BLEUtility.ACTION_SENCMD_READ_FAIL.equals(action))
-            {
-            	UIUtility.showProgressDlg(false, R.string.prgsReadCmdFail);
-            	Toast.makeText(mFaActivity, R.string.prgsReadCmdFail, Toast.LENGTH_SHORT).show();
-            }
-            else if(ACTION_GROUP_READ_OK.equals(action))
-            {
-            	int [] idArr = intent.getIntArrayExtra(ACTION_GROUP_READ_OK_GETITEMID_KEY);
-            	String groupStatus = intent.getStringExtra(ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY);
-            	//update GroupItem first
-            	GroupItem groupItem = mAdapter.getGroup(idArr[0]);
-            	groupItem.mGroupResponse = groupStatus;
-            	groupItem.unCheckAllWrtChild();
-        		MyLog.d(mTAG, "Group item " + groupItem.mGroupTitle + " read OK.");
-        		
-            	//update ChildItem if needed
-        		ChildWrtChkItem childItem = null;
-            	if(idArr[1] >= 0 ) 
-            		childItem = (ChildWrtChkItem) mAdapter.getChild(idArr[0], idArr[1]) ;
-            	if(childItem != null)
-            	{
-            		childItem.mBIsChecked = true;
-            		MyLog.d(mTAG, "ChildWrtChkItem" + childItem.mTitle + " update OK.");
-            	}
-            	
-            	mAdapter.notifyDataSetChanged();
-            	if(mReadCount >= mGoalReadCount)
-            	{
-            		UIUtility.showProgressDlg(false, R.string.prgsReadConfigEnd);
-            		Toast.makeText(mFaActivity, R.string.prgsReadConfigEnd, Toast.LENGTH_SHORT).show();
-            	}
-            }
-            else if(ACTION_GROUP_READ_FAIL.equals(action))
-            {
-            	int [] idArr = intent.getIntArrayExtra(ACTION_GROUP_READ_FAIL_KEY);
-            	GroupItem groupItem =(GroupItem) mAdapter.getGroup(idArr[0]);
-            	if(groupItem != null)
-            	{
-            		MyLog.d(mTAG, "Group item " + groupItem.mGroupTitle + " read fail.");
-            		//Todo: log read fail cmd
-            	}
-            	mAdapter.notifyDataSetChanged();
-            	if(mReadCount >= mGoalReadCount)
-            	{
-            		UIUtility.showProgressDlg(false, R.string.prgsReadConfigEnd);
-            		Toast.makeText(mFaActivity, R.string.prgsReadConfigEnd, Toast.LENGTH_SHORT).show();
-            	}
-            }
-            else if(ACTION_WRTREAD_READ_UPDATE.equals(action)) {
-            	mAdapter.notifyDataSetChanged();
-            	if(mReadCount >= mGoalReadCount)
-            	{
-            		UIUtility.showProgressDlg(false, R.string.prgsReadConfigEnd);
-            		Toast.makeText(mFaActivity, R.string.prgsReadConfigEnd, Toast.LENGTH_SHORT).show();
-            	}
-            }
-            else if(ACTION_WRTREAD_READ_FAIL.equals(action)) {
-            	mAdapter.notifyDataSetChanged();
-            	if(mReadCount >= mGoalReadCount)
-            	{
-            		UIUtility.showProgressDlg(false, R.string.prgsReadConfigEnd);
-            		Toast.makeText(mFaActivity, R.string.prgsReadConfigEnd, Toast.LENGTH_SHORT).show();
-            	}
-            }
-            else if(ACTION_WRTREAD_WRT_UPDATE.equals(action)) {
-            	UIUtility.showProgressDlg(false, R.string.prgsSendingCmd);
-            	mAdapter.notifyDataSetChanged();
-            	Toast.makeText(mFaActivity, R.string.prgsSedingCmdOK, Toast.LENGTH_SHORT).show();
-            }
-            else if(ACTION_WRTREAD_WRT_FAIL.equals(action)) {
-            	UIUtility.showProgressDlg(false, R.string.prgsSendingCmd);
-            	mAdapter.notifyDataSetChanged();
-            	Toast.makeText(mFaActivity, R.string.prgsSedingCmdFail, Toast.LENGTH_SHORT).show();
-            }
-            else if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
-                int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
-                        BluetoothAdapter.ERROR);
-				if (state == BluetoothAdapter.STATE_OFF) 
-				{
-					BLEUtility.getInstance().disconnect();
-					setPullBKTask(false);
-				}
-			}
 		}
 	};
-	
+
 	private class GroupItem {
 		public int mID = -1;
 		private String mTag = "GroupItem";
@@ -343,8 +143,7 @@ public class ExpandaListActivity extends Fragment
 						mUIHanlder.post(new Runnable() {
 							@Override
 							public void run() {
-								final Intent brd = new Intent(ACTION_SEND_CMD_OK);
-						        mFaActivity.sendBroadcast(brd);
+								broadCastAction(BLEUtility.ACTION_SENCMD_OK);
 							}
 						});
 					}
@@ -396,6 +195,19 @@ public class ExpandaListActivity extends Fragment
 		private String mTag = "CanReadGroup";
 		private int mNExeSequence = -1;
 		private int mNTry = 1;
+		
+		private void doCheckReadItems() {
+			if(mReadCount >= mGoalReadCount)
+	    	{
+				mUIHanlder.post(new Runnable() {
+					@Override
+					public void run() {
+						broadCastAction(BLEUtility.ACTION_ITEM_READ_END);
+					}
+				});
+				mReadCount = 0;
+	    	}	
+		}
 	
 		public void doReadRsp()
 		{
@@ -436,20 +248,35 @@ public class ExpandaListActivity extends Fragment
 								{
 					    			++mReadCount;
 					    			mBIsOutofDate = false; 
-									MyLog.d(mTag, "doReadRsp, read ok, post ACTION_GROUP_READ_OK to UI, in thread = " + Thread.currentThread().getId());
+					    			//update GroupItem first
+					            	mGroupResponse = rdCmdStr.mResponseTitleString;
+					            	unCheckAllWrtChild();
+					        		MyLog.d(mTag, "Group item " + mGroupTitle + " read OK.");
+					        		
+					            	//update ChildItem if needed
+					        		ChildWrtChkItem childItem = (ChildWrtChkItem) mAdapter.getChild(mID, Integer.parseInt(rdCmdStr.mRefWrtCmdID)) ;
+					            	if(childItem != null)
+					            	{
+					            		childItem.mBIsChecked = true;
+					            		MyLog.d(mTAG, "ChildWrtChkItem" + childItem.mTitle + " update OK.");
+					            	}
+					            	
+					            	
+									MyLog.d(mTag, "doReadRsp, read ok, post ACTION_ITEM_READ_UPDATE to UI, in thread = " + Thread.currentThread().getId());
 									mUIHanlder.post(new Runnable() {
 										@Override
 										public void run() {
-											final Intent brd = new Intent(ACTION_GROUP_READ_OK);
-											brd.putExtra(ACTION_GROUP_READ_OK_GETITEMID_KEY, new int[] {mID, Integer.parseInt(rdCmdStr.mRefWrtCmdID)});
-											brd.putExtra(ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY, rdCmdStr.mResponseTitleString);
-									        mFaActivity.sendBroadcast(brd);
+											broadCastAction(BLEUtility.ACTION_ITEM_READ_UPDATE);
 										}
 									});
+									
+									doCheckReadItems();
+									
 									mLockSequence.notifyAll();
 									return;
 								}
 					    	}
+					    	
 					    	try {
 								Thread.sleep(500);
 							} catch (InterruptedException e) {
@@ -460,15 +287,15 @@ public class ExpandaListActivity extends Fragment
 			    		
 			    		++mReadCount;
 			    		mBIsOutofDate= true; 
-				    	MyLog.d(mTag, "doReadRsp, read fail, post ACTION_GROUP_READ_FAIL to UI, in thread = " + Thread.currentThread().getId());
+				    	MyLog.d(mTag, "doReadRsp, read fail, post ACTION_ITEM_READ_UPDATE to UI, in thread = " + Thread.currentThread().getId());
 						mUIHanlder.post(new Runnable() {
 							@Override
 							public void run() {
-								final Intent brd = new Intent(ACTION_GROUP_READ_FAIL);
-								brd.putExtra(ACTION_GROUP_READ_FAIL_KEY, new int[] {mID, -1});
-								mFaActivity.sendBroadcast(brd);
+								broadCastAction(BLEUtility.ACTION_ITEM_READ_UPDATE);
 							}
 						});
+						
+						doCheckReadItems();
 						mLockSequence.notifyAll();	
 			    	}
 				    }
@@ -523,17 +350,22 @@ public class ExpandaListActivity extends Fragment
 								}
 							}
 						}
-						final ReadCmdStructur readcmdStrTemp = readcmdStr;
 						
+						if(readcmdStr != null) {
+							//update GroupItem first
+							mParentItem.mGroupResponse = (readcmdStr.mResponseTitleString == null) ? "" : readcmdStr.mResponseTitleString;
+						}
+						mParentItem.unCheckAllWrtChild();
+		        		MyLog.d(mTag, "Group item " + mParentItem.mGroupTitle + " read OK.");
+		        		
+						mParentItem.mBIsOutofDate= false; 
+						mBIsChecked = true;
+		        		MyLog.d(mTag, mTitle + " update OK.");
+		        		
 						mUIHanlder.post(new Runnable() {
 							@Override
 							public void run() {
-								mParentItem.mBIsOutofDate= false; 
-								final Intent brd = new Intent(BLEUtility.ACTION_SENCMD_OK);
-								brd.putExtra(ACTION_GROUP_READ_OK_GETITEMID_KEY, new int[] {mParentItem.mID, mID});
-								if(readcmdStrTemp != null)
-									brd.putExtra(ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY, readcmdStrTemp.mResponseTitleString);
-						        mFaActivity.sendBroadcast(brd);
+								broadCastAction(BLEUtility.ACTION_SENCMD_OK);
 							}
 						});
 					}
@@ -684,9 +516,22 @@ public class ExpandaListActivity extends Fragment
 			}
 		}
 		
+		private void doCheckReadItems() {
+			if(mReadCount >= mGoalReadCount)
+	    	{
+				mUIHanlder.post(new Runnable() {
+					@Override
+					public void run() {
+						broadCastAction(BLEUtility.ACTION_ITEM_READ_END);
+					}
+				});
+				mReadCount = 0;
+	    	}	
+		}
+		
 		public void doWriteCmdAndReadRsp() {
 			MyLog.d(mTag, "doWriteCmdAndReadRsp begin");
-			broadCastAction(ACTION_WRTREAD_WRT_BEG);
+			broadCastAction(BLEUtility.ACTION_WRTREAD_WRT_BEG);
 			Thread workerThread = new Thread() {
 			    public void run() {
 			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd in thread" + Thread.currentThread().getId());
@@ -725,7 +570,7 @@ public class ExpandaListActivity extends Fragment
 						mUIHanlder.post(new Runnable() {
 							@Override
 							public void run() {
-								broadCastAction(ACTION_WRTREAD_WRT_UPDATE);
+								broadCastAction(BLEUtility.ACTION_WRTREAD_WRT_UPDATE);
 							}
 						});
 					}
@@ -735,7 +580,7 @@ public class ExpandaListActivity extends Fragment
 						mUIHanlder.post(new Runnable() {
 							@Override
 							public void run() {
-								broadCastAction(ACTION_WRTREAD_WRT_FAIL);
+								broadCastAction(BLEUtility.ACTION_WRTREAD_WRT_FAIL);
 							}
 						});
 					}
@@ -795,9 +640,10 @@ public class ExpandaListActivity extends Fragment
 							mUIHanlder.post(new Runnable() {
 								@Override
 								public void run() {
-									broadCastAction(ACTION_WRTREAD_READ_UPDATE);
+									broadCastAction(BLEUtility.ACTION_ITEM_READ_UPDATE);
 								}
 							});
+							doCheckReadItems();
 							mLockSequence.notifyAll();
 							return;
 						}
@@ -807,9 +653,10 @@ public class ExpandaListActivity extends Fragment
 					mUIHanlder.post(new Runnable() {
 						@Override
 						public void run() {
-							broadCastAction(ACTION_WRTREAD_READ_FAIL);
+							broadCastAction(BLEUtility.ACTION_ITEM_READ_UPDATE);
 						}
 					});
+					doCheckReadItems();
 					mLockSequence.notifyAll();
 			    }
 			    }
@@ -887,13 +734,11 @@ public class ExpandaListActivity extends Fragment
 					if(strRspCal.equals(mCommandRes) == true)
 					{
 						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd match response");
-						
+						mParentItem.mBIsOutofDate= false; 
 						mUIHanlder.post(new Runnable() {
 							@Override
 							public void run() {
-								mParentItem.mBIsOutofDate= false; 
-								final Intent brd = new Intent(ACTION_SEND_CMD_OK);
-						        mFaActivity.sendBroadcast(brd);
+								broadCastAction(BLEUtility.ACTION_SENCMD_OK);
 							}
 						});
 					}
@@ -1172,8 +1017,7 @@ public class ExpandaListActivity extends Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mFaActivity  = (MainActivity) super.getActivity();
 		mIntegralView = (View) inflater.inflate(R.layout.activity_expandable_list_view, container, false);
-		mFaActivity.registerReceiver(mBtnReceiver, makeServiceActionsIntentFilter());	
-		
+		mFaActivity.registerReceiver(mMsgeceiver, makeMsgIntentFilter());	
 		String devName = mFaActivity.getIntent().getStringExtra("DeviceName");
 		String devAddr = mFaActivity.getIntent().getStringExtra("DeviceAddr");
 		if(devName.length() > 0 && devAddr.length() > 0)
@@ -1218,30 +1062,11 @@ public class ExpandaListActivity extends Fragment
 		return mIntegralView;
 	}
 	
-	private static IntentFilter makeServiceActionsIntentFilter() {
-        final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BLEUtility.ACTION_SENCMD_BEGIN);
-        intentFilter.addAction(BLEUtility.ACTION_SENCMD_OK);
-        intentFilter.addAction(ACTION_SEND_CMD_OK);
-        intentFilter.addAction(BLEUtility.ACTION_SENCMD_FAIL);
-        intentFilter.addAction(BLEUtility.ACTION_SENCMD_SWFORCE);
-        intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ);
-        intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_CONTENT);
-        intentFilter.addAction(BLEUtility.ACTION_SENCMD_READ_FAIL);
-        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_CONNECTING);
-        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_CONNECTED);
-        intentFilter.addAction(BLEUtility.ACTION_CONNSTATE_DISCONNECTED);
-        intentFilter.addAction(BLEUtility.ACTION_GET_LEDEVICE);
-        intentFilter.addAction(ACTION_GROUP_READ_OK);
-        intentFilter.addAction(ACTION_GROUP_READ_FAIL);
-        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        intentFilter.addAction(ACTION_WRTREAD_READ_UPDATE);
-        intentFilter.addAction(ACTION_WRTREAD_READ_FAIL);
-        intentFilter.addAction(ACTION_WRTREAD_WRT_BEG);
-        intentFilter.addAction(ACTION_WRTREAD_WRT_UPDATE);
-        intentFilter.addAction(ACTION_WRTREAD_WRT_FAIL);
-        return intentFilter;
-    }
+	@Override
+	public void onDestroy() {
+		mFaActivity.unregisterReceiver(mMsgeceiver);
+		super.onDestroy();
+	}
 	
 	private void InitPage() {
 	    boolean bIsInFileExist = mFaActivity.getFileStreamPath(mInFileName).exists();
@@ -1514,7 +1339,7 @@ public class ExpandaListActivity extends Fragment
 				else if(BLEUtility.getInstance().isConnect() == false)
 				{
 					mPreCmdToExecute = childItem;
-					connectToIntegral();
+					mFaActivity.connectToIntegral();
 					return false;
 				}
 				
@@ -1604,75 +1429,16 @@ public class ExpandaListActivity extends Fragment
 		}
 	}
 	
-	public void connectToIntegral(){
-		if(BluetoothAdapter.getDefaultAdapter() != null && BluetoothAdapter.getDefaultAdapter().isEnabled() == true)
+	public void doThingsAfterConnted() {
+		if(mPreCmdToExecute != null)
 		{
-			if(IntegralSetting.getDeviceMACAddr().length() <= 0)
-			{
-				UIUtility.showProgressDlg(true, R.string.prgsScanDev);
-				mLeDevices.clear();
-				BLEUtility.getInstance().startScanLEDevices();
-				mScanPeriodHandler.postDelayed(new Runnable() {
-	                @Override
-	                public void run() {
-	                    BLEUtility.getInstance().stopScanLEDevices();
-	                    UIUtility.showProgressDlg(false, R.string.prgsScanNoDev);
-	                    if(mLeDevices.size() == 0)
-	                    {
-	                    	Toast.makeText(mFaActivity, R.string.prgsScanNoDev, Toast.LENGTH_SHORT).show();
-	                    }
-	                    else if(mLeDevices.size() == 1)
-	                    {
-	                    	BLEDevice device = mLeDevices.get(0);
-	                    	if(device != null)
-	                    	{
-	                    		mPreDevice = device;
-	                    		BLEUtility.getInstance().connect(device.getAddress());
-	                    	}
-	                    }
-	                    else //mLeDevices.size() > 1
-	                    {
-	                    	AlertDialog.Builder builderSingle = new AlertDialog.Builder(
-	                                mFaActivity);
-	                        builderSingle.setIcon(R.drawable.ic_icon);
-	                        builderSingle.setTitle(getResources().getString(R.string.dlgChooseIntegral));
-	                        builderSingle.setNegativeButton(getResources().getString(R.string.dlgCancel),
-	                                new DialogInterface.OnClickListener() {
-
-	                                    @Override
-	                                    public void onClick(DialogInterface dialog, int which) {
-	                                        dialog.dismiss();
-	                                    }
-	                                });
-	                        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-	                        		mFaActivity,
-	                                android.R.layout.select_dialog_singlechoice);
-	                        for(BLEDevice leDevice: mLeDevices)
-	                        	arrayAdapter.add(leDevice.getDeviceName() + " [" + leDevice.getAddress() + "]");
-
-	                        builderSingle.setAdapter(arrayAdapter,
-	                                new DialogInterface.OnClickListener() {
-
-	                                    @Override
-	                                    public void onClick(DialogInterface dialog, int which) {
-	                                        BLEDevice device = mLeDevices.get(which);
-	                                        mPreDevice = device;
-	                                        BLEUtility.getInstance().connect(device.getAddress());
-	                                    }
-	                                });
-	                        builderSingle.show();
-	                    }
-	                }
-	            }, SCAN_PERIOD);
-			}
-			else
-			{
-				mPreDevice = new BLEDevice(IntegralSetting.getDeviceName(), IntegralSetting.getDeviceMACAddr());
-				BLEUtility.getInstance().connect(IntegralSetting.getDeviceMACAddr());
-			}
-		}	
+			executeCmd(mPreCmdToExecute);
+			mPreCmdToExecute = null;
+		}
+		else if(mReadAllCmd != null)
+			mReadAllCmd.doIt();
+		setPullBKTask(true);	
 	}
-	
 
 	public void broadCastAction(String action)
 	{
@@ -1686,10 +1452,4 @@ public class ExpandaListActivity extends Fragment
 		brd.putExtra(key, message);
         mFaActivity.sendBroadcast(brd);
 	}	
-	
-	@Override
-	public void onDestroy() {
-		mFaActivity.unregisterReceiver(mBtnReceiver);
-		super.onDestroy();
-	}
 }

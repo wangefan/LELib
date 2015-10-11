@@ -124,4 +124,8 @@
               CheckedIcon2="&#xeb10;" UnCheckedIcon2="&#xeb0f;" Cmd2 = "CEC 0F:36" 
               CheckedIcon3="&#xeb10;" UnCheckedIcon3="&#xeb0f;" Cmd3 = "CEC 0F:36" 
               CheckedIcon4="&#xeb10;" UnCheckedIcon4="&#xeb0f;" Cmd4 = "CEC 0F:36" IsCEC="true"/>
+	<CmdGroup CheckedIcon1="&#xeb10;" UnCheckedIcon1="&#xeb0f;" Cmd1 = "CEC 0F:31" 
+				  CheckedIcon2="&#xeb10;" UnCheckedIcon2="&#xeb0f;" Cmd2 = "CEC 0F:36" 
+				  CheckedIcon3="&#xeb10;" UnCheckedIcon3="&#xeb0f;" Cmd3 = "CEC 0F:36" 
+				  CheckedIcon4="&#xeb10;" UnCheckedIcon4="&#xeb0f;" Cmd4 = "CEC 0F:36" IsCEC="true"/>			  
 </Commands>

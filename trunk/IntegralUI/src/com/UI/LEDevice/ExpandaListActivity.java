@@ -1434,9 +1434,14 @@ public class ExpandaListActivity extends Fragment
 			executeCmd(mPreCmdToExecute);
 			mPreCmdToExecute = null;
 		}
-		else if(mReadAllCmd != null)
-			mReadAllCmd.doIt();
+		else 
+			doReadAllStatus();
 		setPullBKTask(true);	
+	}
+	
+	public void doReadAllStatus() {
+		if(mReadAllCmd != null)
+			mReadAllCmd.doIt();
 	}
 
 	public void broadCastAction(String action)

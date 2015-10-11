@@ -68,9 +68,8 @@ public class MainActivity extends ActionBarActivity {
 				IntegralSetting.setDeviceMACAddr(mPreDevice.getAddress());
 				updateUIForConn();
 				Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
-				ExpandaListActivity integral = (ExpandaListActivity)selectItem(0, mDrawerItems.get(0).getTag());
-        		if(integral != null)
-        			integral.doThingsAfterConnted();
+        		if(mIntegral != null)
+        			mIntegral.doThingsAfterConnted();
 			}
 			else if(BLEUtility.ACTION_GET_LEDEVICE.equals(action))
 			{
@@ -177,6 +176,7 @@ public class MainActivity extends ActionBarActivity {
 	private Handler mScanPeriodHandler = new Handler();
 	private BLEDevice mPreDevice = null;
 	private ArrayList<BLEDevice> mLeDevices = new ArrayList<BLEDevice>();
+	private ExpandaListActivity mIntegral = null;
 	
 	//Member functions
 	public void updateUIForConn()
@@ -482,7 +482,8 @@ public class MainActivity extends ActionBarActivity {
 	private Fragment getFragmentByDrawerTag(int drawerTag) {
 		Fragment fragment;
 		if (drawerTag == DrawerItem.DRAWER_ITEM_Main) {
-			fragment = ExpandaListActivity.newInstance();
+			mIntegral = ExpandaListActivity.newInstance();
+			fragment = mIntegral;
 		} else {
 			fragment = new Fragment();
 		}

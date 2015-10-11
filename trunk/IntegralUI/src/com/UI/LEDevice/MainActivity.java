@@ -169,7 +169,6 @@ public class MainActivity extends ActionBarActivity {
 	private DrawerLayout mDrawerLayout;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private Menu mMenu = null;
-	private CharSequence mDrawerTitle;
 	private CharSequence mTitle;
 	private Handler mHandler;
 	private boolean mShouldFinish = false;
@@ -336,13 +335,13 @@ public class MainActivity extends ActionBarActivity {
 			}
 
 			public void onDrawerOpened(View drawerView) {
-				getSupportActionBar().setTitle(mDrawerTitle);
+				getSupportActionBar().setTitle(R.string.strAbout);
 				supportInvalidateOptionsMenu();
 			}
 		};
 		mDrawerToggle.setDrawerIndicatorEnabled(true);
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
-		mTitle = mDrawerTitle = getTitle();
+		mTitle = getTitle();
 		mDrawerList = (ListView) findViewById(R.id.list_view);
 
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,

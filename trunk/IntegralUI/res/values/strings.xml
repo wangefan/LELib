@@ -19,6 +19,7 @@
     <string name="strAutoConn">Auto</string>
     <string name="strConnActTitle">Set connection</string>
     <string name="strMainActivity">Integral</string>
+    <string name="strAbout">Integral Info</string>
     <string name="strSeatchIntegral">Search Devic</string>
     <string name="groupOutofDate">Fail</string>
     <string name="strMenuDisconnect">disconnect</string>

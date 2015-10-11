@@ -7,16 +7,20 @@ import android.view.WindowManager;
 
 public class UIUtility {
 	static private ProgressDialog mPDialog = null;
+	static private Context mContext;
 	static private Point mPrgDlgSize = new Point();
 	
 	//member functions
-	static public void showProgressDlg(Context context, boolean bShow, int messageID)
+	static public void init(Context context) {
+		mContext = context;
+	}
+	static public void showProgressDlg(boolean bShow, int messageID)
     {
     	if(bShow)
     	{
-    		mPDialog = new ProgressDialog(context, R.style.MyProgressDlg);
+    		mPDialog = new ProgressDialog(mContext, R.style.MyProgressDlg);
     		mPDialog.setCancelable(false); 
-    		mPDialog.setMessage(context.getText(messageID));
+    		mPDialog.setMessage(mContext.getText(messageID));
     		mPDialog.show();
     		
     		Point wndSize = new Point();

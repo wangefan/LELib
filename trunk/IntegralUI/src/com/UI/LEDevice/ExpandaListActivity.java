@@ -59,7 +59,6 @@ public class ExpandaListActivity extends Fragment
 {
 	//constant 
 	private final String mTAG = "ExpandaListActivity";
-	private final static int REQUEST_ENABLE_BT = 5;
 	private final static String ACTION_GROUP_READ_OK = "ACTION_GROUP_READ_OK";
 	private final static String ACTION_GROUP_READ_OK_GETITEMID_KEY = "ACTION_GROUP_READ_OK_GETITEMID_KEY";
 	private final static String ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY = "ACTION_GROUP_READ_OK_GETGRP_STATUS_KEY";
@@ -83,7 +82,7 @@ public class ExpandaListActivity extends Fragment
 	private ArrayList<ChildWrtReadItem> mListWrtReadCmds = new ArrayList<ChildWrtReadItem>();
 	private BLEDevice mPreDevice = null;
 	private ChildReadAllItem mReadAllCmd = null;
-	private ChildItem    mPreCmdToExecute = null;
+	public  ChildItem    mPreCmdToExecute = null;
 	private int mGoalReadCount = 0;
 	private int mReadCount = 0; 
 	private final String mInFileName = "InternalCommands.xml";
@@ -98,7 +97,7 @@ public class ExpandaListActivity extends Fragment
             
 			if(BLEUtility.ACTION_CONNSTATE_DISCONNECTED.equals(action))
             {
-            	UIUtility.showProgressDlg(mFaActivity, false, R.string.prgsDisconn);
+            	UIUtility.showProgressDlg(false, R.string.prgsDisconn);
             	String message = intent.getStringExtra(BLEUtility.ACTION_CONNSTATE_DISCONNECTED_KEY);
 				Toast.makeText(mFaActivity, "Disconnected, cause = " + message, Toast.LENGTH_SHORT).show();
             	mPreCmdToExecute = null;
@@ -108,11 +107,11 @@ public class ExpandaListActivity extends Fragment
             }
 			else if(BLEUtility.ACTION_CONNSTATE_CONNECTING.equals(action))
 			{
-				UIUtility.showProgressDlg(mFaActivity, true, R.string.prgsConnting);
+				UIUtility.showProgressDlg(true, R.string.prgsConnting);
 			}
 			else if(BLEUtility.ACTION_CONNSTATE_CONNECTED.equals(action))
 			{
-				UIUtility.showProgressDlg(mFaActivity, false, R.string.prgsConnted);
+				UIUtility.showProgressDlg(false, R.string.prgsConnted);
 				IntegralSetting.setDeviceName(mPreDevice.getDeviceName());
 				IntegralSetting.setDeviceMACAddr(mPreDevice.getAddress());
 				mFaActivity.updateUIForConn();
@@ -138,11 +137,11 @@ public class ExpandaListActivity extends Fragment
 			//Blew are commands relaive 
 			else if (BLEUtility.ACTION_SENCMD_BEGIN.equals(action)) 
             {
-            	UIUtility.showProgressDlg(mFaActivity, true, R.string.prgsSendingCmd);
+            	UIUtility.showProgressDlg(true, R.string.prgsSendingCmd);
             }
 			else if(ACTION_SEND_CMD_OK.equals(action))
 			{
-				UIUtility.showProgressDlg(mFaActivity, false, R.string.prgsSedingCmdOK);
+				UIUtility.showProgressDlg(false, R.string.prgsSedingCmdOK);
             	Toast.makeText(mFaActivity, R.string.prgsSedingCmdOK, Toast.LENGTH_SHORT).show();
 			}
             else if(BLEUtility.ACTION_SENCMD_OK.equals(action)) 
@@ -166,17 +165,17 @@ public class ExpandaListActivity extends Fragment
             	}
             	
             	mAdapter.notifyDataSetChanged();
-            	UIUtility.showProgressDlg(mFaActivity, false, R.string.prgsSedingCmdOK);
+            	UIUtility.showProgressDlg(false, R.string.prgsSedingCmdOK);
             	Toast.makeText(mFaActivity, R.string.prgsSedingCmdOK, Toast.LENGTH_SHORT).show();
             }
             else if(BLEUtility.ACTION_SENCMD_FAIL.equals(action)) 
             {
-            	UIUtility.showProgressDlg(mFaActivity, false, R.string.prgsSedingCmdFail);
+            	UIUtility.showProgressDlg(false, R.string.prgsSedingCmdFail);
             	Toast.makeText(mFaActivity, R.string.prgsSedingCmdFail, Toast.LENGTH_SHORT).show();
             }
             else if(BLEUtility.ACTION_SENCMD_SWFORCE.equals(action)) 
             {
-            	UIUtility.showProgressDlg(mFaActivity, false, R.string.prgsSedingCmdFail);
+            	UIUtility.showProgressDlg(false, R.string.prgsSedingCmdFail);
             	AlertDialog.Builder builder = new AlertDialog.Builder(mFaActivity);
     			builder.setTitle(R.string.AlertDlgMsgTitle);
     			builder.setMessage(R.string.AlertDlgMsg);
@@ -192,21 +191,21 @@ public class ExpandaListActivity extends Fragment
             }
             else if (BLEUtility.ACTION_SENCMD_READ.equals(action)) 
             {
-            	UIUtility.showProgressDlg(mFaActivity, true, R.string.prgsSedingReadCmd);
+            	UIUtility.showProgressDlg(true, R.string.prgsSedingReadCmd);
             }
             else if (ACTION_WRTREAD_WRT_BEG.equals(action)) 
             {
-            	UIUtility.showProgressDlg(mFaActivity, true, R.string.prgsSendingCmd);
+            	UIUtility.showProgressDlg(true, R.string.prgsSendingCmd);
             }
             else if(BLEUtility.ACTION_SENCMD_READ_CONTENT.equals(action))
             {
-            	UIUtility.showProgressDlg(mFaActivity, false, R.string.prgsSedingReadCmdOK);
+            	UIUtility.showProgressDlg(false, R.string.prgsSedingReadCmdOK);
             	String message = intent.getStringExtra(BLEUtility.ACTION_SENCMD_READ_CONTENT_KEY);
             	Toast.makeText(mFaActivity, "read cmd ok, response = " + message, Toast.LENGTH_SHORT).show();
             }
             else if(BLEUtility.ACTION_SENCMD_READ_FAIL.equals(action))
             {
-            	UIUtility.showProgressDlg(mFaActivity, false, R.string.prgsReadCmdFail);
+            	UIUtility.showProgressDlg(false, R.string.prgsReadCmdFail);
             	Toast.makeText(mFaActivity, R.string.prgsReadCmdFail, Toast.LENGTH_SHORT).show();
             }
             else if(ACTION_GROUP_READ_OK.equals(action))
@@ -232,7 +231,7 @@ public class ExpandaListActivity extends Fragment
             	mAdapter.notifyDataSetChanged();
             	if(mReadCount >= mGoalReadCount)
             	{
-            		UIUtility.showProgressDlg(mFaActivity, false, R.string.prgsReadConfigEnd);
+            		UIUtility.showProgressDlg(false, R.string.prgsReadConfigEnd);
             		Toast.makeText(mFaActivity, R.string.prgsReadConfigEnd, Toast.LENGTH_SHORT).show();
             	}
             }
@@ -248,7 +247,7 @@ public class ExpandaListActivity extends Fragment
             	mAdapter.notifyDataSetChanged();
             	if(mReadCount >= mGoalReadCount)
             	{
-            		UIUtility.showProgressDlg(mFaActivity, false, R.string.prgsReadConfigEnd);
+            		UIUtility.showProgressDlg(false, R.string.prgsReadConfigEnd);
             		Toast.makeText(mFaActivity, R.string.prgsReadConfigEnd, Toast.LENGTH_SHORT).show();
             	}
             }
@@ -256,7 +255,7 @@ public class ExpandaListActivity extends Fragment
             	mAdapter.notifyDataSetChanged();
             	if(mReadCount >= mGoalReadCount)
             	{
-            		UIUtility.showProgressDlg(mFaActivity, false, R.string.prgsReadConfigEnd);
+            		UIUtility.showProgressDlg(false, R.string.prgsReadConfigEnd);
             		Toast.makeText(mFaActivity, R.string.prgsReadConfigEnd, Toast.LENGTH_SHORT).show();
             	}
             }
@@ -264,17 +263,17 @@ public class ExpandaListActivity extends Fragment
             	mAdapter.notifyDataSetChanged();
             	if(mReadCount >= mGoalReadCount)
             	{
-            		UIUtility.showProgressDlg(mFaActivity, false, R.string.prgsReadConfigEnd);
+            		UIUtility.showProgressDlg(false, R.string.prgsReadConfigEnd);
             		Toast.makeText(mFaActivity, R.string.prgsReadConfigEnd, Toast.LENGTH_SHORT).show();
             	}
             }
             else if(ACTION_WRTREAD_WRT_UPDATE.equals(action)) {
-            	UIUtility.showProgressDlg(mFaActivity, false, R.string.prgsSendingCmd);
+            	UIUtility.showProgressDlg(false, R.string.prgsSendingCmd);
             	mAdapter.notifyDataSetChanged();
             	Toast.makeText(mFaActivity, R.string.prgsSedingCmdOK, Toast.LENGTH_SHORT).show();
             }
             else if(ACTION_WRTREAD_WRT_FAIL.equals(action)) {
-            	UIUtility.showProgressDlg(mFaActivity, false, R.string.prgsSendingCmd);
+            	UIUtility.showProgressDlg(false, R.string.prgsSendingCmd);
             	mAdapter.notifyDataSetChanged();
             	Toast.makeText(mFaActivity, R.string.prgsSedingCmdFail, Toast.LENGTH_SHORT).show();
             }
@@ -827,7 +826,7 @@ public class ExpandaListActivity extends Fragment
 		public void doIt()
 		{
 			MyLog.d(mTag, "Read config begin");
-			UIUtility.showProgressDlg(mFaActivity, true, R.string.prgsReadConfig);
+			UIUtility.showProgressDlg(true, R.string.prgsReadConfig);
 			mReadCount = 0;
 			for(int idxGroup = 0; idxGroup < mAdapter.getGroupCount(); ++idxGroup)
 			{
@@ -1507,7 +1506,7 @@ public class ExpandaListActivity extends Fragment
 					int groupPosition, int childPosition, long id) {
 				
 				ChildItem childItem = mAdapter.getChild(groupPosition, childPosition);
-				if(needRequestBT() == true)
+				if(mFaActivity.needRequestBT() == true)
 				{
 					mPreCmdToExecute = childItem;
 					return false;
@@ -1538,24 +1537,6 @@ public class ExpandaListActivity extends Fragment
 		} else {
 			mListView.setIndicatorBoundsRelative(width - px, width);
 		}
-		
-		requestBTOrConn();
-	}
-	
-	private boolean needRequestBT() {
-		if((BluetoothAdapter.getDefaultAdapter() == null || BluetoothAdapter.getDefaultAdapter().isEnabled() == false))
-		{
-			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-	        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-	        return true;
-		}	
-		return false;
-	}
-	
-	public void requestBTOrConn() {
-		if(needRequestBT() == true)
-			return;
-		connectToIntegral();
 	}
 	
 	private boolean executeCmd(ChildItem childItem){
@@ -1623,19 +1604,19 @@ public class ExpandaListActivity extends Fragment
 		}
 	}
 	
-	private void connectToIntegral(){
+	public void connectToIntegral(){
 		if(BluetoothAdapter.getDefaultAdapter() != null && BluetoothAdapter.getDefaultAdapter().isEnabled() == true)
 		{
 			if(IntegralSetting.getDeviceMACAddr().length() <= 0)
 			{
-				UIUtility.showProgressDlg(mFaActivity, true, R.string.prgsScanDev);
+				UIUtility.showProgressDlg(true, R.string.prgsScanDev);
 				mLeDevices.clear();
 				BLEUtility.getInstance().startScanLEDevices();
 				mScanPeriodHandler.postDelayed(new Runnable() {
 	                @Override
 	                public void run() {
 	                    BLEUtility.getInstance().stopScanLEDevices();
-	                    UIUtility.showProgressDlg(mFaActivity, false, R.string.prgsScanNoDev);
+	                    UIUtility.showProgressDlg(false, R.string.prgsScanNoDev);
 	                    if(mLeDevices.size() == 0)
 	                    {
 	                    	Toast.makeText(mFaActivity, R.string.prgsScanNoDev, Toast.LENGTH_SHORT).show();
@@ -1711,23 +1692,4 @@ public class ExpandaListActivity extends Fragment
 		mFaActivity.unregisterReceiver(mBtnReceiver);
 		super.onDestroy();
 	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-       	case REQUEST_ENABLE_BT:
-       	{
-       		if(resultCode == Activity.RESULT_OK ) 
-        	{
-       			connectToIntegral();
-        	}
-       		else if(resultCode == Activity.RESULT_CANCELED)
-       		{
-       			mPreCmdToExecute = null;
-       		}
-       	}
-       	break;
-       }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 }

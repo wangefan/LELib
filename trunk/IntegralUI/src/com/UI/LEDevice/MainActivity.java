@@ -6,6 +6,10 @@ import java.util.List;
 import com.BLE.BLEUtility.BLEUtility;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,20 +29,21 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
+	//constant 
+	private final static int REQUEST_ENABLE_BT = 5;
 
+	//data members
 	private ListView mDrawerList;
 	private List<DrawerItem> mDrawerItems;
 	private DrawerLayout mDrawerLayout;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private Menu mMenu = null;
-
 	private CharSequence mDrawerTitle;
 	private CharSequence mTitle;
-
 	private Handler mHandler;
-
 	private boolean mShouldFinish = false;
 	
+	//Member functions
 	public void updateUIForConn()
 	{
 		if(BLEUtility.getInstance().isConnect())
@@ -52,7 +57,35 @@ public class MainActivity extends ActionBarActivity {
 				mMenu.findItem(R.id.menu_connect).setTitle(R.string.menu_conn);
 		}
 	}
+	
+	public boolean needRequestBT() {
+		if((BluetoothAdapter.getDefaultAdapter() == null || BluetoothAdapter.getDefaultAdapter().isEnabled() == false))
+		{
+			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+	        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+	        return true;
+		}	
+		return false;
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+       	case REQUEST_ENABLE_BT:
+       	{
+       		if(resultCode == Activity.RESULT_OK ) 
+        	{
+       			ExpandaListActivity integral = (ExpandaListActivity)selectItem(0, mDrawerItems.get(0).getTag());
+        		if(integral != null)
+        			integral.connectToIntegral();
+        	}
+       	}
+       	break;
+       }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
+	//Overrride functions
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -91,10 +124,14 @@ public class MainActivity extends ActionBarActivity {
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 		mHandler = new Handler();
+		UIUtility.init(this);
 
 		if (savedInstanceState == null) {
-			int position = 0;
-			selectItem(position, mDrawerItems.get(position).getTag());
+			ExpandaListActivity integral = (ExpandaListActivity)selectItem(0, mDrawerItems.get(0).getTag());
+			if(needRequestBT() == false) {
+	    		if(integral != null)
+	    			integral.connectToIntegral();	
+			}
 		}
 	}
 	
@@ -149,6 +186,7 @@ public class MainActivity extends ActionBarActivity {
 		inflater.inflate(R.menu.main, menu);
 		menu.findItem(R.id.menu_connect).setVisible(true);
 		mMenu = menu;
+		updateUIForConn();
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -174,11 +212,12 @@ public class MainActivity extends ActionBarActivity {
         	if(tle.compareTo(getResources().getString(R.string.menu_disconn)) == 0)
         		BLEUtility.getInstance().disconnect();
         	else if(tle.compareTo(getResources().getString(R.string.menu_conn)) == 0) {
-        		Fragment integral = selectItem(0, mDrawerItems.get(0).getTag());
-        		if(((ExpandaListActivity)integral) != null)
-        			((ExpandaListActivity)integral).requestBTOrConn();
+        		ExpandaListActivity integral = (ExpandaListActivity) selectItem(0, mDrawerItems.get(0).getTag());
+        		if(needRequestBT() == false) {
+            		if(integral != null)
+            			integral.connectToIntegral();
+        		}
         	}
-        		
         }
         break;
         case R.id.menu_clearConn:

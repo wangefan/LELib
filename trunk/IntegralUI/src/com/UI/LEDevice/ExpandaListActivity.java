@@ -491,8 +491,7 @@ public class ExpandaListActivity extends Fragment
 		public String mCommand2 = "";
 		public String mResponseTitle = "";
 		public boolean mBIsOutofDate = false; 
-		public boolean mBIsStatus1 = false; //true: status1, false:status2 
-		public String mCommandRes = "";
+		public boolean mBIsStatus1 = false; //true: status1, false:status2 		
 		public int mNExeSequence = -1;
 		
 		public List<ReadCmdStructur> mCommandResColl = new ArrayList<ReadCmdStructur>();
@@ -562,7 +561,12 @@ public class ExpandaListActivity extends Fragment
 			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, read from integral hex = " + strRspHex);
 			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, read after CRC = " + strRspCal);
 			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, read after CRC hex = " + strRspCalHex);
-			    	if(strRspCal.equals(mCommandRes) == true)
+			    	String commandRes = "";
+			    	if(mBIsStatus1)
+			    		commandRes = mCommand2;
+			    	else
+			    		commandRes = mCommand1;
+			    	if(strRspCal.equals(commandRes) == true)
 					{
 						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd match response");
 						updateStatus(!mBIsStatus1);
@@ -1271,7 +1275,6 @@ public class ExpandaListActivity extends Fragment
 		    			command.mCommand = cmdNode.getAttributes().getNamedItem("ReadCmd").getNodeValue();
 		    			((ChildWrtReadItem)command).mCommand1 = cmdNode.getAttributes().getNamedItem("Cmd1").getNodeValue();
 		    			((ChildWrtReadItem)command).mCommand2 = cmdNode.getAttributes().getNamedItem("Cmd2").getNodeValue();
-		    			((ChildWrtReadItem)command).mCommandRes = cmdNode.getAttributes().getNamedItem("CmdRes").getNodeValue();
 		    			((ChildWrtReadItem)command).mNExeSequence = Integer.parseInt(cmdNode.getAttributes().getNamedItem("Sequence").getNodeValue());
 		    			for(int idxCmdRes = 0; idxCmdRes < cmdNode.getChildNodes().getLength(); ++idxCmdRes) { 
 				    		Node cmdResNode = cmdNode.getChildNodes().item(idxCmdRes); 

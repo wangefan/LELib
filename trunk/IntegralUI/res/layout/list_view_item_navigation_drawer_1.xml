@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.UI.LEDevice.MaterialRippleLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.UI.LEDevice"
     style="@style/RippleStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -21,17 +20,19 @@
             style="@style/TextViewAppearance.Title1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="18dp"
-            android:textColor="@drawable/selector_text_empty" />
+            android:gravity="center_vertical"
+            android:padding="8dp"
+            android:textColor="@color/main_color_grey_700" 
+            android:textSize="22sp"/>
 
         <com.UI.font.RobotoTextView
             android:id="@+id/title"
-            style="@style/TextViewAppearance.Body1"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="6dp"
-            android:textColor="@drawable/selector_text_empty"
-            app:typeface="robotoBold" />
+            android:gravity="center_vertical"
+	        android:padding="8dp"
+	        android:textColor="@color/main_color_grey_700"
+	        android:textSize="18sp" />
     </LinearLayout>
 
 </com.UI.LEDevice.MaterialRippleLayout>

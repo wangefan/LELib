@@ -491,14 +491,14 @@ public class ExpandaListActivity extends Fragment
 		public String mCommand2 = "";
 		public String mResponseTitle = "";
 		public boolean mBIsOutofDate = false; 
-		public boolean mBIsStatus1 = true; //true: status1, false:status2 
+		public boolean mBIsStatus1 = false; //true: status1, false:status2 
 		public String mCommandRes = "";
 		public int mNExeSequence = -1;
 		
 		public List<ReadCmdStructur> mCommandResColl = new ArrayList<ReadCmdStructur>();
 		
 		public ChildWrtReadItem() {
-			updateStatus(true);
+			updateStatus(false);
 		}
 		
 		public String getStatusTitle() {

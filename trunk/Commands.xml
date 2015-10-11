@@ -6,15 +6,15 @@
 		</WriteCmd>
 		<ReadAllCmd Title="Read Config" Cmd="" Icon="&#xe8d0;">
 		</ReadAllCmd>
-		<WrtReadCmd Title="CEC Broadcast" Cmd1="cec on" Cmd2="cec off" CmdRes="ok" ReadCmd = "cec" Sequence = "6">
+		<WrtReadCmd Title="CEC Broadcast" Cmd1="cec on" Cmd2="cec off" ReadCmd = "cec" Sequence = "6">
 			<ReadRes Title="CEC On">cec on</ReadRes>
 			<ReadRes Title="CEC Off">cec off</ReadRes>
 		</WrtReadCmd>
-		<WrtReadCmd Title="Power" Cmd1="pwr on" Cmd2="pwr off" CmdRes="ok" ReadCmd = "power" Sequence = "7">
+		<WrtReadCmd Title="Power" Cmd1="pwr on" Cmd2="pwr off" ReadCmd = "power" Sequence = "7">
 			<ReadRes Title="Power On">power on</ReadRes>
 			<ReadRes Title="Power Off">power off</ReadRes>
 		</WrtReadCmd>
-		<WrtReadCmd Title="Auto Switch" Cmd1="autosw on" Cmd2="autosw off" CmdRes="ok" ReadCmd = "autosw" Sequence = "8">
+		<WrtReadCmd Title="Auto Switch" Cmd1="autosw on" Cmd2="autosw off" ReadCmd = "autosw" Sequence = "8">
 			<ReadRes Title="Auto Switch On">autosw on</ReadRes>
 			<ReadRes Title="Auto Switch Off">autosw off</ReadRes>
 		</WrtReadCmd>
@@ -29,6 +29,12 @@
 		<WriteCmdChk Title="Channel/Input 2" Cmd="insel 2">
 			<CmdResOK>ok</CmdResOK>
 		</WriteCmdChk>
+		<WriteCmdChk Title="Channel/Input 3" Cmd="insel 3">
+			<CmdResOK>ok</CmdResOK>
+		</WriteCmdChk>		
+		<WriteCmdChk Title="Channel/Input 4" Cmd="insel 4">
+			<CmdResOK>ok</CmdResOK>
+		</WriteCmdChk>		
 		<ReadCmd Title="Read Channel" Cmd="insel">
 			<CmdRes Title="Input 1" refWmdID = "0">insel 1</CmdRes>
 			<CmdRes Title="Input 2" refWmdID = "1">insel 2</CmdRes>
@@ -58,7 +64,7 @@
 			<CmdResOK>ok</CmdResOK>
 			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
-		<WrtReadCmd Title="Mute All Sound" Cmd1="mute on" Cmd2="mute off" CmdRes="ok" ReadCmd = "mute" Sequence = "9">
+		<WrtReadCmd Title="Mute All Sound" Cmd1="mute on" Cmd2="mute off" ReadCmd = "mute" Sequence = "9">
 			<ReadRes Title="Mute On">mute on</ReadRes>
 			<ReadRes Title="Mute Off">mute off</ReadRes>
 		</WrtReadCmd>
@@ -101,10 +107,10 @@
     </CmdGroup>
     <CmdGroup Title="Play with CEC" Icon="&#xe860;" CanRead="true" Sequence="5" Try="1">
 	    <WriteCmdChk Title="Turn Everything On" Cmd="cec on">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
 		</WriteCmdChk>
 	    <WriteCmdChk Title="Turn Everything Off" Cmd="cec off">
-			<CmdRes>ok</CmdRes>
+			<CmdResOK>ok</CmdResOK>
 		</WriteCmdChk>
 		<WriteCECCmd Title="Play CEC Command" Cmd="CEC 0F:36" Icon="&#xea9d;">
 			<CmdRes>ok</CmdRes>
@@ -114,14 +120,8 @@
 			<CmdRes Title="Off" refWmdID = "1">cec off</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-    <CmdGroup NormalImage1 ="cec1_nor.png" PressedImage1 = "cec1_press.png" Cmd1 = "CEC 0F:1" 
-              NormalImage2 ="cec2_nor.png" PressedImage2 = "cec2_press.png" Cmd2 = "CEC 0F:2" 
-              NormalImage3 ="cec3_nor.png" PressedImage3 = "cec3_press.png" Cmd3 = "CEC 0F:3" 
-              NormalImage4 ="cec4_nor.png" PressedImage4 = "cec4_press.png" Cmd4 = "CEC 0F:4" 
-              IsCEC="true"/>
-    <CmdGroup NormalImage1 ="cec4_nor_.png" PressedImage1 = "cec4_press_.png" Cmd1 = "CEC 0F:5" 
-              NormalImage2 ="cec3_nor_.png" PressedImage2 = "cec3_press_.png" Cmd2 = "CEC 0F:6" 
-              NormalImage3 ="cec2_nor_.png" PressedImage3 = "cec2_press_.png" Cmd3 = "CEC 0F:7" 
-              NormalImage4 ="cec1_nor_.png" PressedImage4 = "cec1_press_.png" Cmd4 = "CEC 0F:8" 
-              IsCEC="true"/>
+    <CmdGroup CheckedIcon1="&#xeb10;" UnCheckedIcon1="&#xeb0f;" Cmd1 = "CEC 0F:31" 
+              CheckedIcon2="&#xeb10;" UnCheckedIcon2="&#xeb0f;" Cmd2 = "CEC 0F:36" 
+              CheckedIcon3="&#xeb10;" UnCheckedIcon3="&#xeb0f;" Cmd3 = "CEC 0F:36" 
+              CheckedIcon4="&#xeb10;" UnCheckedIcon4="&#xeb0f;" Cmd4 = "CEC 0F:36" IsCEC="true"/>
 </Commands>

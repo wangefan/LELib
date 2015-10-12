@@ -6,15 +6,15 @@
 		</WriteCmd>
 		<ReadAllCmd Title="Read Config" Cmd="" Icon="&#xe8d0;">
 		</ReadAllCmd>
-		<WrtReadCmd Title="CEC Broadcast" Cmd1="cec on" Cmd2="cec off" ReadCmd = "cec" Sequence = "6">
+		<WrtReadCmd Title="CEC Broadcast" Cmd1="cec on" Cmd2="cec off" CmdRes="ok" ReadCmd = "cec" Sequence = "6">
 			<ReadRes Title="CEC On">cec on</ReadRes>
 			<ReadRes Title="CEC Off">cec off</ReadRes>
 		</WrtReadCmd>
-		<WrtReadCmd Title="Power" Cmd1="pwr on" Cmd2="pwr off" ReadCmd = "power" Sequence = "7">
+		<WrtReadCmd Title="Power" Cmd1="pwr on" Cmd2="pwr off" CmdRes="ok" ReadCmd = "power" Sequence = "7">
 			<ReadRes Title="Power On">power on</ReadRes>
 			<ReadRes Title="Power Off">power off</ReadRes>
 		</WrtReadCmd>
-		<WrtReadCmd Title="Auto Switch" Cmd1="autosw on" Cmd2="autosw off" ReadCmd = "autosw" Sequence = "8">
+		<WrtReadCmd Title="Auto Switch" Cmd1="autosw on" Cmd2="autosw off" CmdRes="ok" ReadCmd = "autosw" Sequence = "8">
 			<ReadRes Title="Auto Switch On">autosw on</ReadRes>
 			<ReadRes Title="Auto Switch Off">autosw off</ReadRes>
 		</WrtReadCmd>
@@ -64,7 +64,7 @@
 			<CmdResOK>ok</CmdResOK>
 			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
-		<WrtReadCmd Title="Mute All Sound" Cmd1="mute on" Cmd2="mute off" ReadCmd = "mute" Sequence = "9">
+		<WrtReadCmd Title="Mute All Sound" Cmd1="mute on" Cmd2="mute off" CmdRes="ok" ReadCmd = "mute" Sequence = "9">
 			<ReadRes Title="Mute On">mute on</ReadRes>
 			<ReadRes Title="Mute Off">mute off</ReadRes>
 		</WrtReadCmd>

@@ -90,7 +90,6 @@ public class ExpandaListActivity extends Fragment
 
 	private class GroupItem {
 		public int mID = -1;
-		private String mTag = "GroupItem";
 		public String mGroupTitle = "";
 		public String mGroupResponse = "";
 		public boolean mBIsOutofDate = false;
@@ -112,80 +111,6 @@ public class ExpandaListActivity extends Fragment
 			for(ChildItem childItem: items)
 				if(childItem instanceof ChildWrtChkItem)
 					((ChildWrtChkItem)childItem).mBIsChecked = false;
-		}
-	}
-	
-	private class CECGroup extends GroupItem {
-		private String mTag = "CECGroup";
-		public  String [] mCECCmd = new String []{"", "", "", ""};
-		public  String [] mCECCheckedIcon = new String []{"", "", "", ""};
-		public  String [] mCECUnCheckedIcon = new String []{"", "", "", ""};
-		public  String [] mCurIcon = new String []{"", "", "", ""};
-		
-		private void doWriteCmdAndReadRsp(final int nCEC) {
-			MyLog.d(mTag, "doWriteCmdAndReadRsp begin");
-			broadCastAction(BLEUtility.ACTION_SENCMD_BEGIN);
-			
-			Thread workerThread = new Thread() {
-			    public void run() {
-			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd in thread" + Thread.currentThread().getId());
-			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write CEC cmd = " + mCECCmd[nCEC]);
-			    	byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(mCECCmd[nCEC], true));
-			    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
-			    	String strRspCal = "";
-			    	if(rspCal != null)
-			    		strRspCal = new String(rspCal);
-					if(strRspCal.equals("ok") == true)
-					{
-						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd match response");
-						mCurIcon[nCEC] = mCECCheckedIcon[nCEC];
-						mUIHanlder.post(new Runnable() {
-							@Override
-							public void run() {
-								broadCastAction(BLEUtility.ACTION_SENCMD_OK);
-							}
-						});
-					}
-					else
-					{
-						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd not match response");
-						mCurIcon[nCEC] = mCECUnCheckedIcon[nCEC];
-						mUIHanlder.post(new Runnable() {
-							@Override
-							public void run() {
-								broadCastAction(BLEUtility.ACTION_SENCMD_FAIL);
-							}
-						});
-					}
-			    }
-			};
-			workerThread.start();
-		}
-		
-		public void setCEC(final int nCEC, FontelloTextView ibCEC) {
-			ibCEC.setText(mCurIcon[nCEC]);
-	    	ibCEC.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View arg0) {
-					doWriteCmdAndReadRsp(nCEC);
-				}
-	    	});
-		}
-		
-		public void setCEC1(FontelloTextView ibCEC1) {
-			setCEC(0, ibCEC1);
-		}
-		
-		public void setCEC2(FontelloTextView ibCEC2) {
-			setCEC(1, ibCEC2);
-		}
-		
-		public void setCEC3(FontelloTextView ibCEC3) {
-			setCEC(2, ibCEC3);
-		}
-		
-		public void setCEC4(FontelloTextView ibCEC4) {
-			setCEC(3, ibCEC4);
 		}
 	}
 	
@@ -311,6 +236,80 @@ public class ExpandaListActivity extends Fragment
 		public int mID = -1;
 		public String mTitle;
 		public String mCommand = "";
+	}
+	
+	private class CECChildItem extends ChildItem {
+		private String mTag = "CECChildItem";
+		public  String [] mCECCmd = new String []{"", "", "", ""};
+		public  String [] mCECCheckedIcon = new String []{"", "", "", ""};
+		public  String [] mCECUnCheckedIcon = new String []{"", "", "", ""};
+		public  String [] mCurIcon = new String []{"", "", "", ""};
+		
+		private void doWriteCmdAndReadRsp(final int nCEC) {
+			MyLog.d(mTag, "doWriteCmdAndReadRsp begin");
+			broadCastAction(BLEUtility.ACTION_SENCMD_BEGIN);
+			
+			Thread workerThread = new Thread() {
+			    public void run() {
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd in thread" + Thread.currentThread().getId());
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write CEC cmd = " + mCECCmd[nCEC]);
+			    	byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(mCECCmd[nCEC], true));
+			    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
+			    	String strRspCal = "";
+			    	if(rspCal != null)
+			    		strRspCal = new String(rspCal);
+					if(strRspCal.equals("ok") == true)
+					{
+						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd match response");
+						mCurIcon[nCEC] = mCECCheckedIcon[nCEC];
+						mUIHanlder.post(new Runnable() {
+							@Override
+							public void run() {
+								broadCastAction(BLEUtility.ACTION_SENCMD_OK);
+							}
+						});
+					}
+					else
+					{
+						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd not match response");
+						mCurIcon[nCEC] = mCECUnCheckedIcon[nCEC];
+						mUIHanlder.post(new Runnable() {
+							@Override
+							public void run() {
+								broadCastAction(BLEUtility.ACTION_SENCMD_FAIL);
+							}
+						});
+					}
+			    }
+			};
+			workerThread.start();
+		}
+		
+		public void setCEC(final int nCEC, FontelloTextView ibCEC) {
+			ibCEC.setText(mCurIcon[nCEC]);
+	    	ibCEC.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					doWriteCmdAndReadRsp(nCEC);
+				}
+	    	});
+		}
+		
+		public void setCEC1(FontelloTextView ibCEC1) {
+			setCEC(0, ibCEC1);
+		}
+		
+		public void setCEC2(FontelloTextView ibCEC2) {
+			setCEC(1, ibCEC2);
+		}
+		
+		public void setCEC3(FontelloTextView ibCEC3) {
+			setCEC(2, ibCEC3);
+		}
+		
+		public void setCEC4(FontelloTextView ibCEC4) {
+			setCEC(3, ibCEC4);
+		}
 	}
 	
 	private class ChildWrtChkItem extends ChildItem  {
@@ -788,22 +787,23 @@ public class ExpandaListActivity extends Fragment
 		}
 	}
 	private static class ChildHolder {
+		View  mChildNormal;
 		TextView mTitle;
 		TextView mRespTitle;
 		FontelloTextView  mIcon;
 		CheckBox  mCheckBox;
-	}
-
-	private static class GroupHolder {
-		View  mGroupNormal;
-		View  mGroupCEC;
-		TextView mGroupTitle;
-		TextView mGroupRespStatus;
-		FontelloTextView  mGroupIcon;
+		
+		View  mChildCEC;
 		FontelloTextView mbtnCEC1;
 		FontelloTextView mbtnCEC2;
 		FontelloTextView mbtnCEC3;
 		FontelloTextView mbtnCEC4;
+	}
+
+	private static class GroupHolder {
+		TextView mGroupTitle;
+		TextView mGroupRespStatus;
+		FontelloTextView  mGroupIcon;
 	}
 
 	/**
@@ -861,10 +861,17 @@ public class ExpandaListActivity extends Fragment
 	            	break;
 	        }
 			
-			ChildHolder chdholder = new ChildHolder();
+			ChildHolder chdholder = null;
 			ChildItem item = getChild(groupPosition, childPosition);
 			if (convertView == null) {
 				convertView = inflater.inflate(R.layout.list_item, parent, false);
+				chdholder = new ChildHolder();
+				chdholder.mChildCEC = (View)convertView.findViewById(R.id.lstCECLayout);
+				chdholder.mbtnCEC1 = (FontelloTextView) convertView.findViewById(R.id.cecBtn1);
+				chdholder.mbtnCEC2 = (FontelloTextView) convertView.findViewById(R.id.cecBtn2);
+				chdholder.mbtnCEC3 = (FontelloTextView) convertView.findViewById(R.id.cecBtn3);
+				chdholder.mbtnCEC4 = (FontelloTextView) convertView.findViewById(R.id.cecBtn4);
+				chdholder.mChildNormal = (View)convertView.findViewById(R.id.lstChildRelativeLayout);
 				chdholder.mTitle = (TextView) convertView.findViewById(R.id.textTitle);
 				chdholder.mRespTitle = (TextView) convertView.findViewById(R.id.textRespStatus);
 				chdholder.mIcon = (FontelloTextView) convertView.findViewById(R.id.lstChildItemIcon);
@@ -872,15 +879,27 @@ public class ExpandaListActivity extends Fragment
 				chdholder.mCheckBox.setEnabled(false);
 				convertView.setTag(chdholder);
 			} 
-			
-			chdholder = (ChildHolder) convertView.getTag();
+			else
+				chdholder = (ChildHolder) convertView.getTag();
+				
 			chdholder.mTitle.setText(item.mTitle);
+			chdholder.mChildNormal.setVisibility(View.VISIBLE);
+			chdholder.mChildCEC.setVisibility(View.INVISIBLE);
 			if(item instanceof ChildWrtItem)
 			{
 				chdholder.mRespTitle.setVisibility(View.INVISIBLE);
 				chdholder.mIcon.setVisibility(View.VISIBLE);
 				chdholder.mIcon.setText(((ChildWrtItem)item).getIcon());
 				chdholder.mCheckBox.setVisibility(View.INVISIBLE);
+			}
+			else if(item instanceof CECChildItem)
+			{
+				chdholder.mChildNormal.setVisibility(View.INVISIBLE);
+				chdholder.mChildCEC.setVisibility(View.VISIBLE);
+				((CECChildItem)item).setCEC1(chdholder.mbtnCEC1);
+				((CECChildItem)item).setCEC2(chdholder.mbtnCEC2);
+				((CECChildItem)item).setCEC3(chdholder.mbtnCEC3);
+				((CECChildItem)item).setCEC4(chdholder.mbtnCEC4);
 			}
 			else if(item instanceof ChildWrtChkItem)
 			{
@@ -954,31 +973,12 @@ public class ExpandaListActivity extends Fragment
 			if (convertView == null) {
 				holder = new GroupHolder();
 				convertView = inflater.inflate(R.layout.group_item, parent, false);
-				holder.mGroupCEC = (View)convertView.findViewById(R.id.lstCECLayout);
-				holder.mbtnCEC1 = (FontelloTextView) convertView.findViewById(R.id.cecBtn1);
-				holder.mbtnCEC2 = (FontelloTextView) convertView.findViewById(R.id.cecBtn2);
-				holder.mbtnCEC3 = (FontelloTextView) convertView.findViewById(R.id.cecBtn3);
-				holder.mbtnCEC4 = (FontelloTextView) convertView.findViewById(R.id.cecBtn4);
-				holder.mGroupNormal = (View)convertView.findViewById(R.id.lstNormalGroupLayout);
 				holder.mGroupTitle = (TextView) convertView.findViewById(R.id.textTitle);
 				holder.mGroupRespStatus = (TextView) convertView.findViewById(R.id.textRespStatus);
 				holder.mGroupIcon = (FontelloTextView) convertView.findViewById(R.id.lstGroupItemIcon);
 				convertView.setTag(holder);
 			} else {
 				holder = (GroupHolder) convertView.getTag();
-			}
-			
-			if(item instanceof CECGroup) {
-				holder.mGroupCEC.setVisibility(View.VISIBLE);
-				holder.mGroupNormal.setVisibility(View.INVISIBLE);
-				((CECGroup)item).setCEC1(holder.mbtnCEC1);
-				((CECGroup)item).setCEC2(holder.mbtnCEC2);
-				((CECGroup)item).setCEC3(holder.mbtnCEC3);
-				((CECGroup)item).setCEC4(holder.mbtnCEC4);
-			}
-			else {
-				holder.mGroupCEC.setVisibility(View.INVISIBLE);
-				holder.mGroupNormal.setVisibility(View.VISIBLE);
 			}
 
 			holder.mGroupTitle.setText(item.mGroupTitle);
@@ -1106,32 +1106,9 @@ public class ExpandaListActivity extends Fragment
 		    String isCanReadGroup = "";
 		    if(attributes.getNamedItem("CanRead") != null)
 		    	isCanReadGroup = attributes.getNamedItem("CanRead").getNodeValue();
-		    Node attrCEC = attributes.getNamedItem("IsCEC");
 		    
 		    GroupItem cmdgroup = null;
-		    if(attrCEC != null && attrCEC.getNodeValue().equals("true")) {
-		    	cmdgroup = new CECGroup();
-		    	((CECGroup)cmdgroup).mCECCmd[0] = attributes.getNamedItem("Cmd1").getNodeValue();
-		    	((CECGroup)cmdgroup).mCECCmd[1] = attributes.getNamedItem("Cmd2").getNodeValue();
-		    	((CECGroup)cmdgroup).mCECCmd[2] = attributes.getNamedItem("Cmd3").getNodeValue();
-		    	((CECGroup)cmdgroup).mCECCmd[3] = attributes.getNamedItem("Cmd4").getNodeValue();
-		    	
-		    	((CECGroup)cmdgroup).mCECCheckedIcon[0] = attributes.getNamedItem("CheckedIcon1").getNodeValue();
-		    	((CECGroup)cmdgroup).mCECCheckedIcon[1] = attributes.getNamedItem("CheckedIcon2").getNodeValue();
-		    	((CECGroup)cmdgroup).mCECCheckedIcon[2] = attributes.getNamedItem("CheckedIcon3").getNodeValue();
-		    	((CECGroup)cmdgroup).mCECCheckedIcon[3] = attributes.getNamedItem("CheckedIcon4").getNodeValue();
-		    	
-		    	((CECGroup)cmdgroup).mCECUnCheckedIcon[0] = attributes.getNamedItem("UnCheckedIcon1").getNodeValue();
-		    	((CECGroup)cmdgroup).mCECUnCheckedIcon[1] = attributes.getNamedItem("UnCheckedIcon2").getNodeValue();
-		    	((CECGroup)cmdgroup).mCECUnCheckedIcon[2] = attributes.getNamedItem("UnCheckedIcon3").getNodeValue();
-		    	((CECGroup)cmdgroup).mCECUnCheckedIcon[3] = attributes.getNamedItem("UnCheckedIcon4").getNodeValue();
-		    	
-		    	((CECGroup)cmdgroup).mCurIcon[0] = ((CECGroup)cmdgroup).mCECUnCheckedIcon[0];
-		    	((CECGroup)cmdgroup).mCurIcon[1] = ((CECGroup)cmdgroup).mCECUnCheckedIcon[1];
-		    	((CECGroup)cmdgroup).mCurIcon[2] = ((CECGroup)cmdgroup).mCECUnCheckedIcon[2];
-		    	((CECGroup)cmdgroup).mCurIcon[3] = ((CECGroup)cmdgroup).mCECUnCheckedIcon[3];
-		    }
-		    else if(isCanReadGroup.equals("false"))
+		    if(isCanReadGroup.equals("false"))
 		    	cmdgroup = new GroupItem();
 		    else
 		    {
@@ -1181,6 +1158,32 @@ public class ExpandaListActivity extends Fragment
 				    			((ChildWrtChkItem)command).mCommandResSWForce = new String(strVal);
 				    		}
 		    			}
+		    			cmdgroup.items.add(command);
+		    		}
+		    		else if(strNodeName.compareTo("CECChildItem") == 0)
+		    		{
+		    			command = new CECChildItem();
+		    			command.mParentItem = cmdgroup;
+		    			command.mID = nID++;
+		    			((CECChildItem)command).mCECCmd[0] = cmdNode.getAttributes().getNamedItem("Cmd1").getNodeValue();
+				    	((CECChildItem)command).mCECCmd[1] = cmdNode.getAttributes().getNamedItem("Cmd2").getNodeValue();
+				    	((CECChildItem)command).mCECCmd[2] = cmdNode.getAttributes().getNamedItem("Cmd3").getNodeValue();
+				    	((CECChildItem)command).mCECCmd[3] = cmdNode.getAttributes().getNamedItem("Cmd4").getNodeValue();
+				    	
+				    	((CECChildItem)command).mCECCheckedIcon[0] = cmdNode.getAttributes().getNamedItem("CheckedIcon1").getNodeValue();
+				    	((CECChildItem)command).mCECCheckedIcon[1] = cmdNode.getAttributes().getNamedItem("CheckedIcon2").getNodeValue();
+				    	((CECChildItem)command).mCECCheckedIcon[2] = cmdNode.getAttributes().getNamedItem("CheckedIcon3").getNodeValue();
+				    	((CECChildItem)command).mCECCheckedIcon[3] = cmdNode.getAttributes().getNamedItem("CheckedIcon4").getNodeValue();
+				    	
+				    	((CECChildItem)command).mCECUnCheckedIcon[0] = cmdNode.getAttributes().getNamedItem("UnCheckedIcon1").getNodeValue();
+				    	((CECChildItem)command).mCECUnCheckedIcon[1] = cmdNode.getAttributes().getNamedItem("UnCheckedIcon2").getNodeValue();
+				    	((CECChildItem)command).mCECUnCheckedIcon[2] = cmdNode.getAttributes().getNamedItem("UnCheckedIcon3").getNodeValue();
+				    	((CECChildItem)command).mCECUnCheckedIcon[3] = cmdNode.getAttributes().getNamedItem("UnCheckedIcon4").getNodeValue();
+				    	
+				    	((CECChildItem)command).mCurIcon[0] = ((CECChildItem)command).mCECUnCheckedIcon[0];
+				    	((CECChildItem)command).mCurIcon[1] = ((CECChildItem)command).mCECUnCheckedIcon[1];
+				    	((CECChildItem)command).mCurIcon[2] = ((CECChildItem)command).mCECUnCheckedIcon[2];
+				    	((CECChildItem)command).mCurIcon[3] = ((CECChildItem)command).mCECUnCheckedIcon[3];
 		    			cmdgroup.items.add(command);
 		    		}
 		    		else if(strNodeName.compareTo("WriteCmd") == 0)

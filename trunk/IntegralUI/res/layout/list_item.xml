@@ -1,46 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res/com.UI.LEDevice"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:background = "@drawable/child_item_selector"
     android:descendantFocusability="blocksDescendants" >
+    
+	<LinearLayout
+	    android:id="@+id/lstCECLayout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:minHeight="64dp"
+	    android:orientation="horizontal" >
 
+   		<com.UI.LEDevice.MaterialRippleLayout
+   		    style="@style/RippleStyle"
+   		    android:layout_width="0dp"
+   		    android:layout_height="match_parent"
+   		    android:layout_weight="1"
+   		    android:paddingLeft="16dp"
+   		    android:paddingRight="16dp"
+   		    app:rippleColor="@color/main_color_grey_400" >
+
+   		    <com.UI.font.FontelloTextView
+   		        android:id="@+id/cecBtn1"
+   		        android:layout_width="wrap_content"
+   		        android:layout_height="wrap_content"
+   		        android:layout_gravity="center"
+   		        android:background="@drawable/selector_background_empty"
+   		        android:clickable="true"
+   		        android:padding="16dp"
+   		        android:text="@string/fontello_heart_empty"
+   		        android:textSize="22sp"
+   		        tools:ignore="SpUsage" />
+
+		</com.UI.LEDevice.MaterialRippleLayout>
+	    
+   		<com.UI.LEDevice.MaterialRippleLayout
+   		    style="@style/RippleStyle"
+   		    android:layout_width="0dp"
+   		    android:layout_height="match_parent"
+   		    android:layout_weight="1"
+   		    android:paddingLeft="16dp"
+   		    android:paddingRight="16dp"
+   		    app:rippleColor="@color/main_color_grey_400" >
+
+   		    <com.UI.font.FontelloTextView
+   		        android:id="@+id/cecBtn2"
+   		        android:layout_width="wrap_content"
+   		        android:layout_height="wrap_content"
+   		        android:layout_gravity="center"
+   		        android:background="@drawable/selector_background_empty"
+   		        android:clickable="true"
+   		        android:padding="16dp"
+   		        android:text="@string/fontello_heart_empty"
+   		        android:textSize="22sp"
+   		        tools:ignore="SpUsage" />
+
+		</com.UI.LEDevice.MaterialRippleLayout>
+		
+	    <com.UI.LEDevice.MaterialRippleLayout
+	        style="@style/RippleStyle"
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="1"
+	        android:paddingLeft="16dp"
+	        android:paddingRight="16dp"
+	        app:rippleColor="@color/main_color_grey_400" >
+
+   		    <com.UI.font.FontelloTextView
+   		        android:id="@+id/cecBtn3"
+   		        android:layout_width="wrap_content"
+   		        android:layout_height="wrap_content"
+   		        android:layout_gravity="center"
+   		        android:background="@drawable/selector_background_empty"
+   		        android:clickable="true"
+   		        android:padding="16dp"
+   		        android:text="@string/fontello_heart_empty"
+   		        android:textSize="22sp"
+   		        tools:ignore="SpUsage" />
+
+		</com.UI.LEDevice.MaterialRippleLayout>
+		
+	    <com.UI.LEDevice.MaterialRippleLayout
+	        style="@style/RippleStyle"
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="1"
+	        android:paddingLeft="16dp"
+	        android:paddingRight="16dp"
+	        app:rippleColor="@color/main_color_grey_400" >
+
+   		    <com.UI.font.FontelloTextView
+   		        android:id="@+id/cecBtn4"
+   		        android:layout_width="wrap_content"
+   		        android:layout_height="wrap_content"
+   		        android:layout_gravity="center"
+   		        android:background="@drawable/selector_background_empty"
+   		        android:clickable="true"
+   		        android:padding="16dp"
+   		        android:text="@string/fontello_heart_empty"
+   		        android:textSize="22sp"
+   		        tools:ignore="SpUsage" />
+
+		</com.UI.LEDevice.MaterialRippleLayout>
+    </LinearLayout>
     <RelativeLayout android:id="@+id/lstChildRelativeLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent" >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:minHeight="64dp"
+        android:background = "@drawable/child_item_selector">
         
         <com.UI.font.FontelloTextView
-	        style="@style/TextViewAppearance.Title1"
-	        android:id="@+id/lstChildItemIcon"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_marginStart="37dp"
-	        android:gravity="center_vertical"
-	        android:minHeight="48dp"
-	        android:padding="2dp"
-	        android:text="@string/fontello_heart_full"
-	        android:textColor="@color/main_color_grey_700"
-	        android:textSize="20sp"/>
+            android:id="@+id/lstChildItemIcon"
+            style="@style/TextViewAppearance.Title1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="37dp"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:padding="2dp"
+            android:text="@string/fontello_heart_full"
+            android:textColor="@color/main_color_grey_700"
+            android:textSize="20sp" />
         
 	    <com.UI.LEDevice.MaterialRippleLayout
 	        style="@style/RippleStyle"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_centerVertical="true"
 	        android:paddingLeft="16dp"
 	        android:paddingRight="16dp"
 	        app:rippleColor="@color/main_color_grey_400" >
 	        
 		    <CheckBox
-		       	android:id="@+id/chkWt"
-		        style="@style/CheckBoxStyle.Light" 
+		        android:id="@+id/chkWt"
+		        style="@style/CheckBoxStyle.Light"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
+		        android:layout_gravity="center_vertical"
 		        android:layout_marginStart="16dp"
-		       	android:gravity="center_vertical"
+		        android:gravity="center_vertical"
 		        android:minHeight="48dp"
-		        android:padding="8dp"/>
+		        android:padding="8dp" />
+
 		</com.UI.LEDevice.MaterialRippleLayout>
 		
 		<com.UI.font.RobotoTextView
@@ -60,12 +165,13 @@
 		     android:layout_width="wrap_content"
 		     android:layout_height="wrap_content"
 		     android:layout_alignParentEnd="true"
-		     android:layout_marginEnd="30dp"
 		     android:layout_centerVertical="true"
+		     android:layout_marginEnd="30dp"
 		     android:gravity="center_vertical"
 		     android:minHeight="48dp"
 		     android:padding="8dp"
 		     android:textColor="@color/main_color_grey_700"
 		     android:textSize="18sp" />
+
 	</RelativeLayout>
-</LinearLayout>
+</RelativeLayout>

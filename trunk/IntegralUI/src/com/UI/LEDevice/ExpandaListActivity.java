@@ -634,7 +634,7 @@ public class ExpandaListActivity extends Fragment
 						{
 							MyLog.d(mTag, "doReadRsp, read ok, update status now");
 							mBIsStatus1 = (idxRsp == 0) ? true : false;
-							updateStatus(!mBIsStatus1);
+							updateStatus(mBIsStatus1);
 							mBIsOutofDate = false;
 							mUIHanlder.post(new Runnable() {
 								@Override

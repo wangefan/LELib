@@ -74,7 +74,7 @@
 			<CmdRes Title="Auto" refWmdID = "-1">audio auto</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-	<CmdGroup Title="EDID Settings" Icon="&#xe8c7;" CanRead="true" Sequence="3" Try="1">
+	<CmdGroup Title="EDID Settings" Icon="&#xe8c7;" CanRead="true" Sequence="3" Try="2">
 	    <WriteCmdChk Title="Auto Mix Mode" Cmd="edid automix">
 			<CmdResOK>ok</CmdResOK>
 			<CmdResSWForce>swforce</CmdResSWForce>

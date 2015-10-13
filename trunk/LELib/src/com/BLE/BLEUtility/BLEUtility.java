@@ -7,6 +7,9 @@ import java.util.UUID;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.apache.commons.lang3.ArrayUtils;
+
+import com.utility.CmdProcObj;
+
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -61,6 +64,11 @@ public class BLEUtility
 	final private static UUID mSUUIDString = UUID.fromString("edee2909-12b0-3e9d-1042-4c0bc820c4dc");
 	final private static UUID mCUUIDString = UUID.fromString("1249c28c-63b4-219b-814a-393944dec8c1");
 	private enum ConnStatus { CONN_STATE_DISCONNECTED, CONN_STATE_CONNECTING, CONN_STATE_CONNECTED}
+	
+	//Members 
+	public static String mVersion = "";
+	public static String mVideoStatus = "";
+	public static String mLinkStatus = "";
 		 
 	// Device scan callback.
     @SuppressLint("NewApi")
@@ -131,6 +139,8 @@ public class BLEUtility
                 			}
                 			mBTCharct = btCharct;
                 			mHandlerConnTimeout.removeCallbacksAndMessages(null);
+                			
+                			doThingsAfterConnected();
                 			mConnStatus = ConnStatus.CONN_STATE_CONNECTED;
                 			mFireConnected();
                 			if(mBAutoReconnect)
@@ -274,6 +284,32 @@ public class BLEUtility
         sendBroadcast(brdConnState);
 	}
 	*/
+	
+	void doThingsAfterConnected() {
+		//Version
+		byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC("ver", false));
+    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
+    	if(rspCal != null)
+    		mVersion = new String(rspCal);
+    	else 
+    		mVersion = "";
+    	
+    	//Video Status
+    	rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC("vmode", false));
+    	rspCal = CmdProcObj.calCRC(rsp, true);
+    	if(rspCal != null)
+    		mVideoStatus = new String(rspCal);
+    	else 
+    		mVideoStatus = "";
+    	
+    	//Link Status
+    	rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC("linkst", false));
+    	rspCal = CmdProcObj.calCRC(rsp, true);
+    	if(rspCal != null)
+    		mLinkStatus = new String(rspCal);
+    	else 
+    		mLinkStatus = ""; 
+	}
 	
 	void mFireConnecting()
 	{

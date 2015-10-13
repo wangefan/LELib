@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.UI.LEDevice"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -15,23 +16,32 @@
 	        android:id="@+id/lstChildItemIcon"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_marginStart="16dp"
+	        android:layout_marginStart="37dp"
 	        android:gravity="center_vertical"
 	        android:minHeight="48dp"
 	        android:padding="2dp"
 	        android:text="@string/fontello_heart_full"
 	        android:textColor="@color/main_color_grey_700"
 	        android:textSize="20sp"/>
-    
-	    <CheckBox
-	       	android:id="@+id/chkWt"
-	        style="@style/CheckBoxStyle.Light" 
+        
+	    <com.UI.LEDevice.MaterialRippleLayout
+	        style="@style/RippleStyle"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_marginStart="16dp"
-	       	android:gravity="center_vertical"
-	        android:minHeight="48dp"
-	        android:padding="8dp"/>
+	        android:paddingLeft="16dp"
+	        android:paddingRight="16dp"
+	        app:rippleColor="@color/main_color_grey_400" >
+	        
+		    <CheckBox
+		       	android:id="@+id/chkWt"
+		        style="@style/CheckBoxStyle.Light" 
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginStart="16dp"
+		       	android:gravity="center_vertical"
+		        android:minHeight="48dp"
+		        android:padding="8dp"/>
+		</com.UI.LEDevice.MaterialRippleLayout>
 		
 		<com.UI.font.RobotoTextView
 		    android:id="@+id/textTitle"
@@ -57,6 +67,5 @@
 		     android:padding="8dp"
 		     android:textColor="@color/main_color_grey_700"
 		     android:textSize="18sp" />
-
 	</RelativeLayout>
 </LinearLayout>

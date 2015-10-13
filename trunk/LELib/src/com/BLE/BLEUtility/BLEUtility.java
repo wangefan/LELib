@@ -140,11 +140,16 @@ public class BLEUtility
                 			mBTCharct = btCharct;
                 			mHandlerConnTimeout.removeCallbacksAndMessages(null);
                 			
-                			doThingsAfterConnected();
-                			mConnStatus = ConnStatus.CONN_STATE_CONNECTED;
-                			mFireConnected();
-                			if(mBAutoReconnect)
-                	        	mSetCheckConnTimer(false);
+                			Thread workerThread = new Thread() {
+                			    public void run() {
+                			    	doThingsAfterConnected();
+                        			mConnStatus = ConnStatus.CONN_STATE_CONNECTED;
+                        			mFireConnected();
+                        			if(mBAutoReconnect)
+                        	        	mSetCheckConnTimer(false);
+                			    }
+                			};
+                			workerThread.start();
                 			return;
             			}
             		}
@@ -294,6 +299,13 @@ public class BLEUtility
     	else 
     		mVersion = "";
     	
+    	try {
+			Thread.sleep(400);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
     	//Video Status
     	rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC("vmode", false));
     	rspCal = CmdProcObj.calCRC(rsp, true);
@@ -301,6 +313,13 @@ public class BLEUtility
     		mVideoStatus = new String(rspCal);
     	else 
     		mVideoStatus = "";
+    	
+    	try {
+			Thread.sleep(400);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	
     	//Link Status
     	rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC("linkst", false));

@@ -106,12 +106,12 @@
 		</ReadCmd>
     </CmdGroup>
     <CmdGroup Title="Play with CEC" Icon="&#xe860;" CanRead="true" Sequence="5" Try="1">
-	    <WriteCmdChk Title="Turn Everything On" Cmd="cec on">
+	    <WriteCmd Title="Turn Everything On" Cmd="CEC 0F:04" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">
 			<CmdResOK>ok</CmdResOK>
-		</WriteCmdChk>
-	    <WriteCmdChk Title="Turn Everything Off" Cmd="cec off">
+		</WriteCmd>
+	    <WriteCmd Title="Turn Everything Off" Cmd="CEC 0F:36" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">
 			<CmdResOK>ok</CmdResOK>
-		</WriteCmdChk>
+		</WriteCmd>   
 		<WriteCECCmd Title="Play CEC Command" Cmd="CEC 0F:36" Icon="&#xea9d;">
 			<CmdRes>ok</CmdRes>
 		</WriteCECCmd>

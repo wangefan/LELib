@@ -29,15 +29,17 @@
 		<WriteCmdChk Title="Channel/Input 2" Cmd="insel 2">
 			<CmdResOK>ok</CmdResOK>
 		</WriteCmdChk>
-		<WriteCmdChk Title="Channel/Input 3" Cmd="insel 3">
+		<WriteCmdChk Title="Matrix Thru" Cmd="insel 3">
 			<CmdResOK>ok</CmdResOK>
 		</WriteCmdChk>		
-		<WriteCmdChk Title="Channel/Input 4" Cmd="insel 4">
+		<WriteCmdChk Title="Matrix Swap" Cmd="insel 4">
 			<CmdResOK>ok</CmdResOK>
 		</WriteCmdChk>		
 		<ReadCmd Title="Read Channel" Cmd="insel">
 			<CmdRes Title="Input 1" refWmdID = "0">insel 1</CmdRes>
 			<CmdRes Title="Input 2" refWmdID = "1">insel 2</CmdRes>
+            <CmdRes Title="Matrix Thru" refWmdID = "2">insel 3</CmdRes>
+           	<CmdRes Title="Matrix Swap" refWmdID = "3">insel 4</CmdRes>
 		</ReadCmd>
     </CmdGroup>
 	<CmdGroup Title="HDCP Settings" Icon="&#xeaff;" CanRead="true" Sequence="1" Try="2">
@@ -120,8 +122,22 @@
 			<CmdRes Title="Off" refWmdID = "1">cec off</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-    <CmdGroup CheckedIcon1="&#xeb10;" UnCheckedIcon1="&#xeb0f;" Cmd1 = "CEC 0F:31" 
-              CheckedIcon2="&#xeb10;" UnCheckedIcon2="&#xeb0f;" Cmd2 = "CEC 0F:36" 
-              CheckedIcon3="&#xeb10;" UnCheckedIcon3="&#xeb0f;" Cmd3 = "CEC 0F:36" 
-              CheckedIcon4="&#xeb10;" UnCheckedIcon4="&#xeb0f;" Cmd4 = "CEC 0F:36" IsCEC="true"/>
+    <CmdGroup Title="CEC Playback1" Icon="&#xeaa4;" CanRead="false">
+    <CmdGroup CheckedIcon1="&#xeacb;" UnCheckedIcon1="&#xeacb;" Cmd1 = "CEC 54:44:4C" 
+              CheckedIcon2="&#xea7d;" UnCheckedIcon2="&#xea7d;" Cmd2 = "CEC 54:44:44" 
+              CheckedIcon3="&#xea64;" UnCheckedIcon3="&#xea64;" Cmd3 = "CEC 54:44:46" 
+              CheckedIcon4="&#xeaca;" UnCheckedIcon4="&#xeaca;" Cmd4 = "CEC 54:44:4B" IsCEC="true"/>
+    <CmdGroup CheckedIcon1="&#xe9be;" UnCheckedIcon1="&#xe9be;" Cmd1 = "CEC 54:44:09" 
+              CheckedIcon2="&#x0000;" UnCheckedIcon2="&#x0000;" Cmd2 = "CEC 0F:36" 
+              CheckedIcon3="&#xe815;" UnCheckedIcon3="&#xe815;" Cmd3 = "CEC 54:44:01" 
+              CheckedIcon4="&#x0000;" UnCheckedIcon4="&#x0000;" Cmd4 = "CEC 0F:36" IsCEC="true"/>
+	<CmdGroup CheckedIcon1="&#xe9d4;" UnCheckedIcon1="&#xe9d4;" Cmd1 = "CEC 54:44:35" 
+		CheckedIcon2="&#xe8f9;" UnCheckedIcon2="&#xe8f9;" Cmd2 = "CEC 54:44:03" 
+		CheckedIcon3="&#xe810;" UnCheckedIcon3="&#xe810;" Cmd3 = "CEC 54:44:00" 
+		CheckedIcon4="&#xe811;" UnCheckedIcon4="&#xe811;" Cmd4 = "CEC 54:44:04" IsCEC="true"/>	
+	<CmdGroup CheckedIcon1="&#xe885;" UnCheckedIcon1="&#xe884;" Cmd1 = "CEC 54:44:0D" 
+		CheckedIcon2="&#x0000;" UnCheckedIcon2="&#xe0000;" Cmd2 = "CEC 0F:36" 
+		CheckedIcon3="&#xe8f4;" UnCheckedIcon3="&#xe8f4;" Cmd3 = "CEC 54:44:02" 
+		CheckedIcon4="&#x0000;" UnCheckedIcon4="&#x0000;" Cmd4 = "CEC 0F:36" IsCEC="true"/>
+</CmdGroup>		  
 </Commands>

@@ -15,6 +15,7 @@
 	    android:orientation="horizontal" >
 
    		<com.UI.LEDevice.MaterialRippleLayout
+   		    android:id="@+id/cecBtn1Lay"
    		    style="@style/RippleStyle"
    		    android:layout_width="0dp"
    		    android:layout_height="match_parent"
@@ -38,6 +39,7 @@
 		</com.UI.LEDevice.MaterialRippleLayout>
 	    
    		<com.UI.LEDevice.MaterialRippleLayout
+   		    android:id="@+id/cecBtn2Lay"
    		    style="@style/RippleStyle"
    		    android:layout_width="0dp"
    		    android:layout_height="match_parent"
@@ -61,6 +63,7 @@
 		</com.UI.LEDevice.MaterialRippleLayout>
 		
 	    <com.UI.LEDevice.MaterialRippleLayout
+	        android:id="@+id/cecBtn3Lay"
 	        style="@style/RippleStyle"
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent"
@@ -84,6 +87,7 @@
 		</com.UI.LEDevice.MaterialRippleLayout>
 		
 	    <com.UI.LEDevice.MaterialRippleLayout
+	        android:id="@+id/cecBtn4Lay"
 	        style="@style/RippleStyle"
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent"

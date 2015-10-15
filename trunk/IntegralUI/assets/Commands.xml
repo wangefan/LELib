@@ -128,16 +128,16 @@
 	              CheckedIcon3="&#xea64;" UnCheckedIcon3="&#xea64;" Cmd3 = "CEC 54:44:46" 
 	              CheckedIcon4="&#xeaca;" UnCheckedIcon4="&#xeaca;" Cmd4 = "CEC 54:44:4B"/>
 	    <CECChildItem CheckedIcon1="&#xe9be;" UnCheckedIcon1="&#xe9be;" Cmd1 = "CEC 54:44:09" 
-	              CheckedIcon2="&#x0000;" UnCheckedIcon2="&#x0000;" Cmd2 = "CEC 0F:36" 
+	              CheckedIcon2="" UnCheckedIcon2="" Cmd2 = "CEC 0F:36" 
 	              CheckedIcon3="&#xe815;" UnCheckedIcon3="&#xe815;" Cmd3 = "CEC 54:44:01" 
-	              CheckedIcon4="&#x0000;" UnCheckedIcon4="&#x0000;" Cmd4 = "CEC 0F:36"/>
+	              CheckedIcon4="" UnCheckedIcon4="" Cmd4 = "CEC 0F:36"/>
 		<CECChildItem CheckedIcon1="&#xe9d4;" UnCheckedIcon1="&#xe9d4;" Cmd1 = "CEC 54:44:35" 
 			CheckedIcon2="&#xe8f9;" UnCheckedIcon2="&#xe8f9;" Cmd2 = "CEC 54:44:03" 
 			CheckedIcon3="&#xe810;" UnCheckedIcon3="&#xe810;" Cmd3 = "CEC 54:44:00" 
 			CheckedIcon4="&#xe811;" UnCheckedIcon4="&#xe811;" Cmd4 = "CEC 54:44:04"/>	
 		<CECChildItem CheckedIcon1="&#xe885;" UnCheckedIcon1="&#xe884;" Cmd1 = "CEC 54:44:0D" 
-			CheckedIcon2="&#x0000;" UnCheckedIcon2="&#xe0000;" Cmd2 = "CEC 0F:36" 
+			CheckedIcon2="" UnCheckedIcon2="" Cmd2 = "CEC 0F:36" 
 			CheckedIcon3="&#xe8f4;" UnCheckedIcon3="&#xe8f4;" Cmd3 = "CEC 54:44:02" 
-			CheckedIcon4="&#x0000;" UnCheckedIcon4="&#x0000;" Cmd4 = "CEC 0F:36"/>
+			CheckedIcon4="" UnCheckedIcon4="" Cmd4 = "CEC 0F:36"/>
 	</CmdGroup>		  
 </Commands>

@@ -39,8 +39,10 @@ import android.text.InputType;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -287,8 +289,15 @@ public class ExpandaListActivity extends Fragment
 			workerThread.start();
 		}
 		
-		public void setCEC(final int nCEC, FontelloTextView ibCEC) {
+		public void setCEC(final int nCEC, FontelloTextView ibCEC, MaterialRippleLayout cecLay, final boolean bClickable) {
 			ibCEC.setText(mCurIcon[nCEC]);
+			cecLay.setOnTouchListener(new OnTouchListener() {
+				@Override
+				public boolean onTouch(View arg0, MotionEvent arg1) {
+					return !bClickable;
+				}
+			});
+			
 	    	ibCEC.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
@@ -297,20 +306,32 @@ public class ExpandaListActivity extends Fragment
 	    	});
 		}
 		
-		public void setCEC1(FontelloTextView ibCEC1) {
-			setCEC(0, ibCEC1);
+		public void setCEC1(FontelloTextView ibCEC1, MaterialRippleLayout cecLay1) {
+			boolean bClickable = true;
+			if(mCECUnCheckedIcon[0].length() == 0 || mCECCheckedIcon[0].length() == 0)
+				bClickable = false;
+			setCEC(0, ibCEC1, cecLay1, bClickable);
 		}
 		
-		public void setCEC2(FontelloTextView ibCEC2) {
-			setCEC(1, ibCEC2);
+		public void setCEC2(FontelloTextView ibCEC2, MaterialRippleLayout cecLay2) {
+			boolean bClickable = true;
+			if(mCECUnCheckedIcon[1].length() == 0 || mCECCheckedIcon[1].length() == 0)
+				bClickable = false;
+			setCEC(1, ibCEC2, cecLay2, bClickable);
 		}
 		
-		public void setCEC3(FontelloTextView ibCEC3) {
-			setCEC(2, ibCEC3);
+		public void setCEC3(FontelloTextView ibCEC3, MaterialRippleLayout cecLay3) {
+			boolean bClickable = true;
+			if(mCECUnCheckedIcon[2].length() == 0 || mCECCheckedIcon[2].length() == 0)
+				bClickable = false;
+			setCEC(2, ibCEC3, cecLay3, bClickable);
 		}
 		
-		public void setCEC4(FontelloTextView ibCEC4) {
-			setCEC(3, ibCEC4);
+		public void setCEC4(FontelloTextView ibCEC4, MaterialRippleLayout cecLay4) {
+			boolean bClickable = true;
+			if(mCECUnCheckedIcon[3].length() == 0 || mCECCheckedIcon[3].length() == 0)
+				bClickable = false;
+			setCEC(3, ibCEC4, cecLay4, bClickable);
 		}
 	}
 	
@@ -800,6 +821,11 @@ public class ExpandaListActivity extends Fragment
 		FontelloTextView mbtnCEC2;
 		FontelloTextView mbtnCEC3;
 		FontelloTextView mbtnCEC4;
+		
+		MaterialRippleLayout mbtnCECLay1;
+		MaterialRippleLayout mbtnCECLay2;
+		MaterialRippleLayout mbtnCECLay3;
+		MaterialRippleLayout mbtnCECLay4;
 	}
 
 	private static class GroupHolder {
@@ -873,6 +899,10 @@ public class ExpandaListActivity extends Fragment
 				chdholder.mbtnCEC2 = (FontelloTextView) convertView.findViewById(R.id.cecBtn2);
 				chdholder.mbtnCEC3 = (FontelloTextView) convertView.findViewById(R.id.cecBtn3);
 				chdholder.mbtnCEC4 = (FontelloTextView) convertView.findViewById(R.id.cecBtn4);
+				chdholder.mbtnCECLay1 = (MaterialRippleLayout) convertView.findViewById(R.id.cecBtn1Lay);
+				chdholder.mbtnCECLay2 = (MaterialRippleLayout) convertView.findViewById(R.id.cecBtn2Lay);
+				chdholder.mbtnCECLay3 = (MaterialRippleLayout) convertView.findViewById(R.id.cecBtn3Lay);
+				chdholder.mbtnCECLay4 = (MaterialRippleLayout) convertView.findViewById(R.id.cecBtn4Lay);
 				chdholder.mChildNormal = (View)convertView.findViewById(R.id.lstChildRelativeLayout);
 				chdholder.mTitle = (TextView) convertView.findViewById(R.id.textTitle);
 				chdholder.mRespTitle = (TextView) convertView.findViewById(R.id.textRespStatus);
@@ -898,10 +928,10 @@ public class ExpandaListActivity extends Fragment
 			{
 				chdholder.mChildNormal.setVisibility(View.INVISIBLE);
 				chdholder.mChildCEC.setVisibility(View.VISIBLE);
-				((CECChildItem)item).setCEC1(chdholder.mbtnCEC1);
-				((CECChildItem)item).setCEC2(chdholder.mbtnCEC2);
-				((CECChildItem)item).setCEC3(chdholder.mbtnCEC3);
-				((CECChildItem)item).setCEC4(chdholder.mbtnCEC4);
+				((CECChildItem)item).setCEC1(chdholder.mbtnCEC1, chdholder.mbtnCECLay1);
+				((CECChildItem)item).setCEC2(chdholder.mbtnCEC2, chdholder.mbtnCECLay2);
+				((CECChildItem)item).setCEC3(chdholder.mbtnCEC3, chdholder.mbtnCECLay3);
+				((CECChildItem)item).setCEC4(chdholder.mbtnCEC4, chdholder.mbtnCECLay4);
 			}
 			else if(item instanceof ChildWrtChkItem)
 			{

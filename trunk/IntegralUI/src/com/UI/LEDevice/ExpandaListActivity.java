@@ -178,7 +178,9 @@ public class ExpandaListActivity extends Fragment
 					        		MyLog.d(mTag, "Group item " + mGroupTitle + " read OK.");
 					        		
 					            	//update ChildItem if needed
-					        		ChildWrtChkItem childItem = (ChildWrtChkItem) mAdapter.getChild(mID, Integer.parseInt(rdCmdStr.mRefWrtCmdID)) ;
+					        		ChildWrtChkItem childItem = null;
+					        		if(Integer.parseInt(rdCmdStr.mRefWrtCmdID) >= 0 && mID >= 0)
+					        			childItem = (ChildWrtChkItem) mAdapter.getChild(mID, Integer.parseInt(rdCmdStr.mRefWrtCmdID)) ;
 					            	if(childItem != null)
 					            	{
 					            		childItem.mBIsChecked = true;

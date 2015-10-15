@@ -330,7 +330,6 @@ public class MainActivity extends ActionBarActivity {
 		setSupportActionBar(toolbar);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerRelativeLayout = (RelativeLayout) findViewById(R.id.left_drawer);
-		mDrawerList = (ListView) findViewById(R.id.list_view_drawer);
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
 				R.string.drawer_open, R.string.drawer_close) {
 			public void onDrawerClosed(View view) {

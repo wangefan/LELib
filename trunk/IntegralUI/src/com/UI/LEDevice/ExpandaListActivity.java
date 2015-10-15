@@ -736,6 +736,7 @@ public class ExpandaListActivity extends Fragment
 	private class ChildWrtCECItem extends ChildItem {
 		private String mTag = "ChildWrtCECItem";
 		public String mIcon = "";
+		public String mPreCmd = "";
 		public String mCommandRes = "";
 		
 		public void doWriteCmdAndReadRsp()
@@ -745,9 +746,10 @@ public class ExpandaListActivity extends Fragment
 			
 			Thread workerThread = new Thread() {
 			    public void run() {
+			    	String cmd = mPreCmd + " " + mCommand;
 			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd in thread" + Thread.currentThread().getId());
-			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write cmd = " + mCommand);
-			    	byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(mCommand, true));
+			    	MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd write cmd = " + cmd);
+			    	byte [] rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC(cmd, true));
 			    	byte [] rspCal = CmdProcObj.calCRC(rsp, true);
 			    	String strRspCal = "";
 			    	if(rspCal != null)
@@ -785,7 +787,7 @@ public class ExpandaListActivity extends Fragment
 
 			// Set up the input
 			final EditText input = new EditText(mFaActivity);
-			input.setText(R.string.InputDlgDefaultCEC);
+			input.setText(mCommand);
 			// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
 			input.setInputType(InputType.TYPE_CLASS_TEXT);
 			builder.setView(input);
@@ -795,7 +797,6 @@ public class ExpandaListActivity extends Fragment
 			    @Override
 			    public void onClick(DialogInterface dialog, int which) {
 			    	mCommand = input.getText().toString();
-			    	mTitle = String.format(mFaActivity.getResources().getString(R.string.InputDlgCECFormatTitle), mCommand);
 			    	doWriteCmdAndReadRsp();
 			    }
 			});
@@ -1249,6 +1250,8 @@ public class ExpandaListActivity extends Fragment
 		    			command.mTitle = cmdNode.getAttributes().getNamedItem("Title").getNodeValue();
 		    			command.mCommand = cmdNode.getAttributes().getNamedItem("Cmd").getNodeValue();
 		    			((ChildWrtCECItem)command).mIcon = cmdNode.getAttributes().getNamedItem("Icon").getNodeValue();
+		    			if(cmdNode.getAttributes().getNamedItem("PreCmd") != null)
+		    				((ChildWrtCECItem)command).mPreCmd = cmdNode.getAttributes().getNamedItem("PreCmd").getNodeValue();
 		    			for(int idxCmdRes = 0; idxCmdRes < cmdNode.getChildNodes().getLength(); ++idxCmdRes) { 
 		    				Node cmdResNode = cmdNode.getChildNodes().item(idxCmdRes); 
 				    		String strResNodeName = cmdResNode.getLocalName();

@@ -83,11 +83,13 @@ public class MainActivity extends ActionBarActivity {
 			}
 			else if(BLEUtility.ACTION_UPDATE_ABOUT.equals(action)) {
 				MyLog.d(mTAG, "Update About");
-				String strVer = intent.getStringExtra(BLEUtility.ACTION_UPDATE_ABOUT_VER_KEY);
+				String strVer = new String(intent.getStringExtra(BLEUtility.ACTION_UPDATE_ABOUT_VER_KEY));
 				mDrawerItems.get(1).setTitle(strVer);
-				String strVMode = intent.getStringExtra(BLEUtility.ACTION_UPDATE_ABOUT_VMODE_KEY);
-				String strLinkSt = intent.getStringExtra(BLEUtility.ACTION_UPDATE_ABOUT_LINKST_KEY);
-				
+				String strVMode = new String(intent.getStringExtra(BLEUtility.ACTION_UPDATE_ABOUT_VMODE_KEY));
+				mDrawerItems.get(2).setTitle(strVMode);
+				String strLinkSt = new String(intent.getStringExtra(BLEUtility.ACTION_UPDATE_ABOUT_LINKST_KEY));
+				mDrawerItems.get(3).setTitle(strLinkSt);
+				mAdapter.notifyDataSetChanged();
 			}
 			//Blew are commands relaive 
 			else if (BLEUtility.ACTION_SENCMD_BEGIN.equals(action)) 
@@ -174,6 +176,7 @@ public class MainActivity extends ActionBarActivity {
 		
 	//data members
 	private ListView mDrawerList;
+	private DrawerAdapter mAdapter; 
 	private List<DrawerItem> mDrawerItems;
 	private DrawerLayout mDrawerLayout;
 	private RelativeLayout mDrawerRelativeLayout;
@@ -359,7 +362,8 @@ public class MainActivity extends ActionBarActivity {
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
 				GravityCompat.START);
 		prepareNavigationDrawerItems();
-		mDrawerList.setAdapter(new DrawerAdapter(this, mDrawerItems, true));
+		mAdapter = new DrawerAdapter(this, mDrawerItems, true);
+		mDrawerList.setAdapter(mAdapter);
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 

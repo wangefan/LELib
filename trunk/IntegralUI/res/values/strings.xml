@@ -11,7 +11,7 @@
     <string name="drawer_title_DEVICEVER">Device Version Info</string>
     <string name="drawer_icon_DEVICEVER">&#xe9b4;</string>
     <string name="drawer_title_LINKHDF">Link hdfury.com</string>
-    <string name="drawer_icon_LINKHDF">&#xe9b4;</string>
+    <string name="drawer_icon_LINKHDF">&#xeb62;</string>
     <string name="confirm_exit">Press Back Button Again To Exit</string>
     <string name="app_name">Integral</string>
     <string name="strWelcome">Total Control</string>

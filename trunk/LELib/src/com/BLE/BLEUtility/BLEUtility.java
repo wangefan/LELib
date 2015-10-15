@@ -52,6 +52,10 @@ public class BLEUtility
 	public final static String ACTION_WRTREAD_WRT_BEG = "ACTION_WRTREAD_WRT_BEG";
 	public final static String ACTION_WRTREAD_WRT_UPDATE = "ACTION_WRTREAD_WRT_UPDATE";
 	public final static String ACTION_WRTREAD_WRT_FAIL = "ACTION_WRTREAD_WRT_FAIL";
+	public final static String ACTION_UPDATE_ABOUT = "com.BLE.BLEUtility.ACTION_UPDATE_ABOUT";
+	public final static String ACTION_UPDATE_ABOUT_VER_KEY = "com.BLE.BLEUtility.ACTION_UPDATE_ABOUT_VER_KEY";
+	public final static String ACTION_UPDATE_ABOUT_VMODE_KEY = "com.BLE.BLEUtility.ACTION_UPDATE_ABOUT_VMODE_KEY";
+	public final static String ACTION_UPDATE_ABOUT_LINKST_KEY = "com.BLE.BLEUtility.ACTION_UPDATE_ABOUT_LINKST_KEY";
 	
     //Messages
     public static final String DISCONNECTED_CAUSE_NORSP = "Connect no response";
@@ -328,6 +332,13 @@ public class BLEUtility
     		mLinkStatus = new String(rspCal);
     	else 
     		mLinkStatus = ""; 
+    	
+		//Broadcast.
+		final Intent brdAbout = new Intent(ACTION_UPDATE_ABOUT);
+		brdAbout.putExtra(ACTION_UPDATE_ABOUT_VER_KEY, mVersion);
+		brdAbout.putExtra(ACTION_UPDATE_ABOUT_VMODE_KEY, mVideoStatus);
+		brdAbout.putExtra(ACTION_UPDATE_ABOUT_LINKST_KEY, mLinkStatus);
+        mContext.sendBroadcast(brdAbout);
 	}
 	
 	void mFireConnecting()

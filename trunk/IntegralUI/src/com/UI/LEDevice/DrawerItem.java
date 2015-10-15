@@ -9,14 +9,14 @@ public class DrawerItem {
 	public static final int DRAWER_ITEM_DEVICEVER = 12;
 	public static final int DRAWER_ITEM_LINKHDF = 13;
 	
-	public DrawerItem(int icon, int title, int tag) {
+	public DrawerItem(int icon, String title, int tag) {
 		this.icon = icon;
 		this.title = title;
 		this.tag = tag;
 	}
 
 	private int icon;
-	private int title;
+	private String title;
 	private int tag;
 
 	public int getIcon() {
@@ -27,11 +27,11 @@ public class DrawerItem {
 		this.icon = icon;
 	}
 
-	public int getTitle() {
+	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(int title) {
+	public void setTitle(String title) {
 		this.title = title;
 	}
 

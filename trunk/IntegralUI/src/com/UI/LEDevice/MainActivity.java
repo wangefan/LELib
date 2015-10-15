@@ -81,6 +81,14 @@ public class MainActivity extends ActionBarActivity {
 					MyLog.d(mTAG, "Get le device , "+mLeDevices.size()+"=>[" + integralDevice.getAddress()+"]");
 				}
 			}
+			else if(BLEUtility.ACTION_UPDATE_ABOUT.equals(action)) {
+				MyLog.d(mTAG, "Update About");
+				String strVer = intent.getStringExtra(BLEUtility.ACTION_UPDATE_ABOUT_VER_KEY);
+				mDrawerItems.get(1).setTitle(strVer);
+				String strVMode = intent.getStringExtra(BLEUtility.ACTION_UPDATE_ABOUT_VMODE_KEY);
+				String strLinkSt = intent.getStringExtra(BLEUtility.ACTION_UPDATE_ABOUT_LINKST_KEY);
+				
+			}
 			//Blew are commands relaive 
 			else if (BLEUtility.ACTION_SENCMD_BEGIN.equals(action)) 
             {
@@ -213,6 +221,7 @@ public class MainActivity extends ActionBarActivity {
         intentFilter.addAction(BLEUtility.ACTION_WRTREAD_WRT_BEG);
         intentFilter.addAction(BLEUtility.ACTION_WRTREAD_WRT_UPDATE);
         intentFilter.addAction(BLEUtility.ACTION_WRTREAD_WRT_FAIL);
+        intentFilter.addAction(BLEUtility.ACTION_UPDATE_ABOUT);
         return intentFilter;
     }
 	
@@ -396,19 +405,19 @@ public class MainActivity extends ActionBarActivity {
 	private void prepareNavigationDrawerItems() {
 		mDrawerItems = new ArrayList<DrawerItem>();
 		mDrawerItems.add(new DrawerItem(R.string.drawer_icon_Main,
-				R.string.drawer_title_Main,
+				getResources().getString(R.string.drawer_title_Main),
 				DrawerItem.DRAWER_ITEM_Main));
-		mDrawerItems.add(new DrawerItem(R.string.drawer_icon_HDMILink,
-				R.string.drawer_title_HDMILink,
-				DrawerItem.DRAWER_ITEM_HDMILink));
-		mDrawerItems.add(new DrawerItem(R.string.drawer_icon_HDMIVideo,
-				R.string.drawer_title_HDMIVideo,
-				DrawerItem.DRAWER_ITEM_HDMIVideo));
 		mDrawerItems.add(new DrawerItem(R.string.drawer_icon_DEVICEVER,
-				R.string.drawer_title_DEVICEVER,
+				getResources().getString(R.string.drawer_title_DEVICEVER),
 				DrawerItem.DRAWER_ITEM_DEVICEVER));
+		mDrawerItems.add(new DrawerItem(R.string.drawer_icon_HDMIVideo,
+				getResources().getString(R.string.drawer_title_HDMIVideo),
+				DrawerItem.DRAWER_ITEM_HDMIVideo));
+		mDrawerItems.add(new DrawerItem(R.string.drawer_icon_HDMILink,
+				getResources().getString(R.string.drawer_title_HDMILink),
+				DrawerItem.DRAWER_ITEM_HDMILink));
 		mDrawerItems.add(new DrawerItem(R.string.drawer_icon_LINKHDF,
-				R.string.drawer_title_LINKHDF,
+				getResources().getString(R.string.drawer_title_LINKHDF),
 				DrawerItem.DRAWER_ITEM_LINKHDF));
 	}
 

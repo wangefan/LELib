@@ -4,11 +4,14 @@
     <string name="drawer_close">Close navigation drawer</string>
     <string name="drawer_title_Main">Integral</string>
     <string name="drawer_icon_Main"></string>
-    <string name="drawer_title_HDMILink">HDMI Link Status</string>
+    <string name="drawer_title_HDMILink_none">Get No HDMI Link Status</string>
+    <string name="drawer_title_HDMILink">In Top: %1$s\nIn Bottom: %1$s\nOut Top: %1$s\nOut Bottom: %1$s</string>
+    <string name="drawer_HDMILink_Act">active</string>
+    <string name="drawer_HDMILink_Nac">un-active</string>
     <string name="drawer_icon_HDMILink"></string>
-    <string name="drawer_title_HDMIVideo">HDMI Video Status</string>
+    <string name="drawer_title_HDMIVideo_none">Get No HDMI Video Status</string>
     <string name="drawer_icon_HDMIVideo"></string>
-    <string name="drawer_title_DEVICEVER">Device Version Info</string>
+    <string name="drawer_title_DEVICEVER_none">Get No Device Version Info</string>
     <string name="drawer_icon_DEVICEVER"></string>
     <string name="drawer_title_LINKHDF">Link hdfury.com</string>
     <string name="drawer_icon_LINKHDF">&#xeb62;</string>
@@ -55,4 +58,8 @@
 	<string name="InputDlgTitle">Input CEC command</string>
 	<string name="InputDlgCECFormatTitle">CEC : [%s]</string>
 	<string name="InputDlgDefaultCEC">CEC 0F:36</string>
+	<string name="aboutVmodeDVI">DVI-D</string>
+	<string name="aboutVmodeHDMI">HDMI</string>
+	<string name="aboutVmode3G">4:2:0 300MHz</string>
+	<string name="aboutVmode6G">4:4:4 600MHz</string>
 </resources>

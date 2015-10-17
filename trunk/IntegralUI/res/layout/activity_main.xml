@@ -20,7 +20,7 @@
  
 	    <RelativeLayout
 	        android:id="@+id/left_drawer"
-	        android:layout_width="240dp"
+	        android:layout_width="320dp"
 	        android:layout_height="match_parent"
 	        android:layout_gravity="start"
 	        android:orientation="vertical">
@@ -33,9 +33,9 @@
 	 
 	         <ListView
 	            android:id="@+id/list_view_drawer"
-	            android:layout_width="@dimen/drawer_width"
 	            android:layout_height="match_parent"
 	            android:layout_below="@id/image_integral" 
+	            android:listSelector="@android:color/transparent"
 	            style="@style/ListViewStyle" />
 
 	    </RelativeLayout>

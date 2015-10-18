@@ -103,8 +103,8 @@
 			<CmdResOK>ok</CmdResOK>
 		</WriteCmd>
 		<ReadCmd Title="Read Current 4:2:0 Selection Status" Cmd="420">
-			<CmdRes Title="Enable 4:4:4 -> 4:2:0" refWmdID = "0">420 on</CmdRes>
-			<CmdRes Title="Disable 4:4:4 -> 4:2:0" refWmdID = "1">420 off</CmdRes>
+			<CmdRes Title="On" refWmdID = "0">420 on</CmdRes>
+			<CmdRes Title="Off" refWmdID = "1">420 off</CmdRes>
 		</ReadCmd>
     </CmdGroup>
     <CmdGroup Title="Play with CEC" Icon="&#xe860;" CanRead="false">

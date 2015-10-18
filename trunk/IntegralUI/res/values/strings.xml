@@ -2,7 +2,7 @@
 <resources>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    <string name="drawer_title_Main">Integral</string>
+    <string name="drawer_title_Main">4K Integral</string>
     <string name="drawer_icon_Main"></string>
     <string name="drawer_title_HDMILink_none">Get No HDMI Link Status</string>
     <string name="drawer_title_HDMILink">In Top: %1$s\nIn Bottom: %1$s\nOut Top: %1$s\nOut Bottom: %1$s</string>
@@ -16,18 +16,18 @@
     <string name="drawer_title_LINKHDF">Link hdfury.com</string>
     <string name="drawer_icon_LINKHDF">&#xeb62;</string>
     <string name="confirm_exit">Press Back Button Again To Exit</string>
-    <string name="app_name">Integral</string>
+    <string name="app_name">4K Integral</string>
     <string name="strWelcome">Total Control</string>
     <string name="action_settings">Settings</string>
     <string name="strAutoConn">Auto</string>
-    <string name="strMainActivity">Integral</string>
-    <string name="strAbout">Integral Info</string>
+    <string name="strMainActivity">4K Integral</string>
+    <string name="strAbout">4K Integral Info</string>
     <string name="strSeatchIntegral">Search Devices</string>
     <string name="groupOutofDate">Fail</string>
     <string name="strMenuDisconnect">Disconnect</string>
     <string name="msgResetConn">Previous Connection Has Been Reset</string>
     <string name="clearConn">Clear Previous Connection</string>
-    <string name="strConnectTo">Integral</string>
+    <string name="strConnectTo">4K Integral</string>
     <string name="strSearchDevice">Search</string>
     <string name="fontello_heart_full">&#xe80a;</string>
 	<string name="fontello_heart_empty">&#xe80b;</string>
@@ -49,7 +49,7 @@
 	<string name="prgsSedingReadCmd">Reading Status&#8230;</string>
 	<string name="prgsSedingReadCmdOK">Read Status OK</string>
 	<string name="prgsReadCmdFail">Read Status Failed</string>
-	<string name="prgsScanDev">Finding Integral Devices&#8230;</string>
+	<string name="prgsScanDev">Finding 4K Integral Devices&#8230;</string>
 	<string name="prgsScanNoDev">No Devices Found</string>
 	<string name="AlertDlgMsgTitle">Warning</string>
 	<string name="AlertDlgMsg">Command sending failed, switch must be moved to middle position.</string>

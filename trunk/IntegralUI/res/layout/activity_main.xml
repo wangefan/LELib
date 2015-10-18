@@ -18,7 +18,7 @@
 
         <!-- Menu -->
  
-	    <RelativeLayout
+	    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res/com.UI.LEDevice"
 	        android:id="@+id/left_drawer"
 	        android:layout_width="320dp"
 	        android:layout_height="match_parent"
@@ -37,7 +37,34 @@
 	            android:layout_below="@id/image_integral" 
 	            android:listSelector="@android:color/transparent"
 	            style="@style/ListViewStyle" />
-
+	        
+			    <com.UI.font.FontelloTextView
+			        android:id="@+id/linkhd_icon"
+			        style="@style/TextViewAppearance.Title1"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_alignParentBottom="true"
+			        android:layout_marginBottom="10dp"
+			        android:layout_alignParentStart="true"
+			        android:textColor="@color/main_color_grey_700" 
+			        android:textSize="22sp"/>
+			   	<com.UI.LEDevice.MaterialRippleLayout
+		   		    android:id="@+id/linkhd"
+		   		    style="@style/RippleStyle"
+		   		    android:layout_width="wrap_content"
+		   		    android:layout_height="wrap_content"
+		   		    android:layout_alignParentBottom="true"
+				    android:layout_marginBottom="20dp"
+				    android:layout_alignParentStart="true"
+				    android:layout_marginStart="50dp"
+		   		    app:rippleColor="@color/main_color_grey_400" >
+				    <com.UI.font.RobotoTextView
+				        android:id="@+id/linkhd_title"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				     	android:textColor="@color/main_color_grey_700"
+				     	android:textSize="18sp" />
+				</com.UI.LEDevice.MaterialRippleLayout>
 	    </RelativeLayout>
     </android.support.v4.widget.DrawerLayout>
 </LinearLayout>

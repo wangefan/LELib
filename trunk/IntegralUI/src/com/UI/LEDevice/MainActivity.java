@@ -8,6 +8,8 @@ import java.util.Map;
 import com.BLE.BLEUtility.BLEDevice;
 import com.BLE.BLEUtility.BLEUtility;
 import com.BLE.BLEUtility.MyLog;
+import com.UI.font.FontelloTextView;
+import com.UI.font.RobotoTextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import android.app.Activity;
@@ -19,6 +21,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -31,10 +34,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -81,6 +81,7 @@ public class MainActivity extends ActionBarActivity {
 				Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
         		if(mIntegral != null)
         			mIntegral.doThingsAfterConnted();
+        		mAdapter.notifyDataSetChanged();
 			}
 			else if(BLEUtility.ACTION_GET_LEDEVICE.equals(action))
 			{
@@ -111,7 +112,7 @@ public class MainActivity extends ActionBarActivity {
 				
 				//update link status
 				String strLinkSt = new String(intent.getStringExtra(BLEUtility.ACTION_UPDATE_ABOUT_LINKST_KEY));
-				String strLinkStFull = getResources().getString(R.string.drawer_title_HDMILink);
+				String strLinkStFull = getResources().getString(R.string.drawer_title_HDMILink_none);
 				if(strLinkSt.length() > 0) {
 					Character rxTop = strLinkSt.charAt(7);
 					Character rxBot = strLinkSt.charAt(9);
@@ -531,7 +532,26 @@ public class MainActivity extends ActionBarActivity {
 		mDrawerList.setAdapter(mAdapter);
 		
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		
+		FontelloTextView linkHdIcon = (FontelloTextView) findViewById(R.id.linkhd_icon);
+		if(linkHdIcon != null)
+			linkHdIcon.setText(getResources().getString(R.string.drawer_icon_LINKHDF));
+		RobotoTextView linkHdTitle = (RobotoTextView)findViewById(R.id.linkhd_title);
+		if(linkHdTitle != null)
+			linkHdTitle.setText(getResources().getString(R.string.drawer_title_LINKHDF));
 
+		MaterialRippleLayout linkhdLayout = (MaterialRippleLayout)findViewById(R.id.linkhd);
+		if(linkhdLayout != null)
+		{
+			linkhdLayout.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.hdfury.com/"));
+					startActivity(browserIntent);
+				}
+			});
+		}
 		mHandler = new Handler();
 		UIUtility.init(this);
 		registerReceiver(mBdReceiver, makeActionsIntentFilter());	
@@ -580,14 +600,11 @@ public class MainActivity extends ActionBarActivity {
 				getResources().getString(R.string.drawer_title_HDMIVideo_none),
 				DrawerItem.DRAWER_ITEM_HDMIVideo));
 		mDrawerItems.add(new DrawerItem(R.string.drawer_icon_HDMILink,
-				getResources().getString(R.string.drawer_title_HDMILink),
+				getResources().getString(R.string.drawer_title_HDMILink_none),
 				DrawerItem.DRAWER_ITEM_HDMILink));
 		mDrawerItems.add(new DrawerItem(R.string.drawer_icon_DEVICEVER,
 				getResources().getString(R.string.drawer_title_DEVICEVER_none),
 				DrawerItem.DRAWER_ITEM_DEVICEVER));
-		mDrawerItems.add(new DrawerItem(R.string.drawer_icon_LINKHDF,
-				getResources().getString(R.string.drawer_title_LINKHDF),
-				DrawerItem.DRAWER_ITEM_LINKHDF));
 	}
 
 	@Override

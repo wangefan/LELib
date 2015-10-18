@@ -9,6 +9,7 @@ public class UIUtility {
 	static private ProgressDialog mPDialog = null;
 	static private Context mContext;
 	static private Point mPrgDlgSize = new Point();
+	static private boolean mBShow = false;
 	
 	//member functions
 	static public void init(Context context) {
@@ -16,12 +17,13 @@ public class UIUtility {
 	}
 	static public void showProgressDlg(boolean bShow, int messageID)
     {
-    	if(bShow)
+    	if(bShow && mBShow == false)
     	{
     		mPDialog = new ProgressDialog(mContext, R.style.MyProgressDlg);
     		mPDialog.setCancelable(false); 
     		mPDialog.setMessage(mContext.getText(messageID));
     		mPDialog.show();
+    		mBShow = true;
     		
     		Point wndSize = new Point();
 			mPDialog.getWindow().getWindowManager().getDefaultDisplay().getSize(wndSize);
@@ -41,6 +43,7 @@ public class UIUtility {
     			mPDialog.dismiss();
     			mPDialog = null;
     		}
+    		mBShow = false;
     	}
     }
 }

@@ -499,6 +499,7 @@ public class MainActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		MyLog.init();
 		ImageLoader imageLoader = ImageLoader.getInstance();
 		if (!imageLoader.isInited()) {
 			imageLoader.init(ImageLoaderConfiguration.createDefault(this));
@@ -574,6 +575,7 @@ public class MainActivity extends ActionBarActivity {
 	public void onDestroy() {
 		unregisterReceiver(mBdReceiver);
 		BLEUtility.getInstance().disconnect();
+		MyLog.close();
 		super.onDestroy();
 	}
 

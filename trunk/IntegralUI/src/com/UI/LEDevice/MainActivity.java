@@ -639,7 +639,6 @@ public class MainActivity extends ActionBarActivity {
         	if(tle.compareTo(getResources().getString(R.string.menu_disconn)) == 0)
         		BLEUtility.getInstance().disconnect();
         	else if(tle.compareTo(getResources().getString(R.string.menu_conn)) == 0) {
-        		selectItem(0, mDrawerItems.get(0).getTag());
         		if(needRequestBT() == false) {
             		connectToIntegral();
         		}

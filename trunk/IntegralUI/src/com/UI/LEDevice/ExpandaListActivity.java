@@ -1063,7 +1063,7 @@ public class ExpandaListActivity extends Fragment
 				
 	    final File file = new File(path, "Commands.xml");
 	    
-		if(file.exists() && MyLog._DEBUG)
+		if(file.exists())
 		{
 			AlertDialog.Builder builderSingle = new AlertDialog.Builder(super.getActivity());
             builderSingle.setIcon(R.drawable.ic_icon);

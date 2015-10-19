@@ -6,15 +6,15 @@
 		</WriteCmd>
 		<ReadAllCmd Title="Read Config" Cmd="" Icon="&#xe8d0;">
 		</ReadAllCmd>
-		<WrtReadCmd Title="CEC Broadcast" Cmd1="cec on" Cmd2="cec off" ReadCmd = "cec" Sequence = "6">
+		<WrtReadCmd Title="CEC Broadcast" Cmd1="cec on" Cmd2="cec off" CmdRes="ok" ReadCmd = "cec" Sequence = "5">
 			<ReadRes Title="CEC On">cec on</ReadRes>
 			<ReadRes Title="CEC Off">cec off</ReadRes>
 		</WrtReadCmd>
-		<WrtReadCmd Title="Power" Cmd1="pwr on" Cmd2="pwr off" ReadCmd = "power" Sequence = "7">
+		<WrtReadCmd Title="Power" Cmd1="pwr on" Cmd2="pwr off" CmdRes="ok" ReadCmd = "power" Sequence = "6">
 			<ReadRes Title="Power On">power on</ReadRes>
 			<ReadRes Title="Power Off">power off</ReadRes>
 		</WrtReadCmd>
-		<WrtReadCmd Title="Auto Switch" Cmd1="autosw on" Cmd2="autosw off" ReadCmd = "autosw" Sequence = "8">
+		<WrtReadCmd Title="Auto Switch" Cmd1="autosw on" Cmd2="autosw off" CmdRes="ok" ReadCmd = "autosw" Sequence = "7">
 			<ReadRes Title="Auto Switch On">autosw on</ReadRes>
 			<ReadRes Title="Auto Switch Off">autosw off</ReadRes>
 		</WrtReadCmd>
@@ -29,15 +29,17 @@
 		<WriteCmdChk Title="Channel/Input 2" Cmd="insel 2">
 			<CmdResOK>ok</CmdResOK>
 		</WriteCmdChk>
-		<WriteCmdChk Title="Channel/Input 3" Cmd="insel 3">
+		<WriteCmdChk Title="Matrix Thru" Cmd="insel 3">
 			<CmdResOK>ok</CmdResOK>
 		</WriteCmdChk>		
-		<WriteCmdChk Title="Channel/Input 4" Cmd="insel 4">
+		<WriteCmdChk Title="Matrix Swap" Cmd="insel 4">
 			<CmdResOK>ok</CmdResOK>
 		</WriteCmdChk>		
 		<ReadCmd Title="Read Channel" Cmd="insel">
 			<CmdRes Title="Input 1" refWmdID = "0">insel 1</CmdRes>
 			<CmdRes Title="Input 2" refWmdID = "1">insel 2</CmdRes>
+            <CmdRes Title="Matrix Thru" refWmdID = "2">insel 3</CmdRes>
+           	<CmdRes Title="Matrix Swap" refWmdID = "3">insel 4</CmdRes>
 		</ReadCmd>
     </CmdGroup>
 	<CmdGroup Title="HDCP Settings" Icon="&#xeaff;" CanRead="true" Sequence="1" Try="2">
@@ -64,7 +66,7 @@
 			<CmdResOK>ok</CmdResOK>
 			<CmdResSWForce>swforce</CmdResSWForce>
 		</WriteCmdChk>
-		<WrtReadCmd Title="Mute All Sound" Cmd1="mute on" Cmd2="mute off" ReadCmd = "mute" Sequence = "9">
+		<WrtReadCmd Title="Mute All Sound" Cmd1="mute on" Cmd2="mute off" CmdRes="ok" ReadCmd = "mute" Sequence = "8">
 			<ReadRes Title="Mute On">mute on</ReadRes>
 			<ReadRes Title="Mute Off">mute off</ReadRes>
 		</WrtReadCmd>
@@ -74,7 +76,7 @@
 			<CmdRes Title="Auto" refWmdID = "-1">audio auto</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-	<CmdGroup Title="EDID Settings" Icon="&#xe8c7;" CanRead="true" Sequence="3" Try="1">
+	<CmdGroup Title="EDID Settings" Icon="&#xe8c7;" CanRead="true" Sequence="3" Try="2">
 	    <WriteCmdChk Title="Auto Mix Mode" Cmd="edid automix">
 			<CmdResOK>ok</CmdResOK>
 			<CmdResSWForce>swforce</CmdResSWForce>
@@ -101,18 +103,24 @@
 			<CmdResOK>ok</CmdResOK>
 		</WriteCmd>
 		<ReadCmd Title="Read Current 4:2:0 Selection Status" Cmd="420">
-			<CmdRes Title="Enable 4:4:4 -> 4:2:0" refWmdID = "0">420 on</CmdRes>
-			<CmdRes Title="Disable 4:4:4 -> 4:2:0" refWmdID = "1">420 off</CmdRes>
+			<CmdRes Title="On" refWmdID = "0">420 on</CmdRes>
+			<CmdRes Title="Off" refWmdID = "1">420 off</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-    <CmdGroup Title="Play with CEC" Icon="&#xe860;" CanRead="true" Sequence="5" Try="1">
-	    <WriteCmdChk Title="Turn Everything On" Cmd="cec on">
+    <CmdGroup Title="Play with CEC" Icon="&#xe860;" CanRead="false">
+	    <WriteCmd Title="Turn Everything On" Cmd="CEC 0F:04" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">
 			<CmdResOK>ok</CmdResOK>
-		</WriteCmdChk>
-	    <WriteCmdChk Title="Turn Everything Off" Cmd="cec off">
+		</WriteCmd>
+	    <WriteCmd Title="Turn Everything Off" Cmd="CEC 0F:36" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">
 			<CmdResOK>ok</CmdResOK>
-		</WriteCmdChk>
-		<WriteCECCmd Title="Play CEC Command" Cmd="CEC 0F:36" Icon="&#xea9d;">
+		</WriteCmd>   
+		<WriteCECCmd Title="Define CEC1 SP" PreCmd = "cec1save" Cmd="0F:36" Icon="&#xea67;">
+			<CmdRes>ok</CmdRes>
+		</WriteCECCmd>
+		<WriteCECCmd Title="Define CEC2 LP" PreCmd = "cec2save" Cmd="0F:36" Icon="&#xea67;">
+			<CmdRes>ok</CmdRes>
+		</WriteCECCmd>
+		<WriteCECCmd Title="Play CEC Command" PreCmd = "CEC" Cmd="0F:36" Icon="&#xea9d;">
 			<CmdRes>ok</CmdRes>
 		</WriteCECCmd>
 		<ReadCmd Title="Read CEC status" Cmd="cec">
@@ -120,12 +128,22 @@
 			<CmdRes Title="Off" refWmdID = "1">cec off</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-    <CmdGroup CheckedIcon1="&#xeb10;" UnCheckedIcon1="&#xeb0f;" Cmd1 = "CEC 0F:31" 
-              CheckedIcon2="&#xeb10;" UnCheckedIcon2="&#xeb0f;" Cmd2 = "CEC 0F:36" 
-              CheckedIcon3="&#xeb10;" UnCheckedIcon3="&#xeb0f;" Cmd3 = "CEC 0F:36" 
-              CheckedIcon4="&#xeb10;" UnCheckedIcon4="&#xeb0f;" Cmd4 = "CEC 0F:36" IsCEC="true"/>
-	<CmdGroup CheckedIcon1="&#xeb10;" UnCheckedIcon1="&#xeb0f;" Cmd1 = "CEC 0F:31" 
-				  CheckedIcon2="&#xeb10;" UnCheckedIcon2="&#xeb0f;" Cmd2 = "CEC 0F:36" 
-				  CheckedIcon3="&#xeb10;" UnCheckedIcon3="&#xeb0f;" Cmd3 = "CEC 0F:36" 
-				  CheckedIcon4="&#xeb10;" UnCheckedIcon4="&#xeb0f;" Cmd4 = "CEC 0F:36" IsCEC="true"/>			  
+    <CmdGroup Title="CEC Playback1" Icon="&#xeaa4;" CanRead="false">
+	    <CECChildItem CheckedIcon1="&#xeacb;" UnCheckedIcon1="&#xeacb;" Cmd1 = "CEC 54:44:4C" 
+	              CheckedIcon2="&#xea7d;" UnCheckedIcon2="&#xea7d;" Cmd2 = "CEC 54:44:44" 
+	              CheckedIcon3="&#xea64;" UnCheckedIcon3="&#xea64;" Cmd3 = "CEC 54:44:46" 
+	              CheckedIcon4="&#xeaca;" UnCheckedIcon4="&#xeaca;" Cmd4 = "CEC 54:44:4B"/>
+	    <CECChildItem CheckedIcon1="&#xe9be;" UnCheckedIcon1="&#xe9be;" Cmd1 = "CEC 54:44:09" 
+	              CheckedIcon2="" UnCheckedIcon2="" Cmd2 = "CEC 0F:36" 
+	              CheckedIcon3="&#xe815;" UnCheckedIcon3="&#xe815;" Cmd3 = "CEC 54:44:01" 
+	              CheckedIcon4="" UnCheckedIcon4="" Cmd4 = "CEC 0F:36"/>
+		<CECChildItem CheckedIcon1="&#xe9d4;" UnCheckedIcon1="&#xe9d4;" Cmd1 = "CEC 54:44:35" 
+			CheckedIcon2="&#xe8f9;" UnCheckedIcon2="&#xe8f9;" Cmd2 = "CEC 54:44:03" 
+			CheckedIcon3="&#xe810;" UnCheckedIcon3="&#xe810;" Cmd3 = "CEC 54:44:00" 
+			CheckedIcon4="&#xe811;" UnCheckedIcon4="&#xe811;" Cmd4 = "CEC 54:44:04"/>	
+		<CECChildItem CheckedIcon1="&#xe885;" UnCheckedIcon1="&#xe884;" Cmd1 = "CEC 54:44:0D" 
+			CheckedIcon2="" UnCheckedIcon2="" Cmd2 = "CEC 0F:36" 
+			CheckedIcon3="&#xe8f4;" UnCheckedIcon3="&#xe8f4;" Cmd3 = "CEC 54:44:02" 
+			CheckedIcon4="" UnCheckedIcon4="" Cmd4 = "CEC 0F:36"/>
+	</CmdGroup>		  
 </Commands>

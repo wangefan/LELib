@@ -99,13 +99,13 @@ public class MainActivity extends ActionBarActivity {
 				String strVMode = new String(intent.getStringExtra(BLEUtility.ACTION_UPDATE_ABOUT_VMODE_KEY));
 				String strVmodeFull = getResources().getString(R.string.drawer_title_HDMIVideo_none);
 				if(strVMode.length() > 0) {
-					Character x = strVMode.charAt(7);
-					Character y = strVMode.charAt(9);
-					Character z = strVMode.charAt(11);
-					String vMode1 = (y.compareTo('0') == 0) ? getResources().getString(R.string.aboutVmodeDVI) : getResources().getString(R.string.aboutVmodeHDMI);
-					int nX = Character.getNumericValue(x);
+					String [] strPart = strVMode.split("\\s+");
+					int nX = Integer.parseInt(strPart[1]);
+					int nY = Integer.parseInt(strPart[2]);
+					int nZ = Integer.parseInt(strPart[3]);
+					String vMode1 = (nY == 0) ? getResources().getString(R.string.aboutVmodeDVI) : getResources().getString(R.string.aboutVmodeHDMI);
 					String vMode2 = mVmode2Coll.get(nX);
-					String vMode3 = (z.compareTo('0') == 0) ? getResources().getString(R.string.aboutVmode3G) : getResources().getString(R.string.aboutVmode6G);
+					String vMode3 = (nZ == 0) ? getResources().getString(R.string.aboutVmode3G) : getResources().getString(R.string.aboutVmode6G);
 					strVmodeFull = String.format("%s %s %s", vMode1, vMode2, vMode3);
 				}
 				mDrawerItems.get(1).setTitle(strVmodeFull);
@@ -134,12 +134,8 @@ public class MainActivity extends ActionBarActivity {
 				String strVerFull = getResources().getString(R.string.drawer_title_DEVICEVER_none);
 				if(strVer.length() > 0)
 				{
-					final int nXXStart = 4, nYYStart = 7, nZZStart = 10, nWWStart = 13, nCount = 2;  
-					String xx = strVer.substring(nXXStart, nXXStart + nCount);
-					String yy = strVer.substring(nYYStart, nYYStart + nCount);
-					String zz = strVer.substring(nZZStart, nZZStart + nCount);
-					String ww = strVer.substring(nWWStart, nWWStart + nCount);
-					strVerFull = String.format("FW ver. %s, %s, %s, %s", xx, yy, zz, ww);
+					String [] strParts = strVer.split("\\s+");  
+					strVerFull = String.format("FW ver: %s.%s.%s.%s", strParts[1], strParts[2], strParts[3], strParts[4]);
 				}
 				
 				mDrawerItems.get(3).setTitle(strVerFull);

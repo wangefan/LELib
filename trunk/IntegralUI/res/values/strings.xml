@@ -5,7 +5,7 @@
     <string name="drawer_title_Main">4K Integral</string>
     <string name="drawer_icon_Main"></string>
     <string name="drawer_title_HDMILink_none">Get No HDMI Link Status</string>
-    <string name="drawer_title_HDMILink">In Top: %1$s\nIn Bottom: %1$s\nOut Top: %1$s\nOut Bottom: %1$s</string>
+    <string name="drawer_title_HDMILink">In Top: %1$s\nIn Bottom: %2$s\nOut Top: %3$s\nOut Bottom: %4$s</string>
     <string name="drawer_HDMILink_Act">active</string>
     <string name="drawer_HDMILink_Nac">un-active</string>
     <string name="drawer_icon_HDMILink"></string>

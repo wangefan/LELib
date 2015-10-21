@@ -28,7 +28,7 @@
 	        <ImageButton
 	            android:id="@+id/image_integral"
 	            android:layout_width="280dp"
-	            android:layout_height="252dp" 
+	            android:layout_height="219dp" 
 	            android:background="@drawable/integral_image"/>
 	 
 	         <ListView

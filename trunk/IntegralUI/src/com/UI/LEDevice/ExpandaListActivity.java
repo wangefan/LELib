@@ -1124,10 +1124,22 @@ public class ExpandaListActivity extends Fragment
 		List<GroupItem> groupItems = new ArrayList<GroupItem>();
 		mGoalReadCount = 0;
 		XPath xpath = XPathFactory.newInstance().newXPath();  
+		String expressCmdRoot = "/Commands";  
 		String expression = "//CmdGroup";  
 		NodeList nodes = null;
 		try {
-			nodes = (NodeList) xpath.evaluate(expression, inputSource, XPathConstants.NODESET);
+			NodeList nodeRoots = (NodeList) xpath.evaluate(expressCmdRoot, inputSource, XPathConstants.NODESET);
+			Node cmdRootNode = nodeRoots.item(0);
+			if(cmdRootNode != null) {
+				NamedNodeMap attributes = cmdRootNode.getAttributes();  
+			    
+			    if(attributes != null && attributes.getNamedItem("CmdDelay") != null) {
+			    	String cmdDelay = attributes.getNamedItem("CmdDelay").getNodeValue();
+					BLEUtility.setCmdDelay(Integer.parseInt(cmdDelay));
+			    }
+			}
+			
+			nodes = (NodeList) xpath.evaluate(expression, cmdRootNode, XPathConstants.NODESET);
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

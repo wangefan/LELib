@@ -208,6 +208,7 @@ public class BLEUtility
 	private BLEDevice mDestBTLEDevice = null;
 	private ConnStatus mConnStatus = ConnStatus.CONN_STATE_DISCONNECTED;
 	static private Context mContext = null;
+	static private int mCmdDelay = 400; //Miliseconds
 	private boolean mBAutoReconnect = false;
 	private Handler mHandlerCheckConn = new Handler();
 	private Handler mHandlerConnTimeout = new Handler();
@@ -316,6 +317,11 @@ public class BLEUtility
 	static public void initBLEUtility(Context context)
 	{
 		mContext = context;
+	}
+	
+	static public void setCmdDelay(int nCmdDelay)
+	{
+		mCmdDelay = nCmdDelay;
 	}
 	
     /**
@@ -497,7 +503,7 @@ public class BLEUtility
 			mResData = null;
 			write(command);
 			mBWaitData = true;
-			Thread.sleep(400);
+			Thread.sleep(mCmdDelay);
 			read();
 			final int nWaitMilliSecs = 2000;
 			final int nWaitStep = 100;

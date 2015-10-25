@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Commands>
+<Commands CmdDelay="500">
     <CmdGroup Title="Device Settings" Icon="&#xe91e;" CanRead="false">
         <WriteCmd Title="Reset" Cmd="reset" CheckedIcon="&#xe8fd;" UnCheckedIcon="&#xe8fd;">
 			<CmdResOK>ok</CmdResOK>

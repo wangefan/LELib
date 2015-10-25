@@ -1,5 +1,6 @@
 package com.UI.LEDevice;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +13,8 @@ import com.UI.font.FontelloTextView;
 import com.UI.font.RobotoTextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.utility.CmdProcObj;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -44,7 +47,7 @@ public class MainActivity extends ActionBarActivity {
 	//constant 
 	private final static int REQUEST_ENABLE_BT = 5;
 	private final String mTAG = "MainActivity";
-	private static final long SCAN_PERIOD = 5000; // Stops scanning after 8 seconds.
+	private static final long SCAN_PERIOD = 5000; // Stops scanning after 5 seconds.
 	
 	//Inner classes
 	BroadcastReceiver mBdReceiver = new BroadcastReceiver() {
@@ -91,55 +94,6 @@ public class MainActivity extends ActionBarActivity {
 					mLeDevices.add(integralDevice);
 					MyLog.d(mTAG, "Get le device , "+mLeDevices.size()+"=>[" + integralDevice.getAddress()+"]");
 				}
-			}
-			else if(BLEUtility.ACTION_UPDATE_ABOUT.equals(action)) {
-				MyLog.d(mTAG, "Update About");
-				
-				//Update v mode
-				String strVMode = new String(intent.getStringExtra(BLEUtility.ACTION_UPDATE_ABOUT_VMODE_KEY));
-				String strVmodeFull = getResources().getString(R.string.drawer_title_HDMIVideo_none);
-				if(strVMode.length() > 0) {
-					String [] strPart = strVMode.split("\\s+");
-					int nX = Integer.parseInt(strPart[1]);
-					int nY = Integer.parseInt(strPart[2]);
-					int nZ = Integer.parseInt(strPart[3]);
-					String vMode1 = (nY == 0) ? getResources().getString(R.string.aboutVmodeDVI) : getResources().getString(R.string.aboutVmodeHDMI);
-					String vMode2 = mVmode2Coll.get(nX);
-					String vMode3 = (nZ == 0) ? getResources().getString(R.string.aboutVmode3G) : getResources().getString(R.string.aboutVmode6G);
-					strVmodeFull = String.format("%s %s %s", vMode1, vMode2, vMode3);
-				}
-				mDrawerItems.get(1).setTitle(strVmodeFull);
-				
-				//update link status
-				String strLinkSt = new String(intent.getStringExtra(BLEUtility.ACTION_UPDATE_ABOUT_LINKST_KEY));
-				String strLinkStFull = getResources().getString(R.string.drawer_title_HDMILink_none);
-				if(strLinkSt.length() > 0) {
-					Character rxTop = strLinkSt.charAt(7);
-					Character rxBot = strLinkSt.charAt(9);
-					Character txTop = strLinkSt.charAt(11);
-					Character txBot = strLinkSt.charAt(13);
-					String strRxTop = (rxTop == '0') ? getResources().getString(R.string.drawer_HDMILink_Nac) :
-						getResources().getString(R.string.drawer_HDMILink_Act);
-					String strRxBot = (rxBot == '0') ? getResources().getString(R.string.drawer_HDMILink_Nac) :
-						getResources().getString(R.string.drawer_HDMILink_Act);
-					String strTxTop = (txTop == '0') ? getResources().getString(R.string.drawer_HDMILink_Nac) :
-						getResources().getString(R.string.drawer_HDMILink_Act);
-					String strTxBot = (txBot == '0') ? getResources().getString(R.string.drawer_HDMILink_Nac) :
-						getResources().getString(R.string.drawer_HDMILink_Act);
-					strLinkStFull = String.format(getResources().getString(R.string.drawer_title_HDMILink), 
-							strRxTop, strRxBot, strTxTop, strTxBot);
-				}
-				mDrawerItems.get(2).setTitle(strLinkStFull);
-				String strVer = new String(intent.getStringExtra(BLEUtility.ACTION_UPDATE_ABOUT_VER_KEY));
-				String strVerFull = getResources().getString(R.string.drawer_title_DEVICEVER_none);
-				if(strVer.length() > 0)
-				{
-					String [] strParts = strVer.split("\\s+");  
-					strVerFull = String.format("FW ver: %s.%s.%s.%s", strParts[1], strParts[2], strParts[3], strParts[4]);
-				}
-				
-				mDrawerItems.get(3).setTitle(strVerFull);
-				mAdapter.notifyDataSetChanged();
 			}
 			//Blew are commands relaive 
 			else if (BLEUtility.ACTION_SENCMD_BEGIN.equals(action)) 
@@ -386,7 +340,6 @@ public class MainActivity extends ActionBarActivity {
         intentFilter.addAction(BLEUtility.ACTION_WRTREAD_WRT_BEG);
         intentFilter.addAction(BLEUtility.ACTION_WRTREAD_WRT_UPDATE);
         intentFilter.addAction(BLEUtility.ACTION_WRTREAD_WRT_FAIL);
-        intentFilter.addAction(BLEUtility.ACTION_UPDATE_ABOUT);
         return intentFilter;
     }
 	
@@ -459,6 +412,172 @@ public class MainActivity extends ActionBarActivity {
 		}	
 	}
 	
+	private void doQueryAbout() {
+		
+		final int nTry = 3;
+		byte [] rsp = null;
+		byte [] rspCal = null;
+		String version = "";
+		String videoStatus = "";
+		String linkStatus = "";
+		String strRsp = "", strRspHex = "", strRspCal = "", strRspCalHex = "";
+		
+		//Version
+		for(int idxTry = 0; idxTry < nTry; ++idxTry) {
+			rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC("ver", false));
+			rspCal = CmdProcObj.calCRC(rsp, true);
+			if(rsp != null)
+	    	{
+	    		strRsp = new String(rsp);
+	    		strRspHex = String.format("%x", new BigInteger(1, rsp));
+	    	}
+	    	if(rspCal != null)
+	    	{
+	    		strRspCal = new String(rspCal);
+	    		strRspCalHex = String.format("%x", new BigInteger(1, rspCal));
+	    	}
+	    	MyLog.d(mTAG, "read string from integral = " + strRsp);
+	    	MyLog.d(mTAG, "read string from integral hex = " + strRspHex);
+	    	MyLog.d(mTAG, "read string after CRC = " + strRspCal);
+	    	MyLog.d(mTAG, "read string after CRC hex = " + strRspCalHex);
+	    	
+	    	if(rspCal != null) {
+	    		version = new String(rspCal);
+	    		break;
+			}
+	    	
+	    	try {
+				Thread.sleep(400);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+    	
+    	try {
+			Thread.sleep(400);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	strRsp = ""; strRspHex = ""; strRspCal = ""; strRspCalHex = "";
+    	//Video Status
+    	for(int idxTry = 0; idxTry < nTry; ++idxTry) {
+    		rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC("vmode", false));
+    		rspCal = CmdProcObj.calCRC(rsp, true);
+    		
+    		if(rsp != null)
+	    	{
+	    		strRsp = new String(rsp);
+	    		strRspHex = String.format("%x", new BigInteger(1, rsp));
+	    	}
+	    	if(rspCal != null)
+	    	{
+	    		strRspCal = new String(rspCal);
+	    		strRspCalHex = String.format("%x", new BigInteger(1, rspCal));
+	    	}
+	    	MyLog.d(mTAG, "read string from integral = " + strRsp);
+	    	MyLog.d(mTAG, "read string from integral hex = " + strRspHex);
+	    	MyLog.d(mTAG, "read string after CRC = " + strRspCal);
+	    	MyLog.d(mTAG, "read string after CRC hex = " + strRspCalHex);
+	    	
+    		if(rspCal != null) {
+    			videoStatus = new String(rspCal);
+    			break;
+    		}
+    		try {
+    			Thread.sleep(400);
+    		} catch (InterruptedException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+    	}
+    	
+    	try {
+			Thread.sleep(400);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	strRsp = ""; strRspHex = ""; strRspCal = ""; strRspCalHex = "";
+    	//Link Status
+    	for(int idxTry = 0; idxTry < nTry; ++idxTry) {
+	    	rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC("linkst", false));
+	    	rspCal = CmdProcObj.calCRC(rsp, true);
+	    	if(rsp != null)
+	    	{
+	    		strRsp = new String(rsp);
+	    		strRspHex = String.format("%x", new BigInteger(1, rsp));
+	    	}
+	    	if(rspCal != null)
+	    	{
+	    		strRspCal = new String(rspCal);
+	    		strRspCalHex = String.format("%x", new BigInteger(1, rspCal));
+	    	}
+	    	MyLog.d(mTAG, "read string from integral = " + strRsp);
+	    	MyLog.d(mTAG, "read string from integral hex = " + strRspHex);
+	    	MyLog.d(mTAG, "read string after CRC = " + strRspCal);
+	    	MyLog.d(mTAG, "read string after CRC hex = " + strRspCalHex);
+	    	if(rspCal != null) {
+	    		linkStatus = new String(rspCal);
+	    		break;
+			}
+    	}    	
+		
+		//Update v mode
+		String strVmodeFull = getResources().getString(R.string.drawer_title_HDMIVideo_none);
+		if(videoStatus.length() > 0) {
+			String [] strPart = videoStatus.split("\\s+");
+			int nX = Integer.parseInt(strPart[1]);
+			int nY = Integer.parseInt(strPart[2]);
+			int nZ = Integer.parseInt(strPart[3]);
+			String vMode1 = (nY == 0) ? getResources().getString(R.string.aboutVmodeDVI) : getResources().getString(R.string.aboutVmodeHDMI);
+			String vMode2 = mVmode2Coll.get(nX);
+			String vMode3 = (nZ == 0) ? getResources().getString(R.string.aboutVmode3G) : getResources().getString(R.string.aboutVmode6G);
+			strVmodeFull = String.format("%s %s %s", vMode1, vMode2, vMode3);
+		}
+		mDrawerItems.get(1).setTitle(strVmodeFull);
+		
+		//update link status
+		String strLinkStFull = getResources().getString(R.string.drawer_title_HDMILink_none);
+		if(linkStatus.length() > 0) {
+			Character rxTop = linkStatus.charAt(7);
+			Character rxBot = linkStatus.charAt(9);
+			Character txTop = linkStatus.charAt(11);
+			Character txBot = linkStatus.charAt(13);
+			String strRxTop = (rxTop == '0') ? getResources().getString(R.string.drawer_HDMILink_Nac) :
+				getResources().getString(R.string.drawer_HDMILink_Act);
+			String strRxBot = (rxBot == '0') ? getResources().getString(R.string.drawer_HDMILink_Nac) :
+				getResources().getString(R.string.drawer_HDMILink_Act);
+			String strTxTop = (txTop == '0') ? getResources().getString(R.string.drawer_HDMILink_Nac) :
+				getResources().getString(R.string.drawer_HDMILink_Act);
+			String strTxBot = (txBot == '0') ? getResources().getString(R.string.drawer_HDMILink_Nac) :
+				getResources().getString(R.string.drawer_HDMILink_Act);
+			strLinkStFull = String.format(getResources().getString(R.string.drawer_title_HDMILink), 
+					strRxTop, strRxBot, strTxTop, strTxBot);
+		}
+		mDrawerItems.get(2).setTitle(strLinkStFull);
+		String strVerFull = getResources().getString(R.string.drawer_title_DEVICEVER_none);
+		if(version.length() > 0)
+		{
+			String [] strParts = version.split("\\s+");  
+			strVerFull = String.format("FW ver: %s.%s.%s.%s", strParts[1], strParts[2], strParts[3], strParts[4]);
+		}
+		
+		mDrawerItems.get(3).setTitle(strVerFull);
+		MainActivity.this.runOnUiThread(new Runnable()  {
+	        @Override
+	        public void run() {
+	             mAdapter.notifyDataSetChanged();
+	             UIUtility.showProgressDlg(false, R.string.prgsReadAboutEnd);
+	             Toast.makeText(getApplicationContext(), R.string.prgsReadAboutEnd, Toast.LENGTH_SHORT).show();
+	        }
+	    });
+	}
+	
 	public boolean needRequestBT() {
 		if((BluetoothAdapter.getDefaultAdapter() == null || BluetoothAdapter.getDefaultAdapter().isEnabled() == false))
 		{
@@ -515,6 +634,17 @@ public class MainActivity extends ActionBarActivity {
 			public void onDrawerOpened(View drawerView) {
 				getSupportActionBar().setTitle(R.string.strAbout);
 				supportInvalidateOptionsMenu();
+				//Do update about info
+				if(BLEUtility.getInstance().isConnect())
+				{
+					UIUtility.showProgressDlg(true, R.string.prgsReadAbout);
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							doQueryAbout();
+						}
+					}).start();
+				}
 			}
 		};
 		mDrawerToggle.setDrawerIndicatorEnabled(true);

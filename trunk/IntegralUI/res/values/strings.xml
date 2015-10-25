@@ -38,6 +38,8 @@
 	<string name="dlgXMLIntegral">Custom XML</string>
 	<string name="dlgXMLIntegralMsg">Use Custom Commands XML?</string>
 	<string name="menu_disconn">Disconnect</string>
+	<string name="prgsReadAbout">Reading Device Info&#8230;</string>
+	<string name="prgsReadAboutEnd">Read Device Info End</string>
 	<string name="prgsReadConfig">Reading Config&#8230;</string>
 	<string name="prgsReadConfigEnd">Read Config End</string>
 	<string name="prgsConnting">Connecting&#8230;</string>

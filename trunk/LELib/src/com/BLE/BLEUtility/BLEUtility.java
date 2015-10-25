@@ -52,10 +52,6 @@ public class BLEUtility
 	public final static String ACTION_WRTREAD_WRT_BEG = "ACTION_WRTREAD_WRT_BEG";
 	public final static String ACTION_WRTREAD_WRT_UPDATE = "ACTION_WRTREAD_WRT_UPDATE";
 	public final static String ACTION_WRTREAD_WRT_FAIL = "ACTION_WRTREAD_WRT_FAIL";
-	public final static String ACTION_UPDATE_ABOUT = "com.BLE.BLEUtility.ACTION_UPDATE_ABOUT";
-	public final static String ACTION_UPDATE_ABOUT_VER_KEY = "com.BLE.BLEUtility.ACTION_UPDATE_ABOUT_VER_KEY";
-	public final static String ACTION_UPDATE_ABOUT_VMODE_KEY = "com.BLE.BLEUtility.ACTION_UPDATE_ABOUT_VMODE_KEY";
-	public final static String ACTION_UPDATE_ABOUT_LINKST_KEY = "com.BLE.BLEUtility.ACTION_UPDATE_ABOUT_LINKST_KEY";
 	
     //Messages
     public static final String DISCONNECTED_CAUSE_NORSP = "No Response";
@@ -138,17 +134,10 @@ public class BLEUtility
                 			}
                 			mBTCharct = btCharct;
                 			mHandlerConnTimeout.removeCallbacksAndMessages(null);
-                			
-                			Thread workerThread = new Thread() {
-                			    public void run() {
-                			    	doThingsAfterConnected();
-                        			mConnStatus = ConnStatus.CONN_STATE_CONNECTED;
-                        			mFireConnected();
-                        			if(mBAutoReconnect)
-                        	        	mSetCheckConnTimer(false);
-                			    }
-                			};
-                			workerThread.start();
+                			mConnStatus = ConnStatus.CONN_STATE_CONNECTED;
+                        	mFireConnected();
+                        	if(mBAutoReconnect)
+                        	   	mSetCheckConnTimer(false);
                 			return;
             			}
             		}
@@ -288,129 +277,6 @@ public class BLEUtility
         sendBroadcast(brdConnState);
 	}
 	*/
-	
-	void doThingsAfterConnected() {
-		//Version
-		final int nTry = 3;
-		byte [] rsp = null;
-		byte [] rspCal = null;
-		//Members 
-		String version = "";
-		String videoStatus = "";
-		String linkStatus = "";
-		String strRsp = "", strRspHex = "", strRspCal = "", strRspCalHex = "";
-		
-		for(int idxTry = 0; idxTry < nTry; ++idxTry) {
-			rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC("ver", false));
-			rspCal = CmdProcObj.calCRC(rsp, true);
-			if(rsp != null)
-	    	{
-	    		strRsp = new String(rsp);
-	    		strRspHex = String.format("%x", new BigInteger(1, rsp));
-	    	}
-	    	if(rspCal != null)
-	    	{
-	    		strRspCal = new String(rspCal);
-	    		strRspCalHex = String.format("%x", new BigInteger(1, rspCal));
-	    	}
-	    	MyLog.d(mTag, "read string from integral = " + strRsp);
-	    	MyLog.d(mTag, "read string from integral hex = " + strRspHex);
-	    	MyLog.d(mTag, "read string after CRC = " + strRspCal);
-	    	MyLog.d(mTag, "read string after CRC hex = " + strRspCalHex);
-	    	
-	    	if(rspCal != null) {
-	    		version = new String(rspCal);
-	    		break;
-			}
-	    	
-	    	try {
-				Thread.sleep(400);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-    	
-    	try {
-			Thread.sleep(400);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
-    	strRsp = ""; strRspHex = ""; strRspCal = ""; strRspCalHex = "";
-    	//Video Status
-    	for(int idxTry = 0; idxTry < nTry; ++idxTry) {
-    		rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC("vmode", false));
-    		rspCal = CmdProcObj.calCRC(rsp, true);
-    		
-    		if(rsp != null)
-	    	{
-	    		strRsp = new String(rsp);
-	    		strRspHex = String.format("%x", new BigInteger(1, rsp));
-	    	}
-	    	if(rspCal != null)
-	    	{
-	    		strRspCal = new String(rspCal);
-	    		strRspCalHex = String.format("%x", new BigInteger(1, rspCal));
-	    	}
-	    	MyLog.d(mTag, "read string from integral = " + strRsp);
-	    	MyLog.d(mTag, "read string from integral hex = " + strRspHex);
-	    	MyLog.d(mTag, "read string after CRC = " + strRspCal);
-	    	MyLog.d(mTag, "read string after CRC hex = " + strRspCalHex);
-	    	
-    		if(rspCal != null) {
-    			videoStatus = new String(rspCal);
-    			break;
-    		}
-    		try {
-    			Thread.sleep(400);
-    		} catch (InterruptedException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-    	}
-    	
-    	try {
-			Thread.sleep(400);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
-    	strRsp = ""; strRspHex = ""; strRspCal = ""; strRspCalHex = "";
-    	//Link Status
-    	for(int idxTry = 0; idxTry < nTry; ++idxTry) {
-	    	rsp = BLEUtility.getInstance().writeCmd(CmdProcObj.addCRC("linkst", false));
-	    	rspCal = CmdProcObj.calCRC(rsp, true);
-	    	if(rsp != null)
-	    	{
-	    		strRsp = new String(rsp);
-	    		strRspHex = String.format("%x", new BigInteger(1, rsp));
-	    	}
-	    	if(rspCal != null)
-	    	{
-	    		strRspCal = new String(rspCal);
-	    		strRspCalHex = String.format("%x", new BigInteger(1, rspCal));
-	    	}
-	    	MyLog.d(mTag, "read string from integral = " + strRsp);
-	    	MyLog.d(mTag, "read string from integral hex = " + strRspHex);
-	    	MyLog.d(mTag, "read string after CRC = " + strRspCal);
-	    	MyLog.d(mTag, "read string after CRC hex = " + strRspCalHex);
-	    	if(rspCal != null) {
-	    		linkStatus = new String(rspCal);
-	    		break;
-			}
-    	}
-    	
-		//Broadcast.
-		final Intent brdAbout = new Intent(ACTION_UPDATE_ABOUT);
-		brdAbout.putExtra(ACTION_UPDATE_ABOUT_VER_KEY, version);
-		brdAbout.putExtra(ACTION_UPDATE_ABOUT_VMODE_KEY, videoStatus);
-		brdAbout.putExtra(ACTION_UPDATE_ABOUT_LINKST_KEY, linkStatus);
-        mContext.sendBroadcast(brdAbout);
-	}
 	
 	void mFireConnecting()
 	{

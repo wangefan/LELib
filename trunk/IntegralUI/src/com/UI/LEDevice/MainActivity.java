@@ -78,7 +78,7 @@ public class MainActivity extends ActionBarActivity {
 				mDrawerItems.get(0).setTitle(strTleMain);
 				
 				updateUIForConn();
-				Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainActivity.this, R.string.prgsConnted, Toast.LENGTH_SHORT).show();
         		if(mIntegral != null)
         			mIntegral.doThingsAfterConnted();
         		mAdapter.notifyDataSetChanged();

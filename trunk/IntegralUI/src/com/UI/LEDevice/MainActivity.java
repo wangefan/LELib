@@ -537,7 +537,12 @@ public class MainActivity extends ActionBarActivity {
 			String vMode1 = (nY == 0) ? getResources().getString(R.string.aboutVmodeDVI) : getResources().getString(R.string.aboutVmodeHDMI);
 			String vMode2 = mVmode2Coll.get(nX);
 			String vMode3 = (nZ == 0) ? getResources().getString(R.string.aboutVmode3G) : getResources().getString(R.string.aboutVmode6G);
-			strVmodeFull = String.format("%s %s %s", vMode1, vMode2, vMode3);
+			
+			final int n4k2kIdx = 93;
+			if(nX >= n4k2kIdx)
+				strVmodeFull = String.format("%s %s\n%s", vMode1, vMode2, vMode3);
+			else
+				strVmodeFull = String.format("%s %s", vMode1, vMode2);
 		}
 		mDrawerItems.get(1).setTitle(strVmodeFull);
 		

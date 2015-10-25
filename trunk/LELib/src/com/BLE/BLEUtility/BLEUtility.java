@@ -58,9 +58,9 @@ public class BLEUtility
 	public final static String ACTION_UPDATE_ABOUT_LINKST_KEY = "com.BLE.BLEUtility.ACTION_UPDATE_ABOUT_LINKST_KEY";
 	
     //Messages
-    public static final String DISCONNECTED_CAUSE_NORSP = "Connect no response";
-    public static final String DISCONNECTED_CAUSE_DIS = "disconnted";
-    public static final String DISCONNECTED_CAUSE_NOSERVICE = "discover no services";
+    public static final String DISCONNECTED_CAUSE_NORSP = "No Response";
+    public static final String DISCONNECTED_CAUSE_DIS = "Disconneted";
+    public static final String DISCONNECTED_CAUSE_NOSERVICE = "Discover No Services";
     public static final String DISCONNECTED_CAUSE_PFLDIS = "BluetoothProfile.STATE_DISCONNECTED";
 	
     //inner define

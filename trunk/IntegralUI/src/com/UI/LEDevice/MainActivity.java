@@ -732,7 +732,6 @@ public class MainActivity extends ActionBarActivity {
 			Toast.makeText(getApplicationContext(), R.string.confirm_exit,
 					Toast.LENGTH_SHORT).show();
 			mShouldFinish = true;
-			mDrawerLayout.openDrawer(mDrawerRelativeLayout);
 		} else if (!mShouldFinish && mDrawerLayout.isDrawerOpen(mDrawerRelativeLayout)) {
 			mDrawerLayout.closeDrawer(mDrawerRelativeLayout);
 		} else {

@@ -7,7 +7,8 @@ public class DrawerItem {
 	public static final int DRAWER_ITEM_HDMILink = 10;
 	public static final int DRAWER_ITEM_HDMIVideo = 11;
 	public static final int DRAWER_ITEM_DEVICEVER = 12;
-	public static final int DRAWER_ITEM_LINKHDF = 13;
+	public static final int DRAWER_ITEM_APPVER = 13;
+	public static final int DRAWER_ITEM_LINKHDF = 14;
 	
 	public DrawerItem(int icon, String title, int tag) {
 		this.icon = icon;

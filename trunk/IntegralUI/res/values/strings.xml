@@ -5,8 +5,8 @@
     <string name="drawer_title_Main">4K Integral</string>
     <string name="drawer_icon_Main"></string>
     <string name="drawer_title_HDMILink_none">No HDMI Link Status</string>
-    <string name="drawer_title_HDMILink">In Top: %1$s\nIn Bot: %2$s\nOut Top: %3$s\nOut Bot: %4$s</string>
-    <string name="drawer_HDMILink_Act">active</string>
+    <string name="drawer_title_HDMILink">In Top: %1$s&lt;br&gt;In Bot: %2$s&lt;br&gt;Out Top: %3$s&lt;br&gt;Out Bot: %4$s</string>
+    <string name="drawer_HDMILink_Act"><Data><![CDATA[ <font color=#75AD38>active</font>]]> </Data></string>
     <string name="drawer_HDMILink_Nac">inactive</string>
     <string name="drawer_icon_HDMILink"></string>
     <string name="drawer_title_HDMIVideo_none">No HDMI Video Status</string>

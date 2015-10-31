@@ -76,7 +76,7 @@ public class MainActivity extends ActionBarActivity {
 				IntegralSetting.setDeviceMACAddr(mPreDevice.getAddress());
 				
 				//Update MAC address
-				String strTleMain = String.format("%s\n[%s]", getResources().getString(R.string.drawer_title_Main), 
+				String strTleMain = String.format("%s<br>[%s]", getResources().getString(R.string.drawer_title_Main), 
 						IntegralSetting.getDeviceMACAddr());  
 				mDrawerItems.get(0).setTitle(strTleMain);
 				

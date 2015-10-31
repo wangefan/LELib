@@ -3,6 +3,7 @@ package com.UI.LEDevice;
 import java.util.List;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +59,7 @@ public class DrawerAdapter extends BaseAdapter {
 		if (mIsFirstType) {	//We chose to set icon that exists in list_view_item_navigation_drawer_1.xml
 			holder.icon.setText(item.getIcon());
 		}
-		holder.title.setText(item.getTitle());
+		holder.title.setText(Html.fromHtml(item.getTitle()));
 		
 		return convertView;
 	}

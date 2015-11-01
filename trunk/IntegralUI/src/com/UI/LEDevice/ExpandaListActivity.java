@@ -67,7 +67,9 @@ public class ExpandaListActivity extends Fragment
 	private ChildReadAllItem mReadAllCmd = null;
 	public  ChildItem    mPreCmdToExecute = null;
 	private int mGoalReadCount = 0;
+	final private int mReadFailGoalCount = 2;
 	private int mReadCount = 0; 
+	private int mReadFailCount = 0; 
 	private final String mInFileName = "InternalCommands.xml";
 	private static Object mLockPollRead = new Object();
 	
@@ -123,7 +125,7 @@ public class ExpandaListActivity extends Fragment
 		private int mNTry = 1;
 		
 		private void doCheckReadItems() {
-			if(mReadCount >= mGoalReadCount)
+			if(mReadCount >= mGoalReadCount || mReadFailCount >= mReadFailGoalCount)
 	    	{
 				mUIHanlder.post(new Runnable() {
 					@Override
@@ -132,6 +134,7 @@ public class ExpandaListActivity extends Fragment
 					}
 				});
 				mReadCount = 0;
+				mReadFailCount = 0;
 	    	}	
 		}
 	
@@ -212,7 +215,7 @@ public class ExpandaListActivity extends Fragment
 								e.printStackTrace();
 							}
 			    		}
-			    		
+			    		++mReadFailCount;
 			    		++mReadCount;
 			    		mBIsOutofDate= true; 
 				    	MyLog.d(mTag, "doReadRsp, read fail, post ACTION_ITEM_READ_UPDATE to UI, in thread = " + Thread.currentThread().getId());
@@ -538,7 +541,7 @@ public class ExpandaListActivity extends Fragment
 		}
 		
 		private void doCheckReadItems() {
-			if(mReadCount >= mGoalReadCount)
+			if(mReadCount >= mGoalReadCount || mReadFailCount >= mReadFailGoalCount)
 	    	{
 				mUIHanlder.post(new Runnable() {
 					@Override
@@ -547,6 +550,7 @@ public class ExpandaListActivity extends Fragment
 					}
 				});
 				mReadCount = 0;
+				mReadFailCount = 0;
 	    	}	
 		}
 		
@@ -670,6 +674,7 @@ public class ExpandaListActivity extends Fragment
 						}
 			    	}
 			    	MyLog.d(mTag, "doReadRsp, read fail");
+			    	++mReadFailCount;
 			    	mBIsOutofDate = true;
 					mUIHanlder.post(new Runnable() {
 						@Override
@@ -696,6 +701,7 @@ public class ExpandaListActivity extends Fragment
 			MyLog.d(mTag, "Read config begin");
 			UIUtility.showProgressDlg(true, R.string.prgsReadConfig);
 			mReadCount = 0;
+			mReadFailCount = 0;
 			for(int idxGroup = 0; idxGroup < mAdapter.getGroupCount(); ++idxGroup)
 			{
 				GroupItem groupItem = mAdapter.getGroup(idxGroup);

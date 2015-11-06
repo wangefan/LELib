@@ -19,4 +19,10 @@
           android:textColor="@+color/white"
           app1:typeface="robotoCondensed"/>
 
+    <item android:id="@+id/menu_apkVer"
+          android:title="@+string/apkVer"
+          android:orderInCategory="100"
+          android:showAsAction="never"
+          android:textColor="@+color/white"
+          app1:typeface="robotoCondensed"/>    
 </menu>

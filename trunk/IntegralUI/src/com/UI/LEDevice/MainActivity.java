@@ -574,21 +574,6 @@ public class MainActivity extends ActionBarActivity {
 			strVerFull = String.format("FW ver: %s.%s.%s.%s", strParts[1], strParts[2], strParts[3], strParts[4]);
 		}
 		mDrawerItems.get(3).setTitle(strVerFull);
-		
-		//App vesion
-		PackageInfo pInfo = null;;
-		try {
-			pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if(pInfo != null)
-		{
-			String sftVer = String.format(getResources().getString(R.string.drawer_title_appVER), pInfo.versionName);
-			mDrawerItems.get(4).setTitle(sftVer);
-		}
-		
 		MainActivity.this.runOnUiThread(new Runnable()  {
 	        @Override
 	        public void run() {
@@ -753,9 +738,6 @@ public class MainActivity extends ActionBarActivity {
 		mDrawerItems.add(new DrawerItem(R.string.drawer_icon_DEVICEVER,
 				getResources().getString(R.string.drawer_title_DEVICEVER_none),
 				DrawerItem.DRAWER_ITEM_DEVICEVER));
-		mDrawerItems.add(new DrawerItem(R.string.drawer_icon_appVER,
-				getResources().getString(R.string.drawer_title_appVER_none),
-				DrawerItem.DRAWER_ITEM_APPVER));
 	}
 
 	@Override
@@ -764,6 +746,20 @@ public class MainActivity extends ActionBarActivity {
 		inflater.inflate(R.menu.main, menu);
 		menu.findItem(R.id.menu_connect).setVisible(true);
 		mMenu = menu;
+		//App vesion
+		PackageInfo pInfo = null;;
+		try {
+			pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+			if(pInfo != null)
+			{
+				String sftVer = String.format(getResources().getString(R.string.drawer_title_appVER), pInfo.versionName);
+				menu.findItem(R.id.menu_apkVer).setTitle(sftVer);
+			}
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		updateUIForConn();
 		return super.onCreateOptionsMenu(menu);
 	}

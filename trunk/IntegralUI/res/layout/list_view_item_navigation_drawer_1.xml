@@ -21,6 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:padding="8dp"
      android:textColor="@color/main_color_grey_700"
      android:textSize="18sp" />
 </LinearLayout>

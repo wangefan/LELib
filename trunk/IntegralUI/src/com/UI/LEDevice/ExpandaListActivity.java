@@ -1,11 +1,7 @@
 package com.UI.LEDevice;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -70,7 +66,7 @@ public class ExpandaListActivity extends Fragment
 	final private int mReadFailGoalCount = 2;
 	private int mReadCount = 0; 
 	private int mReadFailCount = 0; 
-	private final String mInFileName = "InternalCommands.xml";
+	private File mExternalXMLFile = null; 
 	private static Object mLockPollRead = new Object();
 	
 	private static IntentFilter makeMsgIntentFilter() {
@@ -1067,9 +1063,9 @@ public class ExpandaListActivity extends Fragment
 		File path = Environment.getExternalStoragePublicDirectory(
 	            Environment.DIRECTORY_DOWNLOADS);
 				
-	    final File file = new File(path, "Commands.xml");
+		mExternalXMLFile = new File(path, "Commands.xml");
 	    
-		if(file.exists())
+		if(mExternalXMLFile.exists())
 		{
 			AlertDialog.Builder builderSingle = new AlertDialog.Builder(super.getActivity());
             builderSingle.setIcon(R.drawable.ic_icon);
@@ -1079,8 +1075,9 @@ public class ExpandaListActivity extends Fragment
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                		copyToInternal(mInFileName, file);
         				InitPage();
+        				mExternalXMLFile = null;
+        				
                     }
                 });
             builderSingle.setNegativeButton(R.string.dlgCancel,
@@ -1088,6 +1085,7 @@ public class ExpandaListActivity extends Fragment
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
+                            mExternalXMLFile = null;
                             InitPage();
                         }
                     });
@@ -1107,15 +1105,10 @@ public class ExpandaListActivity extends Fragment
 	}
 	
 	private void InitPage() {
-	    boolean bIsInFileExist = mFaActivity.getFileStreamPath(mInFileName).exists();
 		InputSource inputSource = null;
-		if(bIsInFileExist)
+		if(mExternalXMLFile != null)
 		{
-			try {
-				inputSource = new InputSource(mFaActivity.openFileInput(mInFileName));
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+			inputSource = new InputSource(mExternalXMLFile.getPath());
 		}
 		else
 		{
@@ -1464,6 +1457,7 @@ public class ExpandaListActivity extends Fragment
 		}
 	}
 	
+	/*
 	private void copyToInternal(String pathTo, File fileSrc) {
 		try {
 			InputStream is = new FileInputStream(fileSrc);
@@ -1483,6 +1477,7 @@ public class ExpandaListActivity extends Fragment
 			e.printStackTrace();
 		}
 	}
+	*/
 	
 	public void doThingsAfterConnted() {
 		if(mPreCmdToExecute != null)

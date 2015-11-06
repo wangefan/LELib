@@ -95,20 +95,14 @@
 			<CmdRes Title="Mix" refWmdID = "0">edid automix</CmdRes>
 		</ReadCmd>
     </CmdGroup>
-    <CmdGroup Title="Convert 4K60 4:4:4 > 4:2:0" Icon="&#xea90;" CanRead="true" Sequence="4" Try="1">
-	    <WriteCmdChk Title="On" Cmd="420 on">
-			<CmdResOK>ok</CmdResOK>
-		</WriteCmdChk>
-	    <WriteCmdChk Title="Off" Cmd="420 off">
-			<CmdResOK>ok</CmdResOK>
-		</WriteCmdChk>
-		<ReadCmd Title="Read Current 4:2:0 Selection Status" Cmd="420">
-			<CmdRes Title="On" refWmdID = "0">420 on</CmdRes>
-			<CmdRes Title="Off" refWmdID = "1">420 off</CmdRes>
-		</ReadCmd>
+    <CmdGroup Title="Convert 4K60 4:4:4 > 4:2:0" Icon="&#xea90;" CanRead="false" Sequence="4" Try="1">
+	    <WrtReadCmd Title="Convert 4K60 4:4:4 > 4:2:0" Cmd1="on" Cmd2="off" CmdRes="ok" ReadCmd = "420" Sequence = "4">
+			<ReadRes Title="On">420 on</ReadRes>
+			<ReadRes Title="Off">420 off</ReadRes>
+		</WrtReadCmd>
     </CmdGroup>
     <CmdGroup Title="Play with CEC" Icon="&#xe860;" CanRead="false">
-	    <WriteCmd Title="Turn Everything On" Cmd="CEC 0F:04" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">
+	    <WriteCmd Title="Turn Display On" Cmd="CEC 0F:04" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">
 			<CmdResOK>ok</CmdResOK>
 		</WriteCmd>
 	    <WriteCmd Title="Turn Everything Off" Cmd="CEC 0F:36" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">

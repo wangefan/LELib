@@ -111,7 +111,7 @@
 	    <WriteCmd Title="Turn Display On" Cmd="CEC 0F:04" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">
 			<CmdResOK>ok</CmdResOK>
 		</WriteCmd>
-	    <WriteCmd Title="Turn Display Off" Cmd="CEC 0F:36" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">
+	    <WriteCmd Title="Turn Everything Off" Cmd="CEC 0F:36" CheckedIcon="&#xea9d;" UnCheckedIcon="&#xea9d;">
 			<CmdResOK>ok</CmdResOK>
 		</WriteCmd>   
 		<WriteCECCmd Title="Define CEC1 SP" PreCmd = "cec1save" Cmd="0F:36" Icon="&#xea67;">

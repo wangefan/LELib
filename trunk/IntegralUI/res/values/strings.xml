@@ -13,7 +13,7 @@
     <string name="drawer_icon_HDMIVideo"></string>
     <string name="drawer_title_DEVICEVER_none">No Device Version Info</string>
     <string name="drawer_icon_DEVICEVER"></string>
-    <string name="drawer_title_appVER">Software Version:%1$s</string>
+    <string name="drawer_title_appVER">APK Version %1$s</string>
     <string name="drawer_title_LINKHDF">www.hdfury.com</string>
     <string name="drawer_icon_LINKHDF">&#xeb62;</string>
     <string name="confirm_exit">Press Back Button Again To Exit</string>

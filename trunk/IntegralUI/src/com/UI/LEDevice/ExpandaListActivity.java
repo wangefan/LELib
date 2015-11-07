@@ -1,6 +1,8 @@
 package com.UI.LEDevice;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -1106,18 +1108,22 @@ public class ExpandaListActivity extends Fragment
 	
 	private void InitPage() {
 		InputSource inputSource = null;
-		if(mExternalXMLFile != null)
-		{
-			inputSource = new InputSource(mExternalXMLFile.getPath());
-		}
-		else
-		{
-			try {
+		try {
+			if(mExternalXMLFile != null)
+			{
+				inputSource = new InputSource(new FileInputStream(mExternalXMLFile.getPath()));
+			}
+			else
+			{
 				inputSource = new InputSource(mFaActivity.getAssets().open("Commands.xml"));
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}  
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		catch (IOException e1) {
+			e1.printStackTrace();
+		}  
 		
 		//parsing XML
 		List<GroupItem> groupItems = new ArrayList<GroupItem>();

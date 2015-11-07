@@ -711,10 +711,10 @@ public class ExpandaListActivity extends Fragment
 			for(int idxGroup = 0; idxGroup < mAdapter.getGroupCount(); ++idxGroup)
 			{
 				GroupItem groupItem = mAdapter.getGroup(idxGroup);
-				if(groupItem instanceof CanReadGroup)
+				if(groupItem != null)
 				{
-					((CanReadGroup)groupItem).mGroupResponse = "";
-					((CanReadGroup)groupItem).mBIsOutofDate = false; 
+					groupItem.mGroupResponse = "";
+					groupItem.mBIsOutofDate = false; 
 				}
 			}
 			for(int idxWrCmd = 0; idxWrCmd < mListWrtReadCmds.size(); ++idxWrCmd)

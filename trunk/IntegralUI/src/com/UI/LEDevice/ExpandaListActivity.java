@@ -514,7 +514,8 @@ public class ExpandaListActivity extends Fragment
 		public String mCommand2 = "";
 		public String mResponseTitle = "";
 		public boolean mBIsOutofDate = false; 
-		public boolean mBIsStatus1 = false; //true: status1, false:status2 
+		public boolean mBIsStatus1 = false; //true: status1, false:status2
+		public boolean mBUpdateGrouptTitle = false;
 		public String mCommandRes = "";
 		public int mNExeSequence = -1;
 		
@@ -590,6 +591,8 @@ public class ExpandaListActivity extends Fragment
 					{
 						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd match response");
 						updateStatus(!mBIsStatus1);
+						if(mBUpdateGrouptTitle)
+							mParentItem.mGroupResponse = mResponseTitle;
 						mUIHanlder.post(new Runnable() {
 							@Override
 							public void run() {
@@ -1095,6 +1098,7 @@ public class ExpandaListActivity extends Fragment
             builderSingle.show();
 		}
 		else {
+			mExternalXMLFile = null;
 			InitPage();
 		}
 		return mIntegralView;
@@ -1328,6 +1332,8 @@ public class ExpandaListActivity extends Fragment
 		    			((ChildWrtReadItem)command).mCommand2 = cmdNode.getAttributes().getNamedItem("Cmd2").getNodeValue();
 		    			((ChildWrtReadItem)command).mCommandRes = cmdNode.getAttributes().getNamedItem("CmdRes").getNodeValue();
 		    			((ChildWrtReadItem)command).mNExeSequence = Integer.parseInt(cmdNode.getAttributes().getNamedItem("Sequence").getNodeValue());
+		    	
+		    				
 		    			for(int idxCmdRes = 0; idxCmdRes < cmdNode.getChildNodes().getLength(); ++idxCmdRes) { 
 				    		Node cmdResNode = cmdNode.getChildNodes().item(idxCmdRes); 
 				    		String strResNodeName = cmdResNode.getLocalName();

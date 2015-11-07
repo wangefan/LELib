@@ -96,7 +96,7 @@
 		</ReadCmd>
     </CmdGroup>
     <CmdGroup Title="Convert 4K60 4:4:4 > 4:2:0" Icon="&#xea90;" CanRead="false" Sequence="4" Try="1">
-	    <WrtReadCmd Title="Convert 4K60 4:4:4 > 4:2:0" Cmd1="on" Cmd2="off" CmdRes="ok" ReadCmd = "420" Sequence = "4">
+	    <WrtReadCmd Title="Convert 4K60 4:4:4 > 4:2:0" Cmd1="on" Cmd2="off" CmdRes="ok" ReadCmd = "420" Sequence = "4" UpdateGroupTitle="true">
 			<ReadRes Title="On">420 on</ReadRes>
 			<ReadRes Title="Off">420 off</ReadRes>
 		</WrtReadCmd>

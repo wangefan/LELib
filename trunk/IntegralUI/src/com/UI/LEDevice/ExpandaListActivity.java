@@ -590,9 +590,7 @@ public class ExpandaListActivity extends Fragment
 			    	if(strRspCal.equals(mCommandRes) == true)
 					{
 						MyLog.d(mTag, "doWriteCmdAndReadRsp, BLEUtility.writeCmd match response");
-						updateStatus(!mBIsStatus1);
-						if(mBUpdateGrouptTitle)
-							mParentItem.mGroupResponse = mResponseTitle;
+						updateStatus(!mBIsStatus1);			
 						mUIHanlder.post(new Runnable() {
 							@Override
 							public void run() {
@@ -663,6 +661,10 @@ public class ExpandaListActivity extends Fragment
 							mBIsStatus1 = (idxRsp == 0) ? true : false;
 							updateStatus(mBIsStatus1);
 							mBIsOutofDate = false;
+							if(mBUpdateGrouptTitle) {
+								mParentItem.mBIsOutofDate = false;
+								mParentItem.mGroupResponse = mResponseTitle;
+							}
 							mUIHanlder.post(new Runnable() {
 								@Override
 								public void run() {
@@ -677,6 +679,9 @@ public class ExpandaListActivity extends Fragment
 			    	MyLog.d(mTag, "doReadRsp, read fail");
 			    	++mReadFailCount;
 			    	mBIsOutofDate = true;
+					if(mBUpdateGrouptTitle) {
+						mParentItem.mBIsOutofDate = true;
+					}
 					mUIHanlder.post(new Runnable() {
 						@Override
 						public void run() {
@@ -1332,7 +1337,9 @@ public class ExpandaListActivity extends Fragment
 		    			((ChildWrtReadItem)command).mCommand2 = cmdNode.getAttributes().getNamedItem("Cmd2").getNodeValue();
 		    			((ChildWrtReadItem)command).mCommandRes = cmdNode.getAttributes().getNamedItem("CmdRes").getNodeValue();
 		    			((ChildWrtReadItem)command).mNExeSequence = Integer.parseInt(cmdNode.getAttributes().getNamedItem("Sequence").getNodeValue());
-		    	
+		    			Node ndUpdateGrpTtle = cmdNode.getAttributes().getNamedItem("UpdateGroupTitle");
+		    			if(ndUpdateGrpTtle != null && ndUpdateGrpTtle.getNodeValue().compareTo("true") == 0)
+		    				((ChildWrtReadItem)command).mBUpdateGrouptTitle = true;
 		    				
 		    			for(int idxCmdRes = 0; idxCmdRes < cmdNode.getChildNodes().getLength(); ++idxCmdRes) { 
 				    		Node cmdResNode = cmdNode.getChildNodes().item(idxCmdRes); 

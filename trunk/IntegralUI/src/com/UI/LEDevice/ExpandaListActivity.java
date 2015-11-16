@@ -1087,7 +1087,6 @@ public class ExpandaListActivity extends Fragment
                     public void onClick(DialogInterface dialog, int which) {
         				InitPage();
         				mExternalXMLFile = null;
-        				
                     }
                 });
             builderSingle.setNegativeButton(R.string.dlgCancel,
@@ -1124,7 +1123,7 @@ public class ExpandaListActivity extends Fragment
 			}
 			else
 			{
-				inputSource = new InputSource(mFaActivity.getAssets().open("Commands.xml"));
+				inputSource = new InputSource(mFaActivity.getAssets().open("InternalCommands.xml"));
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

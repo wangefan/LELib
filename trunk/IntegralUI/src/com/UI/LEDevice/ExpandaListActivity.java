@@ -968,12 +968,12 @@ public class ExpandaListActivity extends Fragment
 				chdholder.mCheckBox.setVisibility(View.INVISIBLE);
 			}
 			else if(item instanceof ChildWrtReadItem) {
-				if(((ChildWrtReadItem)item).mBIsOutofDate)
+				if(((ChildWrtReadItem)item).mBIsOutofDate && ((ChildWrtReadItem)item).mBUpdateGrouptTitle == false)
 				{
 					chdholder.mRespTitle.setTextColor(getResources().getColor(R.color.material_red_200));
 					chdholder.mRespTitle.setText(getResources().getString(R.string.groupOutofDate));
 				}
-				else
+				else if(((ChildWrtReadItem)item).mBIsOutofDate == false && ((ChildWrtReadItem)item).mBUpdateGrouptTitle == false)
 				{
 					chdholder.mRespTitle.setTextColor(getResources().getColor(R.color.custom_green_color));
 					chdholder.mRespTitle.setText(((ChildWrtReadItem)item).getStatusTitle());

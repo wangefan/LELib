@@ -978,6 +978,11 @@ public class ExpandaListActivity extends Fragment
 					chdholder.mRespTitle.setTextColor(getResources().getColor(R.color.custom_green_color));
 					chdholder.mRespTitle.setText(((ChildWrtReadItem)item).getStatusTitle());
 				}
+				else if(((ChildWrtReadItem)item).mBUpdateGrouptTitle == true)
+				{
+					chdholder.mRespTitle.setTextColor(getResources().getColor(R.color.custom_green_color));
+					chdholder.mRespTitle.setText("");
+				}
 				chdholder.mRespTitle.setVisibility(View.VISIBLE);
 				chdholder.mIcon.setVisibility(View.INVISIBLE);
 				chdholder.mCheckBox.setChecked(((ChildWrtReadItem) item).mBIsStatus1);
